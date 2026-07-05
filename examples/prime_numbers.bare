@@ -1,0 +1,24 @@
+# Prime Numbers — early return from a sub, %, and a while loop as a filter
+sub is_prime(n)
+    if n < 2
+        return false
+    end
+
+    divisor = 2
+    while divisor * divisor <= n
+        if n % divisor == 0
+            return false
+        end
+        divisor = divisor + 1
+    end
+
+    return true
+end
+
+n = 2
+while n <= 50
+    if is_prime(n)
+        print n
+    end
+    n = n + 1
+end

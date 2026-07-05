@@ -1,0 +1,12 @@
+# String Reverse — building a new string by walking an index backwards
+sub reverse(word)
+    result = ""
+    i = len(word) - 1
+    while i >= 0
+        result = result + word[i]
+        i = i - 1
+    end
+    return result
+end
+
+print reverse("BARE")

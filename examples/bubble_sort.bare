@@ -1,0 +1,18 @@
+# Bubble Sort — swapping list elements in place with a temp variable
+numbers = [5, 2, 9, 1, 5, 6]
+
+i = 0
+while i < len(numbers)
+    j = 0
+    while j < len(numbers) - i - 1
+        if numbers[j] > numbers[j + 1]
+            temp = numbers[j]
+            numbers[j] = numbers[j + 1]
+            numbers[j + 1] = temp
+        end
+        j = j + 1
+    end
+    i = i + 1
+end
+
+print numbers

@@ -1,0 +1,1 @@
+# IDE widgets package

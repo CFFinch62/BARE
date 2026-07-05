@@ -1,0 +1,20 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>BARE icon</title>
+  <desc>Outline glyph of a bear head inside a rounded, unfilled, black-bordered box.</desc>
+
+  <!-- container -->
+  <rect x="10" y="10" width="180" height="180" rx="24" fill="none" stroke="#000000" stroke-width="3"/>
+
+  <!-- bear head outline -->
+  <g fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="72" cy="78" r="11"/>
+    <circle cx="128" cy="78" r="11"/>
+    <circle cx="100" cy="105" r="28"/>
+    <ellipse cx="100" cy="118" rx="12" ry="8"/>
+  </g>
+
+  <!-- eyes and nose -->
+  <circle cx="91" cy="99" r="2" fill="#000000"/>
+  <circle cx="109" cy="99" r="2" fill="#000000"/>
+  <circle cx="100" cy="113" r="2" fill="#000000"/>
+</svg>

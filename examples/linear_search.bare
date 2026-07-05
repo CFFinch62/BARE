@@ -1,0 +1,16 @@
+# Linear Search — a sub that returns early from inside a loop
+sub find_index(haystack, target)
+    i = 0
+    while i < len(haystack)
+        if haystack[i] == target
+            return i
+        end
+        i = i + 1
+    end
+    return -1
+end
+
+names = ["Ada", "Grace", "Alan", "Margaret"]
+
+print find_index(names, "Alan")
+print find_index(names, "Linus")

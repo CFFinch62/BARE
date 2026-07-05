@@ -1,0 +1,22 @@
+# Guessing Game — demonstrates input(), random(), and loops
+secret = random(1, 100)
+guess = 0
+attempts = 0
+
+print "I'm thinking of a number between 1 and 100."
+
+while guess != secret
+    response = input("Your guess: ")
+    guess = num(response)
+    attempts = attempts + 1
+
+    if guess < secret
+        print "Too low!"
+    else
+        if guess > secret
+            print "Too high!"
+        else
+            print "Correct! You got it in " + str(attempts) + " attempts."
+        end
+    end
+end

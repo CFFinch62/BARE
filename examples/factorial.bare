@@ -1,0 +1,10 @@
+# Recursion (factorial) — from BARE spec §10
+sub factorial(n)
+    if n <= 1
+        return 1
+    else
+        return n * factorial(n - 1)
+    end
+end
+
+print factorial(5)

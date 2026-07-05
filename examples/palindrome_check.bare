@@ -1,0 +1,19 @@
+# Palindrome Check — string indexing and building a boolean result in a loop
+sub is_palindrome(word)
+    left = 0
+    right = len(word) - 1
+    result = true
+
+    while left < right
+        if word[left] != word[right]
+            result = false
+        end
+        left = left + 1
+        right = right - 1
+    end
+
+    return result
+end
+
+print is_palindrome("racecar")
+print is_palindrome("hello")

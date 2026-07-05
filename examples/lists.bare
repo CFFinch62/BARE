@@ -1,0 +1,12 @@
+# Lists — from BARE spec §10
+scores = [88, 92, 75]
+append(scores, 100)
+
+total = 0
+i = 0
+while i < len(scores)
+    total = total + scores[i]
+    i = i + 1
+end
+
+print "Average: " + str(total / len(scores))

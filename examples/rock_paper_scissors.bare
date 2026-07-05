@@ -1,0 +1,29 @@
+# Rock, Paper, Scissors — string comparisons and "or" against the computer
+sub beats(a, b)
+    if a == "rock" and b == "scissors"
+        return true
+    end
+    if a == "paper" and b == "rock"
+        return true
+    end
+    if a == "scissors" and b == "paper"
+        return true
+    end
+    return false
+end
+
+choices = ["rock", "paper", "scissors"]
+computer = choices[random(0, 2)]
+player = input("rock, paper, or scissors? ")
+
+print "Computer chose " + computer
+
+if player == computer
+    print "Tie!"
+else
+    if beats(player, computer)
+        print "You win!"
+    else
+        print "Computer wins!"
+    end
+end

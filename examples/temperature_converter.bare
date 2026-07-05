@@ -1,0 +1,10 @@
+# Temperature Converter — input(), num(), and string+number concatenation
+sub to_celsius(fahrenheit)
+    return (fahrenheit - 32) * 5 / 9
+end
+
+response = input("Enter a temperature in Fahrenheit: ")
+fahrenheit = num(response)
+celsius = to_celsius(fahrenheit)
+
+print str(fahrenheit) + "F is " + str(celsius) + "C"
