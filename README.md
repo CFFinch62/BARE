@@ -4,7 +4,7 @@
 teaching language with 11 reserved words, a single numeric type, one loop
 construct, and one procedure construct.
 
-BARE is part of the Fragillidae Software IDE Suite. It is **IDE-locked**:
+BARE is part of the Fragillidae Programming Langauge Teaching Suite. It is **IDE-locked**:
 there is no standalone interpreter — the editor, interpreter, and console
 all live in one PyQt6 process.
 
