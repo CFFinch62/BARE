@@ -33,8 +33,11 @@ one window.
 
 - **Menu bar**: File, Edit, View, Run, Help.
 - **Toolbar**: New, Open, Save, then Run, Stop, Step, Continue.
-- **Editor** (top pane): where you write code. Line numbers on the left
-  double as a breakpoint gutter — see §6.
+- **File Browser** (left pane): a folder tree for navigating your project
+  and opening files — see §8. Toggle it from **View → File Browser** if you
+  want the extra width for editing.
+- **Editor** (top pane): where you write code, one tab per open file — see
+  §8. Line numbers on the left double as a breakpoint gutter — see §7.
 - **Console** (bottom pane, labeled CONSOLE): `print` output appears here,
   errors appear here in red, and when a program calls `input()`, a text
   field appears right in this pane for you to type into.
@@ -160,14 +163,48 @@ to show.
 
 ## 8. Files
 
-- **New** (Ctrl+N) / **Open...** (Ctrl+O) / **Save** (Ctrl+S) /
-  **Save As...** (Ctrl+Shift+S) — standard behavior, filtered to `.bare`
-  files by default.
-- If you try to close a file, open a different one, or quit with unsaved
-  changes, the IDE asks whether to save first — you won't lose work
-  silently.
-- The window title shows the current filename with a leading `*` while
-  there are unsaved changes.
+### Editor tabs
+
+You can have several files open at once, each in its own tab above the
+editor:
+
+- **New** (Ctrl+N) opens a blank *Untitled* tab; **Open...** (Ctrl+O) opens
+  a file in a new tab — or, if that file is already open, just switches to
+  its existing tab instead of opening a second copy.
+- Click a tab to switch to it, drag tabs to reorder them, or click the `×`
+  on a tab (or **File → Close**, Ctrl+W) to close it.
+- Every tab tracks its own unsaved-changes state independently — the tab
+  label shows a leading `*` while that file has edits, and the window title
+  mirrors whichever tab is currently active.
+- If you close a tab, or quit the IDE, with unsaved changes in it, the IDE
+  asks whether to save first — you won't lose work silently.
+- **Save** (Ctrl+S) / **Save As...** (Ctrl+Shift+S) always act on the
+  *current* tab, filtered to `.bare` files by default.
+- **Run**, **Step**, and breakpoints all target whichever tab was active
+  when you clicked **Run** — you're free to switch tabs to read another
+  file while a program is paused or running, without retargeting execution
+  or losing the paused highlight.
+
+### File Browser
+
+The **File Browser** (left pane, toggle with **View → File Browser**) is a
+folder tree for navigating your project without leaving the IDE:
+
+- **Toolbar**: Back / Forward / Up / Home navigate like a normal file
+  manager; Refresh re-scans the current folder; the star bookmarks the
+  current folder; the eye icon shows or hides dotfiles/hidden folders.
+- **Path bar**: type or paste a path and press Enter to jump straight there.
+- **Bookmarks**: a short list of folders you've starred, above the tree, for
+  quick access to wherever you keep your `.bare` files. Right-click a
+  bookmark to remove it.
+- **Tree view**: single-click a folder to expand/collapse it; double-click a
+  file to open it in a tab (switching to it if it's already open), or
+  double-click a folder to navigate into it.
+- **Right-click** anywhere in the tree for New File..., New Folder...,
+  Rename..., Delete, Copy Path, and Reveal in File Manager.
+
+The browser remembers the last folder you had open, your bookmarks, and
+your hidden-files preference between sessions.
 
 ---
 
@@ -242,8 +279,9 @@ debug/error color adapts automatically.
 
 | Action | Shortcut |
 |---|---|
-| New file | Ctrl+N |
-| Open file | Ctrl+O |
+| New file (tab) | Ctrl+N |
+| Open file (tab) | Ctrl+O |
+| Close tab | Ctrl+W |
 | Save | Ctrl+S |
 | Save As | Ctrl+Shift+S |
 | Quit | Ctrl+Q |
@@ -287,6 +325,13 @@ num(response)` line first and watch the Variable Watch panel to see
 - **My program calls a function I never defined, and it works.** It's
   probably in your personal library (§9) — check the **My Library** panel,
   or look for a `Loaded from your library: ...` line in the console.
+- **The File Browser disappeared.** It's just hidden, not closed — bring it
+  back with **View → File Browser** (§8).
+- **I clicked Run, switched tabs, and now the highlight is on the wrong
+  file.** It isn't — Run/Step always stay bound to whichever tab was active
+  when you clicked Run (§8), so switching tabs to read something else while
+  paused is safe. If a highlight looks stale, switch back to the tab you
+  actually ran.
 
 ---
 

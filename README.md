@@ -15,7 +15,8 @@ all live in one PyQt6 process.
 Feature-complete through Phase 6 of the implementation plan — core
 interpreter, editor, syntax highlighting, threaded Run/Stop, step-debug
 with breakpoints and Variable Watch, scope box coloring, and a Preferences
-dialog. See [dev-docs/implementation-task-list.md](dev-docs/implementation-task-list.md)
+dialog — plus multi-file editor tabs and a file browser panel. See
+[dev-docs/implementation-task-list.md](dev-docs/implementation-task-list.md)
 for the full phase-by-phase history.
 
 ## Getting started
@@ -38,7 +39,7 @@ To build a standalone executable (no Python install required to run it):
 | Doc | Audience | Covers |
 |---|---|---|
 | [docs/language-spec.md](docs/language-spec.md) | Anyone writing BARE programs | The full language: syntax, types, control flow, subs, builtins, examples |
-| [docs/user-guide.md](docs/user-guide.md) | Anyone using the IDE | Editor features, running/debugging programs, breakpoints, Preferences, the personal library |
+| [docs/user-guide.md](docs/user-guide.md) | Anyone using the IDE | Editor tabs, the file browser, running/debugging programs, breakpoints, Preferences, the personal library |
 | [curriculum/](curriculum/) | Teachers | A full K-12 learn-to-program curriculum built on BARE (see below) |
 | [dev-docs/ARCHITECTURE.md](dev-docs/ARCHITECTURE.md) | Contributors | Component responsibilities, data flow, threading model |
 | [dev-docs/TESTING_STRATEGY.md](dev-docs/TESTING_STRATEGY.md) | Contributors | Test pyramid, fixtures, how to run the suite |
