@@ -48,6 +48,11 @@ class UITheme:
     panel_background: str
     panel_border: str
 
+    # File browser colors
+    browser_background: str
+    browser_item_hover: str
+    browser_item_selected: str
+
     # Editor colors
     editor_background: str
     editor_foreground: str
@@ -104,6 +109,9 @@ DARK_THEME = UITheme(
     accent_hover="#74c7ec",
     panel_background="#181825",
     panel_border="#313244",
+    browser_background="#181825",
+    browser_item_hover="#585b70",
+    browser_item_selected="#89b4fa",
     editor_background="#1e1e2e",
     editor_foreground="#cdd6f4",
     editor_line_highlight="#2a2a3c",
@@ -149,6 +157,9 @@ LIGHT_THEME = UITheme(
     accent_hover="#2a7afd",
     panel_background="#e6e9ef",
     panel_border="#bcc0cc",
+    browser_background="#e6e9ef",
+    browser_item_hover="#acb0be",
+    browser_item_selected="#1e66f5",
     editor_background="#eff1f5",
     editor_foreground="#4c4f69",
     editor_line_highlight="#dce0e8",
@@ -194,6 +205,9 @@ GREY_THEME = UITheme(
     accent_hover="#5eadff",
     panel_background="#25262a",
     panel_border="#3c3f41",
+    browser_background="#25262a",
+    browser_item_hover="#5a5d62",
+    browser_item_selected="#4a9eff",
     editor_background="#2b2d30",
     editor_foreground="#bcbec4",
     editor_line_highlight="#323437",
@@ -239,6 +253,9 @@ SOLARIZED_LIGHT_THEME = UITheme(
     accent_hover="#2aa1f5",
     panel_background="#eee8d5",
     panel_border="#93a1a1",
+    browser_background="#eee8d5",
+    browser_item_hover="#839496",
+    browser_item_selected="#268bd2",
     editor_background="#fdf6e3",
     editor_foreground="#657b83",
     editor_line_highlight="#eee8d5",
@@ -284,6 +301,9 @@ SOLARIZED_DARK_THEME = UITheme(
     accent_hover="#2aa1f5",
     panel_background="#073642",
     panel_border="#586e75",
+    browser_background="#073642",
+    browser_item_hover="#657b83",
+    browser_item_selected="#268bd2",
     editor_background="#002b36",
     editor_foreground="#839496",
     editor_line_highlight="#073642",
@@ -329,6 +349,9 @@ HIGH_CONTRAST_THEME = UITheme(
     accent_hover="#81d4fa",
     panel_background="#0a0a0a",
     panel_border="#444444",
+    browser_background="#0a0a0a",
+    browser_item_hover="#555555",
+    browser_item_selected="#4fc3f7",
     editor_background="#000000",
     editor_foreground="#ffffff",
     editor_line_highlight="#1a1a1a",
