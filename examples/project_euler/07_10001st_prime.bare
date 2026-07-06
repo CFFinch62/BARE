@@ -1,0 +1,32 @@
+# Project Euler 7: 10001st Prime
+# By listing the first six primes (2, 3, 5, 7, 11, 13) we see that the 6th
+# prime is 13. What is the 10001st prime number?
+# Answer: 104743
+# Note: trial division checks every candidate, so this takes roughly 15-20
+# seconds to run — that tradeoff (simple code, slower runtime) is deliberate.
+
+sub is_prime(n)
+    if n < 2
+        return false
+    end
+    divisor = 2
+    while divisor * divisor <= n
+        if n % divisor == 0
+            return false
+        end
+        divisor = divisor + 1
+    end
+    return true
+end
+
+count = 0
+n = 1
+target = 10001
+while count < target
+    n = n + 1
+    if is_prime(n)
+        count = count + 1
+    end
+end
+
+print n

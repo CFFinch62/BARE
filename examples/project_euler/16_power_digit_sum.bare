@@ -1,0 +1,58 @@
+# Project Euler 16: Power Digit Sum
+# 2^15 = 32768, and the sum of its digits is 3 + 2 + 7 + 6 + 8 = 26.
+# What is the sum of the digits of 2^1000?
+# Answer: 1366
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# 2^1000 has over 300 digits. BARE's one numeric type is a float, exact to
+# only about 15-16 digits — `2 ^ 1000` in BARE would just return a rounded
+# approximation, wrong from the 17th digit onward, with no warning.
+#
+# So instead of using `^`, this program represents the growing power as a
+# STRING of digits and doubles it 1000 times by hand: double_big() walks
+# the string from the last digit to the first, doubling each one, carrying
+# into the next — exactly the long-multiplication method taught on paper,
+# just specialized to "times 2". See 13_large_sum.bare for the addition
+# version of the same idea, and 20_factorial_digit_sum.bare for the
+# general "multiply by any number" version.
+#
+# This works, and it's real computation — but notice what it cost: a
+# hand-rolled arithmetic routine to do one exponentiation. A language with
+# a native big-integer type turns this whole file into one line,
+# `print sum_of_digits(2 ^ 1000)`. That gap between "possible" and
+# "reasonable" is exactly what motivates moving on to a richer language
+# later in this teaching suite.
+
+sub double_big(a)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    while i >= 0 or carry > 0
+        digit = 0
+        if i >= 0
+            digit = num(a[i])
+        end
+        total = digit * 2 + carry
+        new_digit = total % 10
+        carry = (total - new_digit) / 10
+        result = str(new_digit) + result
+        i = i - 1
+    end
+    return result
+end
+
+power = "1"
+count = 0
+while count < 1000
+    power = double_big(power)
+    count = count + 1
+end
+
+digit_sum = 0
+i = 0
+while i < len(power)
+    digit_sum = digit_sum + num(power[i])
+    i = i + 1
+end
+
+print digit_sum

@@ -1,0 +1,51 @@
+# Project Euler 12: Highly Divisible Triangular Number
+# What is the value of the first triangle number to have over five hundred
+# divisors?
+# Answer: 76576500
+# Note: a triangle number is n(n+1)/2. Since n and n+1 share no factors,
+# their divisor counts can be found separately (each is a much smaller
+# number than the triangle number itself) and multiplied together — far
+# faster than factoring the triangle number directly.
+
+sub count_divisors(m)
+    count = 0
+    i = 1
+    while i * i <= m
+        if m % i == 0
+            if i * i == m
+                count = count + 1
+            else
+                count = count + 2
+            end
+        end
+        i = i + 1
+    end
+    return count
+end
+
+sub triangle_divisor_count(n)
+    a = 0
+    b = 0
+    if n % 2 == 0
+        a = n / 2
+        b = n + 1
+    else
+        a = n
+        b = (n + 1) / 2
+    end
+    return count_divisors(a) * count_divisors(b)
+end
+
+n = 1
+answer = 0
+found = false
+while not found
+    if triangle_divisor_count(n) > 500
+        answer = n * (n + 1) / 2
+        found = true
+    else
+        n = n + 1
+    end
+end
+
+print answer

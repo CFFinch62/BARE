@@ -1,0 +1,148 @@
+# Project Euler 17: Number Letter Counts
+# If the numbers 1 to 5 are written out in words: one, two, three, four,
+# five, that is 3 + 3 + 5 + 4 + 4 = 19 letters. If all the numbers from 1
+# to 1000 (one thousand) inclusive were written out in words, how many
+# letters would be used? (Spaces and hyphens do not count, but the "and"
+# used in British usage, e.g. "three hundred and forty-two", does.)
+# Answer: 21124
+
+sub ones_word(n)
+    if n == 1
+        return "one"
+    end
+    if n == 2
+        return "two"
+    end
+    if n == 3
+        return "three"
+    end
+    if n == 4
+        return "four"
+    end
+    if n == 5
+        return "five"
+    end
+    if n == 6
+        return "six"
+    end
+    if n == 7
+        return "seven"
+    end
+    if n == 8
+        return "eight"
+    end
+    return "nine"
+end
+
+sub teen_word(n)
+    if n == 10
+        return "ten"
+    end
+    if n == 11
+        return "eleven"
+    end
+    if n == 12
+        return "twelve"
+    end
+    if n == 13
+        return "thirteen"
+    end
+    if n == 14
+        return "fourteen"
+    end
+    if n == 15
+        return "fifteen"
+    end
+    if n == 16
+        return "sixteen"
+    end
+    if n == 17
+        return "seventeen"
+    end
+    if n == 18
+        return "eighteen"
+    end
+    return "nineteen"
+end
+
+sub tens_word(n)
+    if n == 20
+        return "twenty"
+    end
+    if n == 30
+        return "thirty"
+    end
+    if n == 40
+        return "forty"
+    end
+    if n == 50
+        return "fifty"
+    end
+    if n == 60
+        return "sixty"
+    end
+    if n == 70
+        return "seventy"
+    end
+    if n == 80
+        return "eighty"
+    end
+    return "ninety"
+end
+
+sub number_to_words(n)
+    if n == 1000
+        return "one thousand"
+    end
+
+    hundreds_digit = (n - n % 100) / 100
+    remainder = n % 100
+
+    words = ""
+    if hundreds_digit > 0
+        words = ones_word(hundreds_digit) + " hundred"
+        if remainder > 0
+            words = words + " and "
+        end
+    end
+
+    if remainder > 0
+        if remainder < 10
+            words = words + ones_word(remainder)
+        else
+            if remainder < 20
+                words = words + teen_word(remainder)
+            else
+                tens_digit = (remainder - remainder % 10)
+                ones_digit = remainder % 10
+                words = words + tens_word(tens_digit)
+                if ones_digit > 0
+                    words = words + "-" + ones_word(ones_digit)
+                end
+            end
+        end
+    end
+
+    return words
+end
+
+sub count_letters(s)
+    count = 0
+    i = 0
+    while i < len(s)
+        if s[i] != " " and s[i] != "-"
+            count = count + 1
+        end
+        i = i + 1
+    end
+    return count
+end
+
+total_letters = 0
+n = 1
+while n <= 1000
+    total_letters = total_letters + count_letters(number_to_words(n))
+    n = n + 1
+end
+
+print total_letters

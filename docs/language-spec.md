@@ -292,7 +292,7 @@ machinery — that's a lesson for a later, more advanced language. See
 
 ## 10. Built-in functions
 
-Seven functions, none of them keywords — which means this table, unlike the
+None of these are keywords — which means this table, unlike the
 keyword list, could grow in a future version without changing the
 grammar:
 
@@ -305,6 +305,20 @@ grammar:
 | `num(x)` | Converts a string to a number — runtime error if the string isn't numeric |
 | `random(min, max)` | Random integer in `[min, max]`, inclusive on both ends |
 | `round(x, decimals)` | Rounds `x` to `decimals` decimal places (half-up, e.g. `round(2.5, 0)` is `3`) |
+| `time()` | Seconds elapsed on a monotonic clock — call it twice and subtract to time code |
+
+`time()` doesn't return a wall-clock timestamp, only a number that's
+meaningful when you subtract an earlier reading from a later one:
+
+```
+start = time()
+count = 0
+while count < 1000000
+    count = count + 1
+end
+elapsed = time() - start
+print "That took " + str(elapsed) + " seconds"
+```
 
 `input()` always returns a **string**, even if the user typed digits — run
 it through `num()` before doing arithmetic on it:

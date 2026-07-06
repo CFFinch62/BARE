@@ -1,0 +1,22 @@
+# Project Euler 5: Smallest Multiple
+# What is the smallest positive number that is evenly divisible by all of
+# the numbers from 1 to 20?
+# Answer: 232792560
+
+sub gcd(a, b)
+    while b != 0
+        temp = b
+        b = a % b
+        a = temp
+    end
+    return a
+end
+
+result = 1
+n = 1
+while n <= 20
+    result = result * n / gcd(result, n)
+    n = n + 1
+end
+
+print result

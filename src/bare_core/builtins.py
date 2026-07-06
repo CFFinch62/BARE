@@ -1,6 +1,6 @@
 """BARE Built-in Functions.
 
-Seven built-in functions from spec §8. These are ordinary callable names,
+Built-in functions from spec §8. These are ordinary callable names,
 not keywords, so this list can grow without touching the grammar.
 
     len(x)              — Length of a string or list
@@ -10,9 +10,11 @@ not keywords, so this list can grow without touching the grammar.
     num(x)              — Converts a string to a number
     random(min, max)    — Random integer in [min, max] inclusive
     round(x, decimals)  — Rounds x to the given number of decimal places
+    time()              — Seconds elapsed since an arbitrary fixed point
 """
 
 import random as _random
+import time as _time
 from decimal import ROUND_HALF_UP, Decimal
 from typing import Any, Callable, Dict, List, Optional
 
@@ -145,6 +147,20 @@ def builtin_round(args: list, line: int) -> float:
     return float(Decimal(str(val)).quantize(quantum, rounding=ROUND_HALF_UP))
 
 
+def builtin_time(args: list, line: int) -> float:
+    """time() — Seconds elapsed since an arbitrary fixed point.
+
+    Meant for timing code, e.g.:
+        start = time()
+        ...
+        elapsed = time() - start
+    Uses a monotonic clock, so it's only meaningful as a difference
+    between two calls, not as a wall-clock timestamp.
+    """
+    _check_arg_count("time", args, 0, line)
+    return _time.perf_counter()
+
+
 # Registry of all built-in functions.
 # The interpreter checks this dict before looking up user-defined subs.
 # Each entry maps name → callable(args: list, line: int) → Any.
@@ -155,6 +171,7 @@ BUILTINS: Dict[str, Callable] = {
     "num": builtin_num,
     "random": builtin_random,
     "round": builtin_round,
+    "time": builtin_time,
     # "input" is handled specially by the interpreter because it needs
     # the input_callback hook from the IDE. See interpreter.py.
 }

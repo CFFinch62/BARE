@@ -1,0 +1,57 @@
+# Project Euler 20: Factorial Digit Sum
+# n! means n x (n-1) x ... x 3 x 2 x 1. Find the sum of the digits in the
+# number 100!
+# Answer: 648
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# 100! has 158 digits. BARE's one numeric type is a float, exact to only
+# about 15-16 digits, so computing this with ordinary `*` would silently
+# drift into a wrong answer well before reaching 100 — no crash, no
+# warning, just a plausible-looking wrong number.
+#
+# This is the third and most general of the three "bignum" problems in
+# this folder (see 13_large_sum.bare for hand-rolled addition and
+# 16_power_digit_sum.bare for doubling). multiply_big() below multiplies a
+# digit-string by an ordinary number `m` — any single call from 2 to 100 —
+# using the same carry-the-remainder technique as long multiplication on
+# paper. 100 calls in a row builds up 100! one factor at a time.
+#
+# Three problems, three hand-built pieces of arithmetic, because BARE
+# doesn't have a real integer type to lean on. That's a deliberate cost of
+# a language with exactly one numeric type — and it's the clearest
+# argument in this whole set of examples for why the next language in
+# this teaching suite needs to do better.
+
+sub multiply_big(a, m)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    while i >= 0 or carry > 0
+        digit = 0
+        if i >= 0
+            digit = num(a[i])
+        end
+        total = digit * m + carry
+        new_digit = total % 10
+        carry = (total - new_digit) / 10
+        result = str(new_digit) + result
+        i = i - 1
+    end
+    return result
+end
+
+factorial = "1"
+n = 2
+while n <= 100
+    factorial = multiply_big(factorial, n)
+    n = n + 1
+end
+
+digit_sum = 0
+i = 0
+while i < len(factorial)
+    digit_sum = digit_sum + num(factorial[i])
+    i = i + 1
+end
+
+print digit_sum

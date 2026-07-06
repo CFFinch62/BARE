@@ -1,0 +1,37 @@
+# Project Euler 10: Summation of Primes
+# Find the sum of all the primes below two million.
+# Answer: 142913828922
+# Note: uses a Sieve of Eratosthenes (a list of "is this composite?" flags)
+# instead of testing each number one at a time — the sieve is what makes
+# checking two million numbers finish in well under a minute.
+
+limit = 2000000
+is_composite = []
+i = 0
+while i <= limit
+    append(is_composite, false)
+    i = i + 1
+end
+
+p = 2
+while p * p <= limit
+    if not is_composite[p]
+        multiple = p * p
+        while multiple <= limit
+            is_composite[multiple] = true
+            multiple = multiple + p
+        end
+    end
+    p = p + 1
+end
+
+total = 0
+n = 2
+while n <= limit
+    if not is_composite[n]
+        total = total + n
+    end
+    n = n + 1
+end
+
+print total

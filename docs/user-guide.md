@@ -81,7 +81,7 @@ with no need to run anything:
 | Color role | Applies to |
 |---|---|
 | Keyword (bold) | `print` `input` `if` `else` `end` `while` `sub` `return` `and` `or` `not` |
-| Builtin | `len` `append` `str` `num` `random` `round` |
+| Builtin | `len` `append` `str` `num` `random` `round` `time` |
 | String | Anything in `"double quotes"` |
 | Number | `5`, `3.14`, etc. |
 | Literal | `true` `false` `null` — colored distinctly from keywords, since they're values, not control flow |

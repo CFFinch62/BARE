@@ -1,0 +1,22 @@
+# Project Euler 9: Special Pythagorean Triplet
+# There exists exactly one Pythagorean triplet (a, b, c) with a < b < c for
+# which a + b + c = 1000. Find the product abc.
+# Answer: 31875000
+
+a = 1
+found = false
+answer = 0
+while a < 1000 and not found
+    b = a + 1
+    while b < 1000 - a and not found
+        c = 1000 - a - b
+        if a * a + b * b == c * c
+            answer = a * b * c
+            found = true
+        end
+        b = b + 1
+    end
+    a = a + 1
+end
+
+print answer

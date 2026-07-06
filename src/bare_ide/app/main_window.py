@@ -866,7 +866,7 @@ class BareIDEMainWindow(QMainWindow):
             "11 reserved words, one numeric type, one loop, one procedure.</p>"
             "<p><b>Keywords:</b> print, input, if, else, end, while, sub, "
             "return, and, or, not</p>"
-            "<p><b>Builtins:</b> len, append, str, num, random, round, input</p>"
+            "<p><b>Builtins:</b> len, append, str, num, random, round, time, input</p>"
             "<p>Part of the Fragillidae Software Teaching Language Suite.</p>",
         )
 

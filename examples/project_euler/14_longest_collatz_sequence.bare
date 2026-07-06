@@ -1,0 +1,58 @@
+# Project Euler 14: Longest Collatz Sequence
+# The following iterative sequence is defined for the set of positive
+# integers: n -> n/2 (n even), n -> 3n+1 (n odd). Which starting number
+# under one million produces the longest chain?
+# Answer: 837799 (chain length 525)
+# Note: a plain "try every starting number" version re-walks huge chains
+# from scratch for every one of the million starting points and would take
+# far too long. This version remembers ("caches") the chain length of every
+# number it has already worked out, so each number's length is only
+# computed once. It still takes roughly a minute to run.
+
+limit = 1000000
+cache = []
+i = 0
+while i <= limit
+    append(cache, 0)
+    i = i + 1
+end
+cache[1] = 1
+
+best_start = 1
+best_length = 1
+
+start = 2
+while start <= limit
+    n = start
+    steps = 0
+    chain = []
+    while n > limit or cache[n] == 0
+        append(chain, n)
+        if n % 2 == 0
+            n = n / 2
+        else
+            n = 3 * n + 1
+        end
+        steps = steps + 1
+    end
+    base_length = cache[n]
+    total_from_start = base_length + steps
+
+    k = 0
+    while k < len(chain)
+        node = chain[k]
+        if node <= limit
+            cache[node] = total_from_start - k
+        end
+        k = k + 1
+    end
+
+    if cache[start] > best_length
+        best_length = cache[start]
+        best_start = start
+    end
+    start = start + 1
+end
+
+print best_start
+print best_length

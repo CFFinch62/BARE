@@ -44,6 +44,7 @@ To build a standalone executable (no Python install required to run it):
 | [dev-docs/ARCHITECTURE.md](dev-docs/ARCHITECTURE.md) | Contributors | Component responsibilities, data flow, threading model |
 | [dev-docs/TESTING_STRATEGY.md](dev-docs/TESTING_STRATEGY.md) | Contributors | Test pyramid, fixtures, how to run the suite |
 | [dev-docs/BARE_language_spec.md](dev-docs/BARE_language_spec.md) | Contributors | The original design spec (grammar EBNF, rationale) this implementation was built from |
+| [dev-docs/adding-a-builtin.md](dev-docs/adding-a-builtin.md) | Contributors | Step-by-step checklist for adding a new built-in function |
 
 ## Curriculum
 
@@ -66,7 +67,7 @@ advance, and grading philosophy.
 
 **11 keywords:** `print` `input` `if` `else` `end` `while` `sub` `return` `and` `or` `not`
 
-**7 builtins:** `len(x)` `append(list, value)` `input(prompt)` `str(x)` `num(x)` `random(min, max)` `round(x, decimals)`
+**8 builtins:** `len(x)` `append(list, value)` `input(prompt)` `str(x)` `num(x)` `random(min, max)` `round(x, decimals)` `time()`
 
 ```
 sub factorial(n)

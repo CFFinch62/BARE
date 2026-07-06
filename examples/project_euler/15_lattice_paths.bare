@@ -1,0 +1,20 @@
+# Project Euler 15: Lattice Paths
+# Starting in the top left corner of a 20x20 grid, how many routes are
+# there to the bottom right corner if you can only move right or down?
+# Answer: 137846528820
+# Note: every route is a sequence of 20 right-moves and 20 down-moves in
+# some order, so the count is "40 choose 20" — computed here by building
+# the fraction up one term at a time instead of computing two huge
+# factorials and dividing them.
+
+grid_size = 20
+total_moves = grid_size * 2
+
+routes = 1
+i = 1
+while i <= grid_size
+    routes = routes * (total_moves - grid_size + i) / i
+    i = i + 1
+end
+
+print round(routes, 0)

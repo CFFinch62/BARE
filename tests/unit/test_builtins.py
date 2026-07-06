@@ -116,6 +116,28 @@ class TestRound:
             run("print round(3.14)")
 
 
+class TestTime:
+    def test_time_returns_number(self, run):
+        result = run("t = time()\nprint t >= 0")
+        assert result == ["true"]
+
+    def test_time_advances(self, run):
+        result = run(
+            "start = time()\n"
+            "count = 0\n"
+            "while count < 10000\n"
+            "    count = count + 1\n"
+            "end\n"
+            "elapsed = time() - start\n"
+            "print elapsed >= 0"
+        )
+        assert result == ["true"]
+
+    def test_time_wrong_arg_count(self, run):
+        with pytest.raises(BareRuntimeError, match="expects 0"):
+            run("print time(1)")
+
+
 class TestInput:
     def test_input_returns_string(self, run):
         result = run('x = input("name: ")\nprint x', input_values=["Alice"])

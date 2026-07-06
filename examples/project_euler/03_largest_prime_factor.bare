@@ -1,0 +1,16 @@
+# Project Euler 3: Largest Prime Factor
+# What is the largest prime factor of the number 600851475143?
+# Answer: 6857
+
+sub largest_prime_factor(n)
+    factor = 2
+    while factor * factor <= n
+        while n % factor == 0
+            n = n / factor
+        end
+        factor = factor + 1
+    end
+    return n
+end
+
+print largest_prime_factor(600851475143)

@@ -1,0 +1,81 @@
+# Project Euler 19: Counting Sundays
+# How many Sundays fell on the first of the month during the twentieth
+# century (1 Jan 1901 to 31 Dec 2000)?
+# Answer: 171
+# Note: 1 Jan 1900 was a Monday (a historical fact, used here as the
+# starting point). The day-of-week counter then just advances by however
+# many days are in each month, wrapping around every 7 with %.
+
+sub is_leap_year(year)
+    if year % 4 != 0
+        return false
+    end
+    if year % 100 != 0
+        return true
+    end
+    if year % 400 != 0
+        return false
+    end
+    return true
+end
+
+sub days_in_month(month, year)
+    if month == 1
+        return 31
+    end
+    if month == 2
+        if is_leap_year(year)
+            return 29
+        else
+            return 28
+        end
+    end
+    if month == 3
+        return 31
+    end
+    if month == 4
+        return 30
+    end
+    if month == 5
+        return 31
+    end
+    if month == 6
+        return 30
+    end
+    if month == 7
+        return 31
+    end
+    if month == 8
+        return 31
+    end
+    if month == 9
+        return 30
+    end
+    if month == 10
+        return 31
+    end
+    if month == 11
+        return 30
+    end
+    return 31
+end
+
+day_of_week = 0
+sunday_count = 0
+
+year = 1900
+while year <= 2000
+    month = 1
+    while month <= 12
+        if year >= 1901
+            if day_of_week == 6
+                sunday_count = sunday_count + 1
+            end
+        end
+        day_of_week = (day_of_week + days_in_month(month, year)) % 7
+        month = month + 1
+    end
+    year = year + 1
+end
+
+print sunday_count

@@ -16,7 +16,7 @@ from PyQt6.QtGui import QColor, QFont, QSyntaxHighlighter, QTextCharFormat
 from bare_ide.app.themes import UITheme
 
 KEYWORDS = r"\b(print|input|if|else|end|while|sub|return|and|or|not)\b"
-BUILTINS = r"\b(len|append|str|num|random|round)\b"
+BUILTINS = r"\b(len|append|str|num|random|round|time)\b"
 LITERALS = r"\b(true|false|null)\b"
 NUMBER = r"\b\d+(\.\d+)?\b"
 STRING = r'"[^"]*"'
