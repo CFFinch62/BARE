@@ -1,0 +1,173 @@
+# Project Euler 51: Prime Digit Replacements
+# Replacing the 3rd and 4th digits of 56**3 with the same digit produces
+# seven primes: 56003, 56113, ..., 56993. Find the smallest prime which,
+# by replacing some set of its digits (not necessarily adjacent) with
+# the same digit, is part of an eight-prime family.
+# Answer: 121313
+# Note: this only searches replacement patterns where the number of
+# replaced positions is a multiple of 3. That's not a guess — whichever
+# digit you pick to replace those positions with, the digit sum changes
+# by a multiple of 3 times the count of positions, so if the count
+# itself isn't a multiple of 3, the ten candidates land in all three
+# "remainder mod 3" buckets and at least 4 of them are automatically
+# divisible by 3 (hence not prime), capping the family at 6. Requiring
+# a multiple of 3 is the only way to leave room for 8.
+
+sub is_prime(n)
+    if n < 2
+        return false
+    end
+    if n % 2 == 0
+        return n == 2
+    end
+    divisor = 3
+    while divisor * divisor <= n
+        if n % divisor == 0
+            return false
+        end
+        divisor = divisor + 2
+    end
+    return true
+end
+
+sub index_of(lst, value)
+    i = 0
+    while i < len(lst)
+        if lst[i] == value
+            return i
+        end
+        i = i + 1
+    end
+    return -1
+end
+
+sub generate_combinations(start, k, total, prefix, results)
+    if len(prefix) == k
+        append(results, prefix)
+    else
+        i = start
+        while i < total
+            new_prefix = []
+            j = 0
+            while j < len(prefix)
+                append(new_prefix, prefix[j])
+                j = j + 1
+            end
+            append(new_prefix, i)
+            generate_combinations(i + 1, k, total, new_prefix, results)
+            i = i + 1
+        end
+    end
+    return null
+end
+
+sub complement_positions(chosen, total)
+    result = []
+    p = 0
+    while p < total
+        if index_of(chosen, p) == -1
+            append(result, p)
+        end
+        p = p + 1
+    end
+    return result
+end
+
+sub int_pow(base, exponent)
+    result = 1
+    i = 0
+    while i < exponent
+        result = result * base
+        i = i + 1
+    end
+    return result
+end
+
+best_answer = -1
+
+length = 4
+while length <= 6
+    k = 3
+    while k <= length
+        if k % 3 == 0
+            combos = []
+            generate_combinations(0, k, length, [], combos)
+
+            c = 0
+            while c < len(combos)
+                chosen = combos[c]
+                other = complement_positions(chosen, length)
+                num_fixed = len(other)
+                num_combos = int_pow(10, num_fixed)
+
+                counter = 0
+                while counter < num_combos
+                    fixed_digits = []
+                    temp = counter
+                    idx = 0
+                    while idx < num_fixed
+                        append(fixed_digits, temp % 10)
+                        temp = (temp - temp % 10) / 10
+                        idx = idx + 1
+                    end
+
+                    family = []
+                    replacement = 0
+                    while replacement <= 9
+                        digits = []
+                        p = 0
+                        while p < length
+                            append(digits, -1)
+                            p = p + 1
+                        end
+                        i = 0
+                        while i < len(chosen)
+                            digits[chosen[i]] = replacement
+                            i = i + 1
+                        end
+                        i = 0
+                        while i < len(other)
+                            digits[other[i]] = fixed_digits[i]
+                            i = i + 1
+                        end
+
+                        if digits[0] != 0
+                            s = ""
+                            p = 0
+                            while p < length
+                                s = s + str(digits[p])
+                                p = p + 1
+                            end
+                            n = num(s)
+                            if is_prime(n)
+                                append(family, n)
+                            end
+                        end
+                        replacement = replacement + 1
+                    end
+
+                    if len(family) >= 8
+                        smallest_in_family = family[0]
+                        i = 1
+                        while i < len(family)
+                            if family[i] < smallest_in_family
+                                smallest_in_family = family[i]
+                            end
+                            i = i + 1
+                        end
+                        if best_answer == -1 or smallest_in_family < best_answer
+                            best_answer = smallest_in_family
+                        end
+                    end
+
+                    counter = counter + 1
+                end
+                c = c + 1
+            end
+        end
+        k = k + 1
+    end
+    length = length + 1
+end
+
+print best_answer

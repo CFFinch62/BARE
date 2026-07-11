@@ -1,0 +1,31 @@
+Problem 92: Square Digit Chains
+
+A number chain is created by continuously adding the square of the digits in a number to form a new number until it has been seen before.
+
+For example,
+44 → 32 → 13 → 10 → 1 → 1
+85 → 89 → 145 → 42 → 20 → 4 → 16 → 37 → 58 → 89
+
+Therefore any chain that arrives at 1 or 89 will become stuck in an endless loop. What is most amazing is that EVERY starting number will eventually arrive at 1 or 89.
+
+How many starting numbers below ten million will arrive at 89?
+
+Hint:
+1. We need to count numbers that end in 89
+2. Strategy:
+   - Process each number
+   - Follow chain until 1 or 89
+   - Count 89 results
+3. Implementation:
+   - Square digit sum function
+   - Chain following
+   - Memoization
+4. Optimization:
+   - Cache results
+   - Skip processed numbers
+   - Use efficient digit extraction
+5. Key points:
+   - All numbers end in 1 or 89
+   - Chain length varies
+   - Need efficient processing
+   - Handle large numbers 

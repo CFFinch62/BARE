@@ -1,0 +1,32 @@
+Problem 76: Counting Summations
+
+It is possible to write five as a sum in exactly six different ways:
+
+4 + 1
+3 + 2
+3 + 1 + 1
+2 + 2 + 1
+2 + 1 + 1 + 1
+1 + 1 + 1 + 1 + 1
+
+How many different ways can one hundred be written as a sum of at least two positive integers?
+
+Hint:
+1. We need to count all possible sums of integers that equal 100
+2. Strategy:
+   - Use dynamic programming approach
+   - Build up from smaller sums
+   - Consider partition theory
+3. Implementation:
+   - Create array to store number of ways
+   - Fill array using recurrence relation
+   - Handle base cases carefully
+4. Optimization:
+   - Use efficient partition algorithm
+   - Store only necessary values
+   - Consider mathematical shortcuts
+5. Key points:
+   - Must use at least two numbers
+   - Order matters in partitions
+   - Consider using generating functions
+   - Handle large numbers efficiently 

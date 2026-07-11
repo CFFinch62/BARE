@@ -1,0 +1,35 @@
+Problem 68: Magic 5-gon Ring
+
+Consider the following "magic" 3-gon ring, filled with the numbers 1 to 6, and each line adding to nine:
+
+[Image showing a 3-gon ring where each line sums to 9]
+
+Working clockwise, and starting from the group of three with the numerically lowest external node (4,3,2 in this example), each solution can be described uniquely. For example, the above solution can be described by the set: 4,3,2; 6,2,1; 5,1,3.
+
+It is possible to complete the ring with four different totals: 9, 10, 11, and 12. There are eight solutions in total.
+
+By working clockwise, and starting from the group with the numerically lowest external node, each solution can be described uniquely. For example, the above solution can be described by the set: 4,3,2; 6,2,1; 5,1,3.
+
+Now, using the numbers 1 to 10, and depending on arrangements, it is possible to form 16- and 17-digit strings. What is the maximum 16-digit string for a "magic" 5-gon ring?
+
+[A "magic" 5-gon ring uses the numbers 1 to 10, placed in the nodes, with each line (of three numbers) having the same sum.]
+
+Hint:
+1. We need to find the largest 16-digit string from a magic 5-gon ring
+2. Strategy:
+   - Generate valid arrangements of numbers 1-10
+   - Check if each arrangement forms a magic 5-gon
+   - Convert valid arrangements to strings
+3. Implementation:
+   - Generate permutations of numbers
+   - Check if lines sum to the same value
+   - Create strings starting from lowest external node
+4. Optimization:
+   - Only consider arrangements that give 16 digits
+   - Start with larger numbers in external positions
+   - Use constraints to reduce search space
+5. Key points:
+   - Must use numbers 1-10 exactly once
+   - All lines must sum to same value
+   - Start from lowest external number
+   - Want maximum 16-digit string 

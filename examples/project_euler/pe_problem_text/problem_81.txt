@@ -1,0 +1,27 @@
+Problem 81: Path Sum: Two Ways
+
+In the 5 by 5 matrix below, the minimal path sum from the top left to the bottom right, by only moving to the right and down, is indicated in bold red and is equal to 2427.
+
+[Matrix shown with path highlighted]
+
+Find the minimal path sum from the top left to the bottom right by only moving right and down in matrix.txt (right click and 'Save Link/Target As...'), a 31K text file containing an 80 by 80 matrix.
+
+Hint:
+1. We need to find the minimal path sum in an 80x80 matrix
+2. Strategy:
+   - Use dynamic programming approach
+   - Build up from smaller subproblems
+   - Consider all possible paths
+3. Implementation:
+   - Read matrix from file
+   - Create DP table
+   - Fill table from top-left to bottom-right
+4. Optimization:
+   - Only store necessary values
+   - Process matrix in efficient order
+   - Consider memory usage
+5. Key points:
+   - Can only move right or down
+   - Need to handle large matrix
+   - Consider boundary conditions
+   - Use efficient path finding 

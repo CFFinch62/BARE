@@ -1,0 +1,71 @@
+# Project Euler 73: Counting Fractions in a Range
+# There are 3 reduced proper fractions between 1/3 and 1/2 for
+# denominator <= 8. How many are there for denominator <= 12,000?
+# Answer: 7295372
+# Note: checking every (numerator, denominator) pair with a GCD test
+# works but is slow (millions of GCD calls). 1/3 and 1/2 are Farey
+# neighbors (1x2 - 1x3 = -1), and the mediant of two Farey neighbors —
+# (a+c)/(b+d) — is always already in lowest terms and always falls
+# strictly between them. Recursively taking mediants (each pair of
+# neighbors splits into two new neighbor pairs around it) visits every
+# reduced fraction in the interval exactly once, with no GCD check
+# needed at all.
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# The natural way to write "take mediants recursively" is a recursive
+# sub — and an earlier version of this file did exactly that, calling
+# itself once for each half of the split. It crashed. Because 1/3 has
+# such a simple continued fraction, that recursion tree is wildly
+# lopsided: counting all ~7.3 million fractions only needs ~7.3 million
+# total calls, but the single DEEPEST path down that lopsided tree is
+# nearly 6000 calls long. BARE's interpreter is itself a Python program,
+# and each BARE sub call burns several of Python's own stack frames —
+# so a few thousand levels of BARE recursion is enough to hit Python's
+# recursion ceiling and crash the interpreter, long before BARE's
+# `while` loop would ever break a sweat at the same depth. The fix is a
+# classic one: turn the recursion into a loop with an explicit stack —
+# a plain BARE list, pushed and popped by hand — which trades Python's
+# call stack (invisible, and not very deep) for a BARE list (visible,
+# and limited only by memory).
+
+sub push(stack, top_holder, frame)
+    top = top_holder[0]
+    if top < len(stack)
+        stack[top] = frame
+    else
+        append(stack, frame)
+    end
+    top_holder[0] = top + 1
+    return null
+end
+
+sub pop(stack, top_holder)
+    top = top_holder[0] - 1
+    top_holder[0] = top
+    return stack[top]
+end
+
+limit = 12000
+stack = []
+top_holder = [0]
+push(stack, top_holder, [1, 3, 1, 2])
+
+counter = 0
+while top_holder[0] > 0
+    frame = pop(stack, top_holder)
+    a = frame[0]
+    b = frame[1]
+    c = frame[2]
+    d = frame[3]
+
+    mediant_num = a + c
+    mediant_den = b + d
+
+    if mediant_den <= limit
+        counter = counter + 1
+        push(stack, top_holder, [a, b, mediant_num, mediant_den])
+        push(stack, top_holder, [mediant_num, mediant_den, c, d])
+    end
+end
+
+print counter

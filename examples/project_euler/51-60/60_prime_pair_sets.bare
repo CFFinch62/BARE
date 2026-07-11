@@ -1,0 +1,160 @@
+# Project Euler 60: Prime Pair Sets
+# 3, 7, 109, and 673 are remarkable: concatenating any two of them, in
+# either order, always gives another prime (792 is the lowest sum for
+# such a set of four). Find the lowest sum for a set of FIVE primes
+# with this property.
+# Answer: 26033 (13 + 5197 + 5701 + 6733 + 8389)
+#
+# This is a direct port of a hand-written Python solution, kept as a
+# side-by-side language comparison rather than one of this folder's
+# usual "work around what BARE is missing" examples. Structurally nothing
+# in this algorithm was blocked by BARE — every piece (sieve, trial-
+# division primality, digit concatenation via arithmetic, four nested
+# loops hunting for a matching quintet) translates over directly. Two
+# small differences from the original, worth calling out:
+#
+#   1. BARE has no dict — where the Python version collects every
+#      candidate group into a dict keyed by sum and takes the min at
+#      the end, this just keeps a running best_sum/best_group pair and
+#      updates it in place whenever a cheaper group turns up. Simpler,
+#      if anything, once there's no dict to reach for out of habit.
+#   2. The original's sieve starts its marking loop at 3 instead of 2
+#      (generate_primes(3, limit)), which means multiples of 2 never
+#      get marked composite, and small even numbers like 4, 6, 8 sneak
+#      into "primes_master" as if they were prime. It still finds the
+#      correct answer regardless — match_primes() is strict enough that
+#      none of those impostors survive into a winning group — but it's
+#      a latent bug, not a language limitation, so this port's sieve
+#      starts at 2 like every other sieve in this folder.
+#
+# What BARE's language design DOES cost here is speed, not
+# expressiveness — see SKIPPED_PROBLEMS.md. The Python original takes
+# about 29 seconds. The same algorithm, same asymptotic complexity, in
+# this tree-walking interpreter is the reason problem 60 was left out
+# of the rest of this set: extrapolating from every other prime-heavy
+# example in this folder, this program is expected to take on the
+# order of HOURS to finish, for the exact same reason the two languages
+# otherwise read almost line-for-line identical. Left here to run
+# overnight if you're curious, not because anyone should wait for it.
+
+sub is_prime(n)
+    if n < 2
+        return false
+    end
+    if n == 2
+        return true
+    end
+    if n % 2 == 0
+        return false
+    end
+    i = 3
+    while i * i <= n
+        if n % i == 0
+            return false
+        end
+        i = i + 2
+    end
+    return true
+end
+
+sub generate_primes(limit)
+    is_composite = []
+    i = 0
+    while i <= limit
+        append(is_composite, false)
+        i = i + 1
+    end
+    p = 2
+    while p * p <= limit
+        if not is_composite[p]
+            multiple = p * p
+            while multiple <= limit
+                is_composite[multiple] = true
+                multiple = multiple + p
+            end
+        end
+        p = p + 1
+    end
+    result = []
+    n = 2
+    while n <= limit
+        if not is_composite[n]
+            append(result, n)
+        end
+        n = n + 1
+    end
+    return result
+end
+
+sub merge_primes(a, b)
+    shift = 10
+    while shift <= b
+        shift = shift * 10
+    end
+    return a * shift + b
+end
+
+sub match_primes(a, b)
+    return is_prime(merge_primes(a, b)) and is_prime(merge_primes(b, a))
+end
+
+sub check_candidates(a_prime, candidates, best)
+    n = len(candidates)
+    index2 = 0
+    while index2 < n
+        c2 = candidates[index2]
+        index3 = index2 + 1
+        while index3 < n
+            c3 = candidates[index3]
+            if match_primes(c2, c3)
+                index4 = index3 + 1
+                while index4 < n
+                    c4 = candidates[index4]
+                    if match_primes(c2, c4) and match_primes(c3, c4)
+                        index5 = index4 + 1
+                        while index5 < n
+                            c5 = candidates[index5]
+                            if match_primes(c2, c5) and match_primes(c3, c5) and match_primes(c4, c5)
+                                total = a_prime + c2 + c3 + c4 + c5
+                                if best[0] == -1 or total < best[0]
+                                    best[0] = total
+                                    best[1] = [a_prime, c2, c3, c4, c5]
+                                end
+                            end
+                            index5 = index5 + 1
+                        end
+                    end
+                    index4 = index4 + 1
+                end
+            end
+            index3 = index3 + 1
+        end
+        index2 = index2 + 1
+    end
+    return null
+end
+
+limit = 8500
+primes_master = generate_primes(limit)
+
+best = [-1, []]
+
+i = 0
+while i < len(primes_master)
+    a_prime = primes_master[i]
+    if a_prime != 5
+        candidates = []
+        j = i + 1
+        while j < len(primes_master)
+            b_prime = primes_master[j]
+            if match_primes(a_prime, b_prime)
+                append(candidates, b_prime)
+            end
+            j = j + 1
+        end
+        check_candidates(a_prime, candidates, best)
+    end
+    i = i + 1
+end
+
+print best[0]

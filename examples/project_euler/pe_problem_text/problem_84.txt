@@ -1,0 +1,51 @@
+Problem 84: Monopoly Odds
+
+In the game, Monopoly, the standard board is set up in the following way:
+
+[Monopoly board layout shown]
+
+A player starts on the GO square and adds the scores on two 6-sided dice to determine the number of squares they advance in a clockwise direction. Without any further rules we would expect to visit each square with equal probability: 2.5%. However, landing on G2J (Go To Jail), CC (community chest), and CH (chance) changes this distribution.
+
+In addition to G2J, and one card from each of CC and CH, that orders the player to go directly to jail, if a player rolls three consecutive doubles, they do not advance the result of their third roll. Instead they proceed directly to jail.
+
+At the beginning of the game, the CC and CH cards are shuffled. When a player lands on CC or CH they take a card from the top of the respective pile and, after following the instructions, it is returned to the bottom of the pile. There are sixteen cards in each pile, but for the purpose of this problem we are only concerned with cards that order a movement; any instruction not concerned with movement will be ignored and the player will remain on the CC/CH square.
+
+Community Chest (2/16 cards):
+Advance to GO
+Go to JAIL
+
+Chance (10/16 cards):
+Advance to GO
+Go to JAIL
+Go to C1
+Go to E3
+Go to H2
+Go to R1
+Go to next R (railway company)
+Go to next R
+Go to next U (utility company)
+Go back 3 squares.
+
+The heart of this problem concerns the likelihood of landing on a given square.
+
+What are the three most likely squares to land on after a roll? Order them in descending order of probability.
+
+Hint:
+1. We need to simulate Monopoly board movement and calculate probabilities
+2. Strategy:
+   - Model board as Markov chain
+   - Simulate dice rolls and card draws
+   - Track landing probabilities
+3. Implementation:
+   - Create board representation
+   - Handle special squares (CC, CH, G2J)
+   - Simulate many turns
+4. Optimization:
+   - Use efficient probability calculation
+   - Consider mathematical properties
+   - Store transition probabilities
+5. Key points:
+   - Handle all special rules
+   - Consider card shuffling
+   - Track landing frequencies
+   - Use statistical analysis 

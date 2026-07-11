@@ -1,0 +1,33 @@
+Problem 78: Coin Partitions
+
+Let p(n) represent the number of different ways in which n coins can be separated into piles. For example, five coins can be separated into piles in exactly seven different ways, so p(5)=7.
+
+OOOOO
+OOOO   O
+OOO   OO
+OOO   O   O
+OO   OO   O
+OO   O   O   O
+O   O   O   O   O
+
+Find the least value of n for which p(n) is divisible by one million.
+
+Hint:
+1. We need to find smallest n where p(n) is divisible by 1,000,000
+2. Strategy:
+   - Use partition number recurrence
+   - Calculate p(n) modulo 1,000,000
+   - Check each value until found
+3. Implementation:
+   - Use Euler's pentagonal number theorem
+   - Keep track of previous partition numbers
+   - Handle modular arithmetic carefully
+4. Optimization:
+   - Only store necessary values
+   - Use modular arithmetic throughout
+   - Consider mathematical properties
+5. Key points:
+   - Partition numbers grow very quickly
+   - Need modular arithmetic
+   - Use generating functions
+   - Consider mathematical patterns 

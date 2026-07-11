@@ -1,0 +1,313 @@
+# string_lib — text helpers built entirely out of BARE's one string type.
+#
+# BARE gives you exactly one way to look at a string: index it with [ ].
+# There's no split(), no upper(), no substring() built in. Everything below
+# is built out of that single primitive plus a while loop, on purpose — it's
+# the same technique you'd reach for on paper if someone handed you a strip
+# of characters and asked you to reverse it, capitalize it, or search it.
+#
+# Self-contained: every sub below only calls other subs in this same file.
+# Prefix: every name starts with str_ so it won't collide with subs from
+# the other library files if you copy several of them into one library.
+#
+# To use: copy the sub(s) you want into your personal library (My Library
+# panel → Edit Library File...), or open this file directly in the IDE.
+
+# str_reverse(s) — builds a new string by walking the index backwards.
+sub str_reverse(s)
+    result = ""
+    i = len(s) - 1
+    while i >= 0
+        result = result + s[i]
+        i = i - 1
+    end
+    return result
+end
+
+# str_to_upper(s) — no chr()/ord() in BARE, so case conversion works by
+# looking a character up in a "lower" string and reading the character at
+# the same position out of a parallel "upper" string.
+sub str_to_upper(s)
+    lower = "abcdefghijklmnopqrstuvwxyz"
+    upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    result = ""
+    i = 0
+    while i < len(s)
+        ch = s[i]
+        pos = -1
+        j = 0
+        while j < len(lower)
+            if lower[j] == ch
+                pos = j
+            end
+            j = j + 1
+        end
+        if pos == -1
+            result = result + ch
+        else
+            result = result + upper[pos]
+        end
+        i = i + 1
+    end
+    return result
+end
+
+# str_to_lower(s) — mirror image of str_to_upper.
+sub str_to_lower(s)
+    lower = "abcdefghijklmnopqrstuvwxyz"
+    upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    result = ""
+    i = 0
+    while i < len(s)
+        ch = s[i]
+        pos = -1
+        j = 0
+        while j < len(upper)
+            if upper[j] == ch
+                pos = j
+            end
+            j = j + 1
+        end
+        if pos == -1
+            result = result + ch
+        else
+            result = result + lower[pos]
+        end
+        i = i + 1
+    end
+    return result
+end
+
+# str_to_title(s) — uppercase the first letter of each word, lowercase the
+# rest. Words are separated by single spaces.
+sub str_to_title(s)
+    result = ""
+    capitalize_next = true
+    i = 0
+    while i < len(s)
+        ch = s[i]
+        if ch == " "
+            result = result + ch
+            capitalize_next = true
+        else
+            if capitalize_next
+                result = result + str_to_upper(ch)
+                capitalize_next = false
+            else
+                result = result + str_to_lower(ch)
+            end
+        end
+        i = i + 1
+    end
+    return result
+end
+
+# str_substring(s, start, finish) — characters from index start up to but
+# not including finish, e.g. str_substring("hello", 1, 3) is "el".
+# ("finish", not "end" — end is a BARE keyword, so it can't be a parameter
+# name.)
+sub str_substring(s, start, finish)
+    result = ""
+    i = start
+    while i < finish
+        result = result + s[i]
+        i = i + 1
+    end
+    return result
+end
+
+# str_index_of(haystack, needle) — first index where needle appears, or -1.
+sub str_index_of(haystack, needle)
+    needle_len = len(needle)
+    haystack_len = len(haystack)
+    if needle_len == 0
+        return 0
+    end
+    if needle_len > haystack_len
+        return -1
+    end
+    i = 0
+    while i <= haystack_len - needle_len
+        piece = str_substring(haystack, i, i + needle_len)
+        if piece == needle
+            return i
+        end
+        i = i + 1
+    end
+    return -1
+end
+
+# str_contains(haystack, needle) — true if needle appears anywhere in haystack.
+sub str_contains(haystack, needle)
+    return str_index_of(haystack, needle) != -1
+end
+
+# str_starts_with(s, prefix)
+sub str_starts_with(s, prefix)
+    if len(prefix) > len(s)
+        return false
+    end
+    return str_substring(s, 0, len(prefix)) == prefix
+end
+
+# str_ends_with(s, suffix)
+sub str_ends_with(s, suffix)
+    suffix_len = len(suffix)
+    s_len = len(s)
+    if suffix_len > s_len
+        return false
+    end
+    return str_substring(s, s_len - suffix_len, s_len) == suffix
+end
+
+# str_count_occurrences(haystack, needle) — non-overlapping matches.
+sub str_count_occurrences(haystack, needle)
+    needle_len = len(needle)
+    if needle_len == 0
+        return 0
+    end
+    count = 0
+    i = 0
+    haystack_len = len(haystack)
+    while i <= haystack_len - needle_len
+        piece = str_substring(haystack, i, i + needle_len)
+        if piece == needle
+            count = count + 1
+            i = i + needle_len
+        else
+            i = i + 1
+        end
+    end
+    return count
+end
+
+# str_trim(s) — removes leading and trailing spaces (the literal " " character).
+sub str_trim(s)
+    start = 0
+    finish = len(s)
+    while start < finish and s[start] == " "
+        start = start + 1
+    end
+    while finish > start and s[finish - 1] == " "
+        finish = finish - 1
+    end
+    return str_substring(s, start, finish)
+end
+
+# str_split(s, delimiter) — list of substrings, cut wherever delimiter appears.
+# delimiter must be at least one character.
+sub str_split(s, delimiter)
+    pieces = []
+    delim_len = len(delimiter)
+    s_len = len(s)
+    if delim_len == 0
+        i = 0
+        while i < s_len
+            append(pieces, s[i])
+            i = i + 1
+        end
+        return pieces
+    end
+    start = 0
+    i = 0
+    while i <= s_len - delim_len
+        if str_substring(s, i, i + delim_len) == delimiter
+            append(pieces, str_substring(s, start, i))
+            i = i + delim_len
+            start = i
+        else
+            i = i + 1
+        end
+    end
+    append(pieces, str_substring(s, start, s_len))
+    return pieces
+end
+
+# str_join(pieces, delimiter) — glues a list of strings back together.
+sub str_join(pieces, delimiter)
+    result = ""
+    i = 0
+    while i < len(pieces)
+        result = result + pieces[i]
+        if i < len(pieces) - 1
+            result = result + delimiter
+        end
+        i = i + 1
+    end
+    return result
+end
+
+# str_pad_left(s, width, pad_char) — grows s to width by adding pad_char
+# on the left. If s is already at least width long, it's returned unchanged.
+sub str_pad_left(s, width, pad_char)
+    result = s
+    while len(result) < width
+        result = pad_char + result
+    end
+    return result
+end
+
+# str_pad_right(s, width, pad_char) — same idea, padding added on the right.
+sub str_pad_right(s, width, pad_char)
+    result = s
+    while len(result) < width
+        result = result + pad_char
+    end
+    return result
+end
+
+# str_repeat(s, count) — s written out count times back to back.
+sub str_repeat(s, count)
+    result = ""
+    i = 0
+    while i < count
+        result = result + s
+        i = i + 1
+    end
+    return result
+end
+
+# str_replace(s, old, new) — every occurrence of old replaced with new.
+sub str_replace(s, old, new)
+    pieces = str_split(s, old)
+    return str_join(pieces, new)
+end
+
+# str_is_numeric(s) — true if s parses as a plain number (optional leading
+# "-", digits, at most one ".").  Doesn't accept "", "-", or ".".
+sub str_is_numeric(s)
+    if len(s) == 0
+        return false
+    end
+    digits = "0123456789"
+    i = 0
+    if s[0] == "-"
+        i = 1
+    end
+    if i >= len(s)
+        return false
+    end
+    seen_digit = false
+    seen_dot = false
+    while i < len(s)
+        ch = s[i]
+        if ch == "."
+            if seen_dot
+                return false
+            end
+            seen_dot = true
+        else
+            if not str_contains(digits, ch)
+                return false
+            end
+            seen_digit = true
+        end
+        i = i + 1
+    end
+    return seen_digit
+end
+
+# str_equals_ignore_case(a, b)
+sub str_equals_ignore_case(a, b)
+    return str_to_lower(a) == str_to_lower(b)
+end

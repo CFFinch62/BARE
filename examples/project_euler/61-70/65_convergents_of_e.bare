@@ -1,0 +1,88 @@
+# Project Euler 65: Convergents of e
+# The continued fraction for e is [2; 1,2,1, 1,4,1, 1,6,1, ...]. The
+# sum of digits in the numerator of the 10th convergent is 1+7+3+1+4=17
+# (wait: 1457 -> 1+4+5+7=17). Find the sum of digits in the numerator of
+# the 100th convergent.
+# Answer: 272
+# Note: convergent numerators follow h_k = a_k*h_(k-1) + h_(k-2), and by
+# the 100th term h_k is well over 100 digits — so, as in
+# 57_square_root_convergents.bare, it's kept as a STRING. a_k is always
+# a small integer here (at most a couple hundred), so each step is one
+# multiply-by-a-small-number (multiply_big, from 20_factorial_digit_sum.
+# bare) plus one add_big.
+
+sub add_big(a, b)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    j = len(b) - 1
+    while i >= 0 or j >= 0 or carry > 0
+        digit_a = 0
+        if i >= 0
+            digit_a = num(a[i])
+        end
+        digit_b = 0
+        if j >= 0
+            digit_b = num(b[j])
+        end
+        total = digit_a + digit_b + carry
+        digit = total % 10
+        carry = (total - digit) / 10
+        result = str(digit) + result
+        i = i - 1
+        j = j - 1
+    end
+    return result
+end
+
+sub multiply_big(a, m)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    while i >= 0 or carry > 0
+        digit = 0
+        if i >= 0
+            digit = num(a[i])
+        end
+        total = digit * m + carry
+        new_digit = total % 10
+        carry = (total - new_digit) / 10
+        result = str(new_digit) + result
+        i = i - 1
+    end
+    return result
+end
+
+sub e_term(k)
+    if k == 0
+        return 2
+    end
+    idx = k - 1
+    group = (idx - idx % 3) / 3
+    position = idx % 3
+    if position == 1
+        return 2 * (group + 1)
+    end
+    return 1
+end
+
+h_prev2 = "1"
+h_prev1 = "2"
+
+k = 1
+while k < 100
+    a = e_term(k)
+    h = add_big(multiply_big(h_prev1, a), h_prev2)
+    h_prev2 = h_prev1
+    h_prev1 = h
+    k = k + 1
+end
+
+digit_sum = 0
+i = 0
+while i < len(h_prev1)
+    digit_sum = digit_sum + num(h_prev1[i])
+    i = i + 1
+end
+
+print digit_sum

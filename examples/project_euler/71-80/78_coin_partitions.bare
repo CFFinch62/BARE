@@ -1,0 +1,52 @@
+# Project Euler 78: Coin Partitions
+# p(n) counts the ways n coins can be split into piles (order doesn't
+# matter); p(5) = 7. Find the least n for which p(n) is divisible by
+# one million.
+# Answer: 55374
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# p(55374) is a genuinely enormous number — far too large for BARE's
+# float, and too large to be worth building as a bignum string either,
+# since the question only cares about the last few digits (divisible by
+# 1,000,000, i.e. ends in 000000). Euler's pentagonal number theorem
+# gives a recurrence for p(n) built from smaller partition values with
+# alternating signs, and since every operation involved is + or -, the
+# whole computation can be done modulo 1,000,000 the entire way through
+# — p(n) itself is never actually computed, only p(n) mod 1,000,000,
+# which stays a small, ordinary number at every step.
+
+partitions = [1]
+n = 1
+answer = -1
+while answer == -1
+    total = 0
+    k = 1
+    still_going = true
+    while still_going
+        g1 = k * (3 * k - 1) / 2
+        g2 = k * (3 * k + 1) / 2
+        if g1 > n and g2 > n
+            still_going = false
+        else
+            sign = 1
+            if k % 2 == 0
+                sign = -1
+            end
+            if g1 <= n
+                total = total + sign * partitions[n - g1]
+            end
+            if g2 <= n
+                total = total + sign * partitions[n - g2]
+            end
+            k = k + 1
+        end
+    end
+    total = total % 1000000
+    append(partitions, total)
+    if total == 0
+        answer = n
+    end
+    n = n + 1
+end
+
+print answer

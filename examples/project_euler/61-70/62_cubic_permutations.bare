@@ -1,0 +1,75 @@
+# Project Euler 62: Cubic Permutations
+# 41063625 (345^3) can be permuted to two other cubes: 56623104 (384^3)
+# and 66430125 (405^3) — three cubes sharing a digit signature. Find the
+# smallest cube for which exactly five permutations of its digits are
+# also cube.
+# Answer: 127035954683
+# Note: same "poor man's hash table" idea as 49_prime_permutations.bare
+# — cubes are grouped into [signature, [cubes...]] buckets by their
+# sorted-digit signature as they're generated in increasing order, so
+# the first bucket to reach 5 members is guaranteed to have the smallest
+# cube of any 5-member group (nothing generated later could be smaller).
+# 127035954683 itself is only 12 digits, well inside a float's exact
+# range, so no bignum trick is needed here at all.
+
+sub digit_signature(n)
+    counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    m = n
+    while m > 0
+        d = m % 10
+        m = (m - d) / 10
+        counts[d] = counts[d] + 1
+    end
+    sig = ""
+    d = 0
+    while d <= 9
+        k = 0
+        while k < counts[d]
+            sig = sig + str(d)
+            k = k + 1
+        end
+        d = d + 1
+    end
+    return sig
+end
+
+sub find_bucket(buckets, sig)
+    i = 0
+    while i < len(buckets)
+        entry = buckets[i]
+        if entry[0] == sig
+            return entry[1]
+        end
+        i = i + 1
+    end
+    return null
+end
+
+buckets = []
+answer = -1
+i = 1
+while answer == -1
+    cube = i * i * i
+    sig = digit_signature(cube)
+    bucket = find_bucket(buckets, sig)
+    if bucket == null
+        new_bucket = [cube]
+        append(buckets, [sig, new_bucket])
+    else
+        append(bucket, cube)
+        if len(bucket) == 5
+            smallest = bucket[0]
+            k = 1
+            while k < len(bucket)
+                if bucket[k] < smallest
+                    smallest = bucket[k]
+                end
+                k = k + 1
+            end
+            answer = smallest
+        end
+    end
+    i = i + 1
+end
+
+print answer

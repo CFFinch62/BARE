@@ -1,0 +1,127 @@
+# Project Euler 68: Magic 5-gon Ring
+# A "magic" 5-gon ring places 1-10 on the outer and inner nodes of a
+# five-pointed ring so that each of the 5 three-number lines (one outer
+# node plus two adjacent inner nodes) sums to the same total. What is
+# the maximum 16-digit string formed by reading the lines clockwise
+# from the line with the lowest outer node?
+# Answer: 6531031914842725
+# Note: trying every arrangement of all 10 numbers is 10! = 3,628,800
+# possibilities — slow to even generate in this interpreter. Instead,
+# only the 5 inner numbers (and one outer number, to fix the target
+# line sum) are ever actually chosen; every other outer number is then
+# ALGEBRA, not search: outer[i] = target_sum - inner[i] - inner[i+1] is
+# forced, so it only needs checking, not branching over. That turns 10!
+# candidates into roughly 10*9*8*7*6*5 = 151,200 mostly-O(1) checks.
+
+sub copy_list(lst)
+    result = []
+    i = 0
+    while i < len(lst)
+        append(result, lst[i])
+        i = i + 1
+    end
+    return result
+end
+
+sub generate_inner(depth, used, current, results)
+    if depth == 5
+        append(results, current)
+    else
+        v = 1
+        while v <= 10
+            if not used[v]
+                new_used = copy_list(used)
+                new_used[v] = true
+                new_current = copy_list(current)
+                append(new_current, v)
+                generate_inner(depth + 1, new_used, new_current, results)
+            end
+            v = v + 1
+        end
+    end
+    return null
+end
+
+initial_used = [false, false, false, false, false, false, false, false, false, false, false]
+inner_options = []
+generate_inner(0, initial_used, [], inner_options)
+
+best = ""
+
+opt = 0
+while opt < len(inner_options)
+    inner = inner_options[opt]
+
+    used = [false, false, false, false, false, false, false, false, false, false, false]
+    k = 0
+    while k < 5
+        used[inner[k]] = true
+        k = k + 1
+    end
+
+    remaining = []
+    v = 1
+    while v <= 10
+        if not used[v]
+            append(remaining, v)
+        end
+        v = v + 1
+    end
+
+    r = 0
+    while r < len(remaining)
+        outer0 = remaining[r]
+        target = outer0 + inner[0] + inner[1]
+
+        outer = [outer0, -1, -1, -1, -1]
+        k = 1
+        while k < 5
+            next_inner = inner[(k + 1) % 5]
+            outer[k] = target - inner[k] - next_inner
+            k = k + 1
+        end
+
+        outer_used = [false, false, false, false, false, false, false, false, false, false, false]
+        ok = true
+        k = 0
+        while k < 5
+            ov = outer[k]
+            if ov < 1 or ov > 10 or used[ov] or outer_used[ov]
+                ok = false
+            else
+                outer_used[ov] = true
+            end
+            k = k + 1
+        end
+
+        if ok
+            min_idx = 0
+            k = 1
+            while k < 5
+                if outer[k] < outer[min_idx]
+                    min_idx = k
+                end
+                k = k + 1
+            end
+
+            s = ""
+            k = 0
+            while k < 5
+                idx = (min_idx + k) % 5
+                s = s + str(outer[idx]) + str(inner[idx]) + str(inner[(idx + 1) % 5])
+                k = k + 1
+            end
+
+            if len(s) == 16
+                if len(best) == 0 or s > best
+                    best = s
+                end
+            end
+        end
+
+        r = r + 1
+    end
+    opt = opt + 1
+end
+
+print best

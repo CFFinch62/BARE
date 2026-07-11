@@ -1,0 +1,65 @@
+# Project Euler 77: Prime Summations
+# 10 can be written as a sum of primes in exactly 5 ways. What is the
+# first value which can be written as a sum of primes in over five
+# thousand different ways?
+# Answer: 71
+# Note: same coin-change dynamic program as 31_coin_sums.bare and
+# 76_counting_summations.bare, just with primes as the "coins." Rebuilds
+# the ways-table from scratch for each candidate target, which is
+# wasteful but simple, and still finishes almost instantly since the
+# answer turns out to be small.
+
+sub is_prime(n)
+    if n < 2
+        return false
+    end
+    divisor = 2
+    while divisor * divisor <= n
+        if n % divisor == 0
+            return false
+        end
+        divisor = divisor + 1
+    end
+    return true
+end
+
+primes = []
+p = 2
+while p <= 100
+    if is_prime(p)
+        append(primes, p)
+    end
+    p = p + 1
+end
+
+answer = -1
+target = 2
+while answer == -1
+    ways = []
+    i = 0
+    while i <= target
+        append(ways, 0)
+        i = i + 1
+    end
+    ways[0] = 1
+
+    k = 0
+    while k < len(primes)
+        pr = primes[k]
+        if pr <= target
+            amount = pr
+            while amount <= target
+                ways[amount] = ways[amount] + ways[amount - pr]
+                amount = amount + 1
+            end
+        end
+        k = k + 1
+    end
+
+    if ways[target] > 5000
+        answer = target
+    end
+    target = target + 1
+end
+
+print answer

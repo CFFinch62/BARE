@@ -1,0 +1,47 @@
+# Project Euler 53: Combinatoric Selections
+# C(23,10) = 1144066 is the first value of C(n,r) to exceed one million.
+# How many values of C(n,r), for 1 <= n <= 100, are greater than one
+# million?
+# Answer: 4075
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# C(100,50) is about 1.0 x 10^29 — nowhere near representable exactly in
+# BARE's one numeric type (a float, exact to about 15-16 digits). But
+# this problem never needs the exact value, only whether it clears one
+# million. So instead of computing real binomial coefficients, this
+# builds Pascal's triangle row by row and CAPS every entry the moment it
+# passes 1,000,000 down to a fixed sentinel. Since Pascal's rule only
+# ever ADDS two entries from the row above, a triangle built entirely
+# out of values under roughly 2,000,001 can never produce anything the
+# next row can't also hold safely — the cap can never be "un-capped" by
+# a later addition, so every capped value still correctly reads as
+# "exceeds one million" forever after, without a single number in the
+# whole computation ever exceeding a few million.
+
+previous_row = [1]
+count = 0
+
+n = 1
+while n <= 100
+    current_row = []
+    r = 0
+    while r <= n
+        if r == 0 or r == n
+            value = 1
+        else
+            value = previous_row[r - 1] + previous_row[r]
+            if value > 1000000
+                value = 1000001
+            end
+        end
+        append(current_row, value)
+        if value > 1000000
+            count = count + 1
+        end
+        r = r + 1
+    end
+    previous_row = current_row
+    n = n + 1
+end
+
+print count

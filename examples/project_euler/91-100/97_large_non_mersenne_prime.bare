@@ -1,0 +1,48 @@
+# Project Euler 97: Large Non-Mersenne Prime
+# Find the last ten digits of the non-Mersenne prime 28433 x 2^7830457 + 1.
+# Answer: 8739992577
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# This number has 2,357,207 digits — computing it in full and then
+# slicing the last ten would need a bignum power far beyond anything
+# reasonable to hand-roll. But "last ten digits" is just "value mod
+# 10^10", so this works entirely in modular arithmetic instead: modpow()
+# computes 2^7830457 mod 10^10 using repeated squaring (only about 23
+# squarings for an exponent this size, instead of 7.8 million
+# multiplications). The one wrinkle, same as 48_self_powers.bare:
+# squaring a value near 10^10 briefly produces a number near 10^20,
+# past what BARE's float can hold exactly — so mulmod() does that
+# multiplication via repeated doubling instead of a single `*`.
+
+sub mulmod(a, b, m)
+    result = 0
+    a = a % m
+    while b > 0
+        if b % 2 == 1
+            result = (result + a) % m
+        end
+        a = (a * 2) % m
+        b = (b - b % 2) / 2
+    end
+    return result
+end
+
+sub modpow(base, exponent, m)
+    result = 1
+    b = base % m
+    e = exponent
+    while e > 0
+        if e % 2 == 1
+            result = mulmod(result, b, m)
+        end
+        b = mulmod(b, b, m)
+        e = (e - e % 2) / 2
+    end
+    return result
+end
+
+modulus = 10000000000
+power_part = modpow(2, 7830457, modulus)
+answer = (mulmod(28433, power_part, modulus) + 1) % modulus
+
+print answer

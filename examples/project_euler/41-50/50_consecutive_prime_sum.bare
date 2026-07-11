@@ -1,0 +1,78 @@
+# Project Euler 50: Consecutive Prime Sum
+# 41 = 2+3+5+7+11+13, the longest run of consecutive primes summing to a
+# prime below 100. Which prime below one million can be written as the
+# sum of the most consecutive primes?
+# Answer: 997651
+# Note: prefix sums turn "sum of primes from index i to j" into one
+# subtraction instead of a fresh loop, and the inner search starts at
+# j = i + best_length_so_far rather than j = i + 1, since any run
+# shorter than the best already found isn't worth checking.
+
+limit = 1000000
+
+is_composite = []
+i = 0
+while i <= limit
+    append(is_composite, false)
+    i = i + 1
+end
+
+p = 2
+while p * p <= limit
+    if not is_composite[p]
+        multiple = p * p
+        while multiple <= limit
+            is_composite[multiple] = true
+            multiple = multiple + p
+        end
+    end
+    p = p + 1
+end
+
+sub is_prime_lookup(v, is_composite)
+    if v < 2
+        return false
+    end
+    return not is_composite[v]
+end
+
+primes = []
+n = 2
+while n < limit
+    if not is_composite[n]
+        append(primes, n)
+    end
+    n = n + 1
+end
+
+prefix = [0]
+i = 0
+while i < len(primes)
+    append(prefix, prefix[i] + primes[i])
+    i = i + 1
+end
+
+best_length = 0
+best_sum = 0
+count = len(primes)
+
+i = 0
+while i < count
+    j = i + best_length
+    still_searching = true
+    while j <= count and still_searching
+        total = prefix[j] - prefix[i]
+        if total >= limit
+            still_searching = false
+        else
+            if (j - i) > best_length and is_prime_lookup(total, is_composite)
+                best_length = j - i
+                best_sum = total
+            end
+            j = j + 1
+        end
+    end
+    i = i + 1
+end
+
+print best_sum

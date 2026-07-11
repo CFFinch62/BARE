@@ -1,0 +1,84 @@
+# Project Euler 88: Product-Sum Numbers
+# 6 = 1x2x3 = 1+2+3 is a product-sum number for k=3 (three numbers).
+# For each k, the smallest N that works is its minimal product-sum
+# number; summed once each (no duplicates) for 2<=k<=12000, what's the
+# total?
+# Answer: 5084232
+# Note: instead of searching by k, this searches by FACTORIZATION.
+# Any set of factors f1*f2*...*fm (each >= 2) with product P and factor
+# sum S can be padded out with (P - S) extra 1s to make its "sum of
+# parts" equal its product — giving a valid k = m + (P - S) for that
+# same P. So every product up to 2*12000 is tried as a factorization,
+# in every way, and each is recorded as a candidate minimal-N for
+# whichever k it produces — recursively trying factors in non-
+# decreasing order keeps every factorization from being generated more
+# than once.
+
+sub try_factorizations(start, product, factor_sum, factor_count, limit_product, min_n_for_k, K)
+    if product > limit_product
+        return null
+    end
+    k = factor_count + (product - factor_sum)
+    if k >= 2 and k <= K
+        if min_n_for_k[k] == 0 or product < min_n_for_k[k]
+            min_n_for_k[k] = product
+        end
+    end
+    f = start
+    still_going = true
+    while still_going
+        if product * f > limit_product
+            still_going = false
+        else
+            try_factorizations(f, product * f, factor_sum + f, factor_count + 1, limit_product, min_n_for_k, K)
+            f = f + 1
+        end
+    end
+    return null
+end
+
+K = 12000
+limit_product = 2 * K
+
+min_n_for_k = []
+i = 0
+while i <= K
+    append(min_n_for_k, 0)
+    i = i + 1
+end
+
+try_factorizations(2, 1, 0, 0, limit_product, min_n_for_k, K)
+
+running_min = -1
+k = K
+while k >= 2
+    if min_n_for_k[k] != 0
+        if running_min == -1 or min_n_for_k[k] < running_min
+            running_min = min_n_for_k[k]
+        end
+    end
+    min_n_for_k[k] = running_min
+    k = k - 1
+end
+
+distinct = []
+total = 0
+k = 2
+while k <= K
+    v = min_n_for_k[k]
+    found = false
+    i = 0
+    while i < len(distinct)
+        if distinct[i] == v
+            found = true
+        end
+        i = i + 1
+    end
+    if not found
+        append(distinct, v)
+        total = total + v
+    end
+    k = k + 1
+end
+
+print total

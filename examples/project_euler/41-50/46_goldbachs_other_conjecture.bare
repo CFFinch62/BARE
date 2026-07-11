@@ -1,0 +1,61 @@
+# Project Euler 46: Goldbach's Other Conjecture
+# Christian Goldbach proposed that every odd composite number can be
+# written as the sum of a prime and twice a square (e.g. 15 = 7 + 2x2^2).
+# What is the smallest odd composite that cannot be written this way?
+# Answer: 5777
+# Note: builds a sieve once up front (see 10_summation_of_primes.bare)
+# so both the primality check and the "is n a prime plus twice a square"
+# search are instant array lookups instead of fresh trial division.
+
+limit = 100000
+
+is_composite = []
+i = 0
+while i <= limit
+    append(is_composite, false)
+    i = i + 1
+end
+
+p = 2
+while p * p <= limit
+    if not is_composite[p]
+        multiple = p * p
+        while multiple <= limit
+            is_composite[multiple] = true
+            multiple = multiple + p
+        end
+    end
+    p = p + 1
+end
+
+sub is_prime_lookup(v, is_composite)
+    if v < 2
+        return false
+    end
+    return not is_composite[v]
+end
+
+sub satisfies_conjecture(n, is_composite)
+    i = 1
+    while 2 * i * i < n
+        candidate = n - 2 * i * i
+        if is_prime_lookup(candidate, is_composite)
+            return true
+        end
+        i = i + 1
+    end
+    return false
+end
+
+n = 9
+answer = 0
+while answer == 0
+    if not is_prime_lookup(n, is_composite)
+        if not satisfies_conjecture(n, is_composite)
+            answer = n
+        end
+    end
+    n = n + 2
+end
+
+print answer

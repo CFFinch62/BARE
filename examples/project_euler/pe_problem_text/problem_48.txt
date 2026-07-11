@@ -1,0 +1,23 @@
+Problem 48: Self Powers
+
+The series, 1¹ + 2² + 3³ + ... + 10¹⁰ = 10405071317.
+
+Find the last ten digits of the series, 1¹ + 2² + 3³ + ... + 1000¹⁰⁰⁰.
+
+Hint:
+1. We need to calculate the sum of n^n for n from 1 to 1000 and find the last 10 digits
+2. Strategy:
+   - Calculate each term n^n
+   - Sum all terms
+   - Take the last 10 digits of the result
+3. Implementation:
+   - Use modular arithmetic to keep only the last 10 digits during calculations
+   - For each n, calculate n^n mod 10^10
+   - Sum the results mod 10^10
+4. Optimization:
+   - Use fast exponentiation (binary exponentiation) to calculate large powers
+   - Keep only the last 10 digits at each step to avoid dealing with very large numbers
+5. Key points:
+   - Need to handle very large numbers efficiently
+   - Only the last 10 digits matter
+   - Can use modular arithmetic to simplify calculations 

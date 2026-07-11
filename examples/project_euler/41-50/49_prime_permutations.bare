@@ -1,0 +1,114 @@
+# Project Euler 49: Prime Permutations
+# 1487, 4817, 8147 are three 4-digit primes, each a permutation of the
+# others' digits, forming an arithmetic sequence (common difference
+# 3330). There's exactly one other such sequence. What 12-digit number
+# do you get by concatenating its three terms?
+# Answer: 296962999629
+# Note: BARE has no map/dictionary type — only lists — so "group primes
+# that are permutations of each other" is built as a list of
+# [signature, [primes...]] pairs, searched linearly by signature. With
+# only ~1000 four-digit primes this poor man's hash table is more than
+# fast enough, and it's exactly the structure a real hash map would give
+# you for free.
+
+sub digit_signature(n)
+    counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    m = n
+    while m > 0
+        d = m % 10
+        m = (m - d) / 10
+        counts[d] = counts[d] + 1
+    end
+    sig = ""
+    d = 0
+    while d <= 9
+        k = 0
+        while k < counts[d]
+            sig = sig + str(d)
+            k = k + 1
+        end
+        d = d + 1
+    end
+    return sig
+end
+
+sub is_prime(n)
+    if n < 2
+        return false
+    end
+    divisor = 2
+    while divisor * divisor <= n
+        if n % divisor == 0
+            return false
+        end
+        divisor = divisor + 1
+    end
+    return true
+end
+
+sub find_bucket(buckets, sig)
+    i = 0
+    while i < len(buckets)
+        entry = buckets[i]
+        if entry[0] == sig
+            return entry[1]
+        end
+        i = i + 1
+    end
+    return null
+end
+
+sub contains(lst, value)
+    i = 0
+    while i < len(lst)
+        if lst[i] == value
+            return true
+        end
+        i = i + 1
+    end
+    return false
+end
+
+buckets = []
+n = 1000
+while n <= 9999
+    if is_prime(n)
+        sig = digit_signature(n)
+        bucket = find_bucket(buckets, sig)
+        if bucket == null
+            new_bucket = [n]
+            append(buckets, [sig, new_bucket])
+        else
+            append(bucket, n)
+        end
+    end
+    n = n + 1
+end
+
+answer = ""
+b = 0
+while b < len(buckets)
+    entry = buckets[b]
+    members = entry[1]
+    if len(members) >= 3
+        i = 0
+        while i < len(members)
+            j = i + 1
+            while j < len(members)
+                p = members[i]
+                q = members[j]
+                r = 2 * q - p
+                if r <= 9999 and r != p and r != q and contains(members, r)
+                    if p != 1487
+                        answer = str(p) + str(q) + str(r)
+                    end
+                end
+                j = j + 1
+            end
+            i = i + 1
+        end
+    end
+    b = b + 1
+end
+
+print answer

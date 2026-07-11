@@ -1,0 +1,26 @@
+Problem 70: Totient Permutation
+
+Euler's Totient function, φ(n) [sometimes called the phi function], is used to determine the number of positive numbers less than or equal to n which are relatively prime to n. For example, as 1, 2, 4, 5, 7, and 8, are all less than nine and relatively prime to nine, φ(9)=6.
+The number 87109 and its totient, φ(87109)=79180, are permutations of one another.
+
+Find the value of n, 1 < n < 10⁷, for which φ(n) is a permutation of n and the ratio n/φ(n) produces a minimum.
+
+Hint:
+1. We need to find n where φ(n) is a permutation of n and n/φ(n) is minimized
+2. Strategy:
+   - Calculate φ(n) for numbers up to 10⁷
+   - Check if n and φ(n) are permutations
+   - Track minimum n/φ(n) ratio among valid cases
+3. Implementation:
+   - Use Euler's product formula for φ(n)
+   - Convert numbers to sorted strings to check permutation
+   - Handle large numbers efficiently
+4. Optimization:
+   - Consider that n/φ(n) is minimized for prime numbers
+   - Look for numbers with few prime factors
+   - Use patterns in totient values
+5. Key points:
+   - Need to find permutation pairs
+   - Want minimum ratio n/φ(n)
+   - Consider relationship between n and its totient
+   - Balance between permutation and ratio requirements 

@@ -1,0 +1,166 @@
+# data_lib — a dictionary and a set, built out of BARE's one collection type.
+#
+# BARE only has lists. This file is proof that a list is enough: a
+# dictionary is just a list of [key, value] pairs, and a set is just a list
+# that refuses to store the same value twice. Every "lookup" below is an
+# honest while loop scanning the list — there's no hash table under the
+# hood, just the same trick you'd use with index cards on a table.
+#
+# Because there's no builtin to shrink a list in place, dict_remove and
+# set_remove hand back a *new* list with the entry gone rather than
+# mutating the one you passed in — reassign the result, the same way you
+# already do with dict = dict_set(dict, "key", "value"):
+#     inventory = dict_remove(inventory, "sword")
+#
+# Self-contained: every sub below only calls other subs in this same file.
+# Prefix: dictionary subs start with dict_, set subs start with set_.
+#
+# To use: copy the sub(s) you want into your personal library (My Library
+# panel → Edit Library File...), or open this file directly in the IDE.
+
+# dict_new() — an empty dictionary is just an empty list.
+sub dict_new()
+    return []
+end
+
+# dict_find_index(d, key) — index of the [key, value] pair for key, or -1.
+sub dict_find_index(d, key)
+    i = 0
+    while i < len(d)
+        pair = d[i]
+        if pair[0] == key
+            return i
+        end
+        i = i + 1
+    end
+    return -1
+end
+
+# dict_has(d, key)
+sub dict_has(d, key)
+    return dict_find_index(d, key) != -1
+end
+
+# dict_set(d, key, value) — updates key in place if it's already there,
+# otherwise appends a new pair. Mutates d and also returns it, so both
+# `dict_set(d, "a", 1)` and `d = dict_set(d, "a", 1)` work.
+sub dict_set(d, key, value)
+    index = dict_find_index(d, key)
+    if index == -1
+        append(d, [key, value])
+    else
+        d[index] = [key, value]
+    end
+    return d
+end
+
+# dict_get(d, key, default_value) — value for key, or default_value if the
+# key isn't present (BARE has no way to signal "missing" other than a value
+# you choose yourself).
+sub dict_get(d, key, default_value)
+    index = dict_find_index(d, key)
+    if index == -1
+        return default_value
+    end
+    pair = d[index]
+    return pair[1]
+end
+
+# dict_remove(d, key) — returns a new dictionary with key gone. See the file
+# header for why this can't just shrink d in place.
+sub dict_remove(d, key)
+    result = []
+    i = 0
+    while i < len(d)
+        pair = d[i]
+        if pair[0] != key
+            append(result, pair)
+        end
+        i = i + 1
+    end
+    return result
+end
+
+# dict_keys(d) — list of every key, in insertion order.
+sub dict_keys(d)
+    keys = []
+    i = 0
+    while i < len(d)
+        pair = d[i]
+        append(keys, pair[0])
+        i = i + 1
+    end
+    return keys
+end
+
+# dict_values(d) — list of every value, in insertion order.
+sub dict_values(d)
+    values = []
+    i = 0
+    while i < len(d)
+        pair = d[i]
+        append(values, pair[1])
+        i = i + 1
+    end
+    return values
+end
+
+# dict_size(d)
+sub dict_size(d)
+    return len(d)
+end
+
+# dict_to_string(d) — a readable "{key: value, key: value}" form for print.
+sub dict_to_string(d)
+    result = "{"
+    i = 0
+    while i < len(d)
+        pair = d[i]
+        result = result + str(pair[0]) + ": " + str(pair[1])
+        if i < len(d) - 1
+            result = result + ", "
+        end
+        i = i + 1
+    end
+    result = result + "}"
+    return result
+end
+
+# set_new() — an empty set is just an empty list.
+sub set_new()
+    return []
+end
+
+# set_contains(s, value)
+sub set_contains(s, value)
+    i = 0
+    while i < len(s)
+        if s[i] == value
+            return true
+        end
+        i = i + 1
+    end
+    return false
+end
+
+# set_add(s, value) — appends value only if it isn't already in s. Mutates
+# s and also returns it.
+sub set_add(s, value)
+    if not set_contains(s, value)
+        append(s, value)
+    end
+    return s
+end
+
+# set_remove(s, value) — returns a new set with value gone.
+sub set_remove(s, value)
+    result = []
+    i = 0
+    while i < len(s)
+        if s[i] != value
+            append(result, s[i])
+        end
+        i = i + 1
+    end
+    return result
+end

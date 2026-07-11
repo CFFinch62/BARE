@@ -1,0 +1,46 @@
+# Project Euler 25: 1000-digit Fibonacci Number
+# The Fibonacci sequence is Fn = Fn-1 + Fn-2, with F1 = 1, F2 = 1.
+# What is the index of the first term in the Fibonacci sequence to
+# contain 1000 digits?
+# Answer: 4782
+# Note: F4782 has 1000 digits and would badly overflow BARE's one numeric
+# type (a float, exact to about 15-16 digits — see docs/language-spec.md).
+# So, as in 13_large_sum.bare, each Fibonacci number is kept as a STRING
+# of digits, and add_big() adds two digit-strings by hand, the same
+# add-and-carry method taught on paper.
+
+sub add_big(a, b)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    j = len(b) - 1
+    while i >= 0 or j >= 0 or carry > 0
+        digit_a = 0
+        if i >= 0
+            digit_a = num(a[i])
+        end
+        digit_b = 0
+        if j >= 0
+            digit_b = num(b[j])
+        end
+        total = digit_a + digit_b + carry
+        digit = total % 10
+        carry = (total - digit) / 10
+        result = str(digit) + result
+        i = i - 1
+        j = j - 1
+    end
+    return result
+end
+
+prev = "1"
+curr = "1"
+index = 2
+while len(curr) < 1000
+    next_fib = add_big(prev, curr)
+    prev = curr
+    curr = next_fib
+    index = index + 1
+end
+
+print index

@@ -1,0 +1,31 @@
+# Project Euler 30: Digit Fifth Powers
+# Find the sum of all the numbers that can be written as the sum of
+# fifth powers of their digits.
+# Answer: 443839
+# Note: the search only needs to go up to 354294 (6 x 9^5). A 7-digit
+# number is always bigger than the largest possible digit-fifth-power sum
+# a 7-digit number could produce (7 x 9^5 = 413343, still less than
+# 1,000,000), so nothing beyond 6 digits can ever qualify.
+
+sub fifth_power_digit_sum(n)
+    total = 0
+    m = n
+    while m > 0
+        digit = m % 10
+        m = (m - digit) / 10
+        total = total + digit * digit * digit * digit * digit
+    end
+    return total
+end
+
+limit = 354294
+total_sum = 0
+n = 10
+while n <= limit
+    if fifth_power_digit_sum(n) == n
+        total_sum = total_sum + n
+    end
+    n = n + 1
+end
+
+print total_sum

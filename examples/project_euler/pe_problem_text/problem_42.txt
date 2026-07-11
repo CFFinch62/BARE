@@ -1,0 +1,26 @@
+Problem 42: Coded Triangle Numbers
+
+The nth term of the sequence of triangle numbers is given by, tn = ½n(n+1); so the first ten triangle numbers are:
+
+1, 3, 6, 10, 15, 21, 28, 36, 45, 55, ...
+
+By converting each letter in a word to a number corresponding to its alphabetical position and adding these values we form a word value. For example, the word value for SKY is 19 + 11 + 25 = 55 = t10. If the word value is a triangle number, we shall call the word a triangle word.
+
+Using words.txt (right click and 'Save Link/Target As...'), a 16K text file containing nearly two-thousand common English words, how many are triangle words?
+
+Hint:
+1. A word's value is the sum of its letters' positions in the alphabet (A=1, B=2, ..., Z=26)
+2. A triangle number is given by the formula t(n) = n(n+1)/2
+3. Strategy:
+   - Read the words from the file
+   - For each word:
+     - Calculate its word value
+     - Check if the value is a triangle number
+4. Optimization:
+   - Pre-compute triangle numbers up to the maximum possible word value
+   - Store triangle numbers in a set for O(1) lookup
+   - The maximum word value can be determined by the longest word (all Z's)
+5. Implementation:
+   - Use string manipulation to process the words file
+   - Convert letters to numbers using ord() function
+   - Check word values against pre-computed triangle numbers 

@@ -1,0 +1,29 @@
+Problem 82: Path Sum: Three Ways
+
+NOTE: This problem is a more challenging version of Problem 81.
+
+The minimal path sum in the 5 by 5 matrix below, by starting in any cell in the left column and finishing in any cell in the right column, and only moving up, down, and right, is indicated in red and bold; the sum is equal to 994.
+
+[Matrix shown with path highlighted]
+
+Find the minimal path sum from the left column to the right column in matrix.txt (right click and 'Save Link/Target As...'), a 31K text file containing an 80 by 80 matrix.
+
+Hint:
+1. We need to find minimal path sum in 80x80 matrix with more movement options
+2. Strategy:
+   - Use dynamic programming with more states
+   - Consider all possible starting points
+   - Track minimum path to each cell
+3. Implementation:
+   - Read matrix from file
+   - Create DP table for each column
+   - Update paths considering up/down/right moves
+4. Optimization:
+   - Process columns in order
+   - Store only necessary information
+   - Use efficient update rules
+5. Key points:
+   - Can move up, down, or right
+   - Start from any left column cell
+   - End at any right column cell
+   - Consider all possible paths 

@@ -1,0 +1,82 @@
+# Project Euler 37: Truncatable Primes
+# 3797 stays prime as digits are removed from the left (3797, 797, 97, 7)
+# and from the right (3797, 379, 37, 3). Find the sum of the only eleven
+# primes that are truncatable both ways (2, 3, 5, 7 don't count).
+# Answer: 748317
+# Note: builds a sieve up to a million (like 35_circular_primes.bare) so
+# every truncation is an instant lookup instead of a fresh trial-division
+# check.
+
+limit = 999999
+
+is_composite = []
+i = 0
+while i <= limit
+    append(is_composite, false)
+    i = i + 1
+end
+
+p = 2
+while p * p <= limit
+    if not is_composite[p]
+        multiple = p * p
+        while multiple <= limit
+            is_composite[multiple] = true
+            multiple = multiple + p
+        end
+    end
+    p = p + 1
+end
+
+sub is_prime_lookup(v, is_composite)
+    if v < 2
+        return false
+    end
+    return not is_composite[v]
+end
+
+sub suffix_from(s, start)
+    result = ""
+    k = start
+    while k < len(s)
+        result = result + s[k]
+        k = k + 1
+    end
+    return result
+end
+
+sub is_truncatable(n, is_composite)
+    s = str(n)
+
+    m = (n - n % 10) / 10
+    while m > 0
+        if not is_prime_lookup(m, is_composite)
+            return false
+        end
+        m = (m - m % 10) / 10
+    end
+
+    i = 1
+    while i < len(s)
+        suffix_value = num(suffix_from(s, i))
+        if not is_prime_lookup(suffix_value, is_composite)
+            return false
+        end
+        i = i + 1
+    end
+
+    return true
+end
+
+total = 0
+count = 0
+n = 11
+while count < 11
+    if is_prime_lookup(n, is_composite) and is_truncatable(n, is_composite)
+        total = total + n
+        count = count + 1
+    end
+    n = n + 2
+end
+
+print total

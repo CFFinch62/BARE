@@ -1,0 +1,36 @@
+# Project Euler 63: Powerful Digit Counts
+# 16807 = 7^5 is a 5-digit 5th power. How many n-digit positive integers
+# exist which are also an nth power?
+# Answer: 49
+# Note: only bases 1-9 can ever work — 10^n always has n+1 digits, so no
+# base of 10 or more can produce an n-digit nth power. For base < 10,
+# the digit count of base^n grows at rate log10(base) < 1 per step —
+# slower than n itself — so the digit count can only fall permanently
+# behind n, never overtake it. Once it falls behind, the search for that
+# base stops (it will never come back). Base 1 is 1 digit forever and
+# would never fall behind, so it's counted separately as the one number
+# (1^1 = 1) it ever contributes.
+
+count = 1
+base = 2
+while base <= 9
+    n = 1
+    still_matching = true
+    while still_matching
+        value = base ^ n
+        digit_count = len(str(value))
+        if digit_count == n
+            count = count + 1
+            n = n + 1
+        else
+            if digit_count < n
+                still_matching = false
+            else
+                n = n + 1
+            end
+        end
+    end
+    base = base + 1
+end
+
+print count

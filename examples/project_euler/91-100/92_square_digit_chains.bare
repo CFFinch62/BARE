@@ -1,0 +1,56 @@
+# Project Euler 92: Square Digit Chains
+# Repeatedly replacing a number with the sum of the squares of its
+# digits eventually reaches either 1 or 89 (e.g. 85 -> 89 -> 145 -> ...
+# -> 89), and every number does one or the other. How many starting
+# numbers below ten million arrive at 89?
+# Answer: 8581146
+# Note: a 7-digit number's digit-square sum is at most 7 x 9^2 = 567 —
+# so after just ONE step, every chain (no matter how large the start)
+# has already dropped into the range 1-567. A tiny lookup table for
+# just those 567 outcomes (built once, each by a short direct walk to
+# 1 or 89 — square-digit chains are proven to never do anything else,
+# so no loop-detection bookkeeping is needed) turns each of the nine
+# million checks into one digit-square-sum plus one array lookup.
+
+sub square_digit_sum(n)
+    total = 0
+    m = n
+    while m > 0
+        d = m % 10
+        m = (m - d) / 10
+        total = total + d * d
+    end
+    return total
+end
+
+sub resolve(start)
+    x = start
+    while x != 1 and x != 89
+        x = square_digit_sum(x)
+    end
+    return x
+end
+
+cache = []
+v = 0
+while v <= 567
+    append(cache, 0)
+    v = v + 1
+end
+v = 1
+while v <= 567
+    cache[v] = resolve(v)
+    v = v + 1
+end
+
+count89 = 0
+start = 1
+while start < 10000000
+    landing = square_digit_sum(start)
+    if cache[landing] == 89
+        count89 = count89 + 1
+    end
+    start = start + 1
+end
+
+print count89

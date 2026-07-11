@@ -1,0 +1,82 @@
+# Project Euler 55: Lychrel Numbers
+# Reversing and adding 47 gives 47 + 74 = 121, a palindrome, in one
+# step. A number that never reaches a palindrome within 50 reverse-and-
+# add steps is (for this problem's purposes) called Lychrel. How many
+# Lychrel numbers are there below ten thousand?
+# Answer: 249
+# Note: reverse-and-add on a starting number below 10000 can still grow
+# past what BARE's float can hold exactly within 50 iterations (the
+# famous case, 196, balloons past 100 digits), so the running total is
+# kept as a STRING and added to its own reverse with add_big(), the
+# same digit-by-digit carry method as 13_large_sum.bare.
+
+sub add_big(a, b)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    j = len(b) - 1
+    while i >= 0 or j >= 0 or carry > 0
+        digit_a = 0
+        if i >= 0
+            digit_a = num(a[i])
+        end
+        digit_b = 0
+        if j >= 0
+            digit_b = num(b[j])
+        end
+        total = digit_a + digit_b + carry
+        digit = total % 10
+        carry = (total - digit) / 10
+        result = str(digit) + result
+        i = i - 1
+        j = j - 1
+    end
+    return result
+end
+
+sub reverse_string(s)
+    result = ""
+    i = len(s) - 1
+    while i >= 0
+        result = result + s[i]
+        i = i - 1
+    end
+    return result
+end
+
+sub is_str_palindrome(s)
+    i = 0
+    j = len(s) - 1
+    while i < j
+        if s[i] != s[j]
+            return false
+        end
+        i = i + 1
+        j = j - 1
+    end
+    return true
+end
+
+sub is_lychrel(start)
+    value = str(start)
+    iteration = 0
+    while iteration < 50
+        value = add_big(value, reverse_string(value))
+        if is_str_palindrome(value)
+            return false
+        end
+        iteration = iteration + 1
+    end
+    return true
+end
+
+count = 0
+n = 1
+while n < 10000
+    if is_lychrel(n)
+        count = count + 1
+    end
+    n = n + 1
+end
+
+print count

@@ -1,0 +1,24 @@
+Problem 63: Powerful Digit Counts
+
+The 5-digit number, 16807=7⁵, is also a fifth power. Similarly, the 9-digit number, 134217728=8⁹, is a ninth power.
+
+How many n-digit positive integers exist which are also an nth power?
+
+Hint:
+1. We need to count numbers that have the same number of digits as their power
+2. Strategy:
+   - For each base (1-9), find powers that have the correct number of digits
+   - Count all such numbers
+3. Implementation:
+   - For each base number:
+     - Calculate powers until the digit count exceeds the power
+     - Count cases where digit count equals power
+4. Optimization:
+   - Only need to check bases 1-9 (10^n always has n+1 digits)
+   - Can use logarithms to find digit counts
+   - Stop when digit count exceeds power
+5. Key points:
+   - Need to handle large numbers
+   - Number of digits must equal the power
+   - Consider the relationship between base size and digit count
+   - Base 10 and higher can't work (too many digits) 

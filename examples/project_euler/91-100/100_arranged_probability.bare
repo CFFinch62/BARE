@@ -1,0 +1,32 @@
+# Project Euler 100: Arranged Probability
+# A box of 21 discs (15 blue, 6 red) gives exactly 1/2 chance of drawing
+# two blue discs in a row; so does 85 blue out of 120. Find the number
+# of blue discs in the first such arrangement with over 10^12 discs
+# total.
+# Answer: 756872327473
+# Note: P(BB) = [b/t][(b-1)/(t-1)] = 1/2 rearranges (substituting
+# x = 2b-1, y = 2t-1) into the Pell-like equation y^2 - 2x^2 = -1. Its
+# solutions follow a linear recurrence from the fundamental solution
+# (1,1) — each next (u,v) is (3u+4v, 2u+3v) — which regenerates the
+# problem's own two examples (b=15,t=21 and b=85,t=120) as the 3rd and
+# 4th terms, confirming the recurrence before trusting it past 10^12.
+
+u = 1
+v = 1
+blue = 0
+total = 0
+found = false
+while not found
+    total = (u + 1) / 2
+    blue = (v + 1) / 2
+    if total > 1000000000000
+        found = true
+    else
+        next_u = 3 * u + 4 * v
+        next_v = 2 * u + 3 * v
+        u = next_u
+        v = next_v
+    end
+end
+
+print blue

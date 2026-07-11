@@ -1,0 +1,59 @@
+# Project Euler 64: Odd Period Square Roots
+# Every non-square square root has a periodic continued fraction; e.g.
+# sqrt(23) = [4;(1,3,1,8)], period 4. How many continued fractions for
+# N <= 10000 have an odd period?
+# Answer: 1322
+# Note: the standard continued-fraction recurrence for sqrt(N) (track m,
+# d, a and update them each step) only ever needs integers well inside
+# float's exact range for N this small, so unlike several other
+# problems in this set, no bignum workaround is needed here. The one
+# wrinkle: this algorithm needs the FLOOR of sqrt(N), but round() (as
+# used for the perfect-square check in 44_pentagon_numbers.bare) rounds
+# to the NEAREST integer — for a non-perfect-square that's off by one
+# roughly half the time (e.g. round(23^0.5) is 5, not the floor, 4). So
+# isqrt() here takes that rounded guess and nudges it up or down by one
+# until it's confirmed to be the true floor.
+
+sub isqrt(x)
+    r = round(x ^ 0.5, 0)
+    while r * r > x
+        r = r - 1
+    end
+    while (r + 1) * (r + 1) <= x
+        r = r + 1
+    end
+    return r
+end
+
+sub period_length(nval)
+    a0 = isqrt(nval)
+    if a0 * a0 == nval
+        return 0
+    end
+    m = 0
+    d = 1
+    a = a0
+    length = 0
+    still_going = true
+    while still_going
+        m = d * a - m
+        d = (nval - m * m) / d
+        a = (a0 + m - (a0 + m) % d) / d
+        length = length + 1
+        if a == 2 * a0
+            still_going = false
+        end
+    end
+    return length
+end
+
+count = 0
+n = 2
+while n <= 10000
+    if period_length(n) % 2 == 1
+        count = count + 1
+    end
+    n = n + 1
+end
+
+print count

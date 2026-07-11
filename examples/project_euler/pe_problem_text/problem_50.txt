@@ -1,0 +1,32 @@
+Problem 50: Consecutive Prime Sum
+
+The prime 41, can be written as the sum of six consecutive primes:
+
+41 = 2 + 3 + 5 + 7 + 11 + 13
+
+This is the longest sum of consecutive primes that adds to a prime below one-hundred.
+
+The longest sum of consecutive primes below one-thousand that adds to a prime, contains 21 terms, and is equal to 953.
+
+Which prime, below one-million, can be written as the sum of the most consecutive primes?
+
+Hint:
+1. We need to find the prime below one million that can be written as the sum of the most consecutive primes
+2. Strategy:
+   - Generate all primes below one million
+   - For each starting prime, sum consecutive primes until the sum exceeds one million
+   - Check if the sum is prime and keep track of the longest sequence
+3. Implementation:
+   - Use a sieve to generate all primes below one million
+   - Use a sliding window approach to find consecutive prime sums
+   - Check if each sum is prime
+4. Optimization:
+   - Pre-compute all primes below one million
+   - Use a set for prime lookups
+   - Stop when the sum exceeds one million
+   - Keep track of the longest sequence found
+5. Key points:
+   - The sum must be prime
+   - The primes must be consecutive
+   - The sum must be below one million
+   - We want the prime with the longest sequence 

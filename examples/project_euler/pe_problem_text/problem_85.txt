@@ -1,0 +1,27 @@
+Problem 85: Counting Rectangles
+
+By counting carefully it can be seen that a rectangular grid measuring 3 by 2 contains eighteen rectangles:
+
+[Diagram showing all possible rectangles in 3x2 grid]
+
+Although there exists no rectangular grid that contains exactly two million rectangles, find the area of the grid with the nearest solution.
+
+Hint:
+1. We need to find grid dimensions that give closest to 2 million rectangles
+2. Strategy:
+   - Calculate number of rectangles in grid
+   - Search for dimensions near target
+   - Find closest match
+3. Implementation:
+   - Use formula for rectangle count
+   - Search efficiently through dimensions
+   - Track closest solution
+4. Optimization:
+   - Use mathematical properties
+   - Consider symmetry
+   - Narrow search space
+5. Key points:
+   - Formula for rectangle count
+   - Need to find closest match
+   - Consider grid dimensions
+   - Handle large numbers 

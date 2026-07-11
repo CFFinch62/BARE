@@ -1,2 +1,0 @@
-when saving a sub to library all previous comment in library file are stripped
-sometime file tabs have no close button in the tab name area

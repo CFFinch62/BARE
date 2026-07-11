@@ -1,0 +1,141 @@
+# list_lib — structural list operations BARE's builtins don't cover.
+#
+# BARE's only list builtins are len() and append() — there's no remove(),
+# insert(), or slice(). list_remove_at and list_insert_at can't shrink or
+# grow the list you hand them in place (nothing in BARE can resize a list
+# except append), so they build and return a *new* list instead. Reassign
+# the result the same way you would with append():
+#     scores = list_remove_at(scores, 2)
+#
+# Note: BARE's == already compares two lists element-by-element (try
+# `print [1, 2] == [1, 2]` — it's true), so there's no list_equals() here.
+#
+# Self-contained: every sub below only calls other subs in this same file.
+# Prefix: every name starts with list_.
+#
+# To use: copy the sub(s) you want into your personal library (My Library
+# panel → Edit Library File...), or open this file directly in the IDE.
+
+# list_contains(items, value)
+sub list_contains(items, value)
+    i = 0
+    while i < len(items)
+        if items[i] == value
+            return true
+        end
+        i = i + 1
+    end
+    return false
+end
+
+# list_index_of(items, value) — first matching index, or -1.
+sub list_index_of(items, value)
+    i = 0
+    while i < len(items)
+        if items[i] == value
+            return i
+        end
+        i = i + 1
+    end
+    return -1
+end
+
+# list_count(items, value) — how many times value appears.
+sub list_count(items, value)
+    count = 0
+    i = 0
+    while i < len(items)
+        if items[i] == value
+            count = count + 1
+        end
+        i = i + 1
+    end
+    return count
+end
+
+# list_slice(items, start, finish) — elements from index start up to but
+# not including finish, e.g. list_slice([10, 20, 30, 40], 1, 3) is [20, 30].
+# ("finish", not "end" — end is a BARE keyword, so it can't be a parameter
+# name.)
+sub list_slice(items, start, finish)
+    result = []
+    i = start
+    while i < finish
+        append(result, items[i])
+        i = i + 1
+    end
+    return result
+end
+
+# list_remove_at(items, index) — new list with the item at index gone.
+sub list_remove_at(items, index)
+    result = []
+    i = 0
+    while i < len(items)
+        if i != index
+            append(result, items[i])
+        end
+        i = i + 1
+    end
+    return result
+end
+
+# list_insert_at(items, index, value) — new list with value inserted before
+# whatever was at index (index == len(items) appends at the end).
+sub list_insert_at(items, index, value)
+    result = []
+    i = 0
+    while i < len(items)
+        if i == index
+            append(result, value)
+        end
+        append(result, items[i])
+        i = i + 1
+    end
+    if index >= len(items)
+        append(result, value)
+    end
+    return result
+end
+
+# list_reverse(items) — new list with the elements in reverse order.
+sub list_reverse(items)
+    result = []
+    i = len(items) - 1
+    while i >= 0
+        append(result, items[i])
+        i = i - 1
+    end
+    return result
+end
+
+# list_concat(a, b) — new list with every element of a followed by every
+# element of b.
+sub list_concat(a, b)
+    result = []
+    i = 0
+    while i < len(a)
+        append(result, a[i])
+        i = i + 1
+    end
+    i = 0
+    while i < len(b)
+        append(result, b[i])
+        i = i + 1
+    end
+    return result
+end
+
+# list_unique(items) — new list with duplicate values removed, keeping the
+# first occurrence of each.
+sub list_unique(items)
+    result = []
+    i = 0
+    while i < len(items)
+        if not list_contains(result, items[i])
+            append(result, items[i])
+        end
+        i = i + 1
+    end
+    return result
+end

@@ -1,0 +1,60 @@
+# Project Euler 75: Singular Integer Right Triangles
+# 12 cm of wire is the shortest that bends into an integer-sided right
+# triangle in exactly one way. Given wire length L <= 1,500,000, for how
+# many values of L can exactly one such triangle be formed?
+# Answer: 161667
+# Note: uses Euclid's formula for Pythagorean triples: every primitive
+# triple comes from a pair m > n > 0 with gcd(m,n) = 1 and m,n not both
+# odd, giving perimeter 2m(m+n). Every non-primitive triple with the
+# same shape is just a multiple of a primitive one, so generating each
+# primitive perimeter once and then marking every multiple of it (like
+# a sieve) counts how many triangles share each perimeter, without ever
+# generating a triple directly.
+
+sub gcd(a, b)
+    while b != 0
+        temp = b
+        b = a % b
+        a = temp
+    end
+    return a
+end
+
+limit = 1500000
+
+triangle_count = []
+i = 0
+while i <= limit
+    append(triangle_count, 0)
+    i = i + 1
+end
+
+m = 2
+while 2 * m * m <= limit
+    n = 1
+    while n < m
+        if (m - n) % 2 == 1 and gcd(m, n) == 1
+            perimeter = 2 * m * (m + n)
+            if perimeter <= limit
+                p = perimeter
+                while p <= limit
+                    triangle_count[p] = triangle_count[p] + 1
+                    p = p + perimeter
+                end
+            end
+        end
+        n = n + 1
+    end
+    m = m + 1
+end
+
+answer = 0
+L = 1
+while L <= limit
+    if triangle_count[L] == 1
+        answer = answer + 1
+    end
+    L = L + 1
+end
+
+print answer

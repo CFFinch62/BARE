@@ -1,0 +1,29 @@
+# Project Euler 76: Counting Summations
+# 5 can be written as a sum of smaller positive integers in exactly 6
+# ways (4+1, 3+2, 3+1+1, 2+2+1, 2+1+1+1, 1+1+1+1+1). How many ways can
+# 100 be written as a sum of at least two positive integers?
+# Answer: 190569291
+# Note: same coin-change dynamic program as 31_coin_sums.bare, just
+# with "coins" 1 through 99 instead of English currency (100 itself is
+# excluded as a "part" since the single-term sum 100 doesn't count).
+
+target = 100
+ways = []
+i = 0
+while i <= target
+    append(ways, 0)
+    i = i + 1
+end
+ways[0] = 1
+
+part = 1
+while part < target
+    amount = part
+    while amount <= target
+        ways[amount] = ways[amount] + ways[amount - part]
+        amount = amount + 1
+    end
+    part = part + 1
+end
+
+print ways[target]

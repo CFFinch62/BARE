@@ -1,0 +1,71 @@
+# Project Euler 35: Circular Primes
+# The number 197 is a circular prime because all of its rotations (197,
+# 971, 719) are themselves prime. How many circular primes are there
+# below one million?
+# Answer: 55
+# Note: builds a Sieve of Eratosthenes first (see 10_summation_of_primes.
+# bare) so each rotation can be checked with an instant array lookup
+# instead of trial division.
+
+limit = 999999
+
+is_composite = []
+i = 0
+while i <= limit
+    append(is_composite, false)
+    i = i + 1
+end
+
+p = 2
+while p * p <= limit
+    if not is_composite[p]
+        multiple = p * p
+        while multiple <= limit
+            is_composite[multiple] = true
+            multiple = multiple + p
+        end
+    end
+    p = p + 1
+end
+
+sub rotate(s, start)
+    result = ""
+    k = start
+    while k < len(s)
+        result = result + s[k]
+        k = k + 1
+    end
+    k = 0
+    while k < start
+        result = result + s[k]
+        k = k + 1
+    end
+    return result
+end
+
+sub is_circular_prime(n, is_composite)
+    s = str(n)
+    length = len(s)
+    i = 0
+    while i < length
+        rotated = num(rotate(s, i))
+        if is_composite[rotated]
+            return false
+        end
+        i = i + 1
+    end
+    return true
+end
+
+count = 0
+n = 2
+while n <= limit
+    if not is_composite[n]
+        if is_circular_prime(n, is_composite)
+            count = count + 1
+        end
+    end
+    n = n + 1
+end
+
+print count

@@ -1,0 +1,47 @@
+# Project Euler 52: Permuted Multiples
+# 125874 and its double, 251748, use exactly the same digits. Find the
+# smallest positive integer x such that 2x, 3x, 4x, 5x, and 6x contain
+# the same digits as x.
+# Answer: 142857
+
+sub digit_signature(n)
+    counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    m = n
+    while m > 0
+        d = m % 10
+        m = (m - d) / 10
+        counts[d] = counts[d] + 1
+    end
+    sig = ""
+    d = 0
+    while d <= 9
+        k = 0
+        while k < counts[d]
+            sig = sig + str(d)
+            k = k + 1
+        end
+        d = d + 1
+    end
+    return sig
+end
+
+x = 1
+found = false
+while not found
+    target = digit_signature(x)
+    matches = true
+    multiplier = 2
+    while multiplier <= 6 and matches
+        if digit_signature(multiplier * x) != target
+            matches = false
+        end
+        multiplier = multiplier + 1
+    end
+    if matches
+        found = true
+    else
+        x = x + 1
+    end
+end
+
+print x

@@ -1,0 +1,36 @@
+Problem 75: Singular Integer Right Triangles
+
+It turns out that 12 cm is the smallest length of wire that can be bent to form an integer sided right angle triangle in exactly one way, but there are many more examples.
+
+12 cm: (3,4,5)
+24 cm: (6,8,10)
+30 cm: (5,12,13)
+36 cm: (9,12,15)
+40 cm: (8,15,17)
+48 cm: (12,16,20)
+
+In contrast, some lengths of wire, like 20 cm, cannot be bent to form an integer sided right angle triangle, and other lengths allow more than one solution to be found; for example, using 120 cm it is possible to form exactly three different integer sided right angle triangles.
+
+120 cm: (30,40,50), (20,48,52), (24,45,51)
+
+Given that L is the length of the wire, for how many values of L ≤ 1,500,000 can exactly one integer sided right angle triangle be formed?
+
+Hint:
+1. We need to count lengths that form exactly one integer right triangle
+2. Strategy:
+   - Generate primitive Pythagorean triples
+   - Calculate perimeter for each triple
+   - Count lengths with unique solutions
+3. Implementation:
+   - Use Euclid's formula to generate triples
+   - Track number of solutions for each length
+   - Count lengths with exactly one solution
+4. Optimization:
+   - Only generate primitive triples
+   - Use multiples up to limit
+   - Store solutions efficiently
+5. Key points:
+   - Need primitive and non-primitive triples
+   - Consider perimeter constraints
+   - Track multiple solutions
+   - Handle large numbers efficiently 

@@ -1,0 +1,75 @@
+# Project Euler 23: Non-Abundant Sums
+# A perfect number is one whose proper divisors sum to exactly the number
+# (e.g. 28 = 1+2+4+7+14). A number is abundant if its proper divisors sum
+# to more than the number. Every integer greater than 28123 can be written
+# as the sum of two abundant numbers, so find the sum of all the positive
+# integers which CANNOT be written as the sum of two abundant numbers.
+# Answer: 4179871
+# Note: rather than testing every pair of abundant numbers (6965 of them,
+# so almost 25 million pairs), the inner loop stops as soon as a candidate
+# pair's sum passes the limit — since the abundant list is built in
+# increasing order, every later pair would only be larger still. That
+# pruning is what keeps this runnable in a couple of minutes.
+
+sub sum_proper_divisors(n)
+    total = 1
+    i = 2
+    while i * i <= n
+        if n % i == 0
+            total = total + i
+            partner = n / i
+            if partner != i
+                total = total + partner
+            end
+        end
+        i = i + 1
+    end
+    return total
+end
+
+limit = 28123
+
+abundant = []
+n = 12
+while n <= limit
+    if sum_proper_divisors(n) > n
+        append(abundant, n)
+    end
+    n = n + 1
+end
+
+can_be_written = []
+k = 0
+while k <= limit
+    append(can_be_written, false)
+    k = k + 1
+end
+
+count = len(abundant)
+i = 0
+while i < count
+    a = abundant[i]
+    j = i
+    still_in_range = true
+    while j < count and still_in_range
+        total = a + abundant[j]
+        if total > limit
+            still_in_range = false
+        else
+            can_be_written[total] = true
+            j = j + 1
+        end
+    end
+    i = i + 1
+end
+
+answer = 0
+n = 1
+while n <= limit
+    if not can_be_written[n]
+        answer = answer + n
+    end
+    n = n + 1
+end
+
+print answer

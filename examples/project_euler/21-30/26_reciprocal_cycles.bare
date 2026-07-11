@@ -1,0 +1,44 @@
+# Project Euler 26: Reciprocal Cycles
+# Find the value of d < 1000 for which 1/d contains the longest recurring
+# cycle in its decimal fraction part.
+# Answer: 983
+# Note: simulates long division by hand. At each step, the current
+# remainder decides the next digit; if a remainder repeats, the digits
+# from then on must repeat too, so the cycle length is just the gap
+# between the remainder's first appearance and its second.
+
+sub cycle_length(d)
+    seen_at = []
+    i = 0
+    while i < d
+        append(seen_at, -1)
+        i = i + 1
+    end
+
+    remainder = 1 % d
+    position = 0
+    while remainder != 0 and seen_at[remainder] == -1
+        seen_at[remainder] = position
+        remainder = (remainder * 10) % d
+        position = position + 1
+    end
+
+    if remainder == 0
+        return 0
+    end
+    return position - seen_at[remainder]
+end
+
+best_d = 0
+best_length = -1
+d = 2
+while d < 1000
+    length = cycle_length(d)
+    if length > best_length
+        best_length = length
+        best_d = d
+    end
+    d = d + 1
+end
+
+print best_d

@@ -1,0 +1,66 @@
+# Project Euler 43: Sub-string Divisibility
+# 1406357289 is 0 to 9 pandigital, and its digits d1..d10 have the odd
+# property that d2d3d4, d3d4d5, ..., d8d9d10 are divisible by
+# 2, 3, 5, 7, 11, 13, 17 respectively. Find the sum of all 0 to 9
+# pandigital numbers with this property.
+# Answer: 16695334890
+# Note: generating and filtering all 3,628,800 permutations of 0-9 would
+# work but is far too slow for this interpreter to be worth trying. This
+# instead builds the number digit by digit — after each new digit is
+# placed, whichever 3-digit-substring test just became checkable is
+# applied immediately, so almost every wrong path is abandoned after
+# only 3 or 4 digits instead of after all 10.
+
+sub search(pos, digit_array, used, prime_list, results)
+    if pos == 10
+        s = ""
+        i = 0
+        while i < 10
+            s = s + str(digit_array[i])
+            i = i + 1
+        end
+        append(results, s)
+    else
+        d = 0
+        while d <= 9
+            skip = (d == 0 and pos == 0) or used[d]
+            if not skip
+                digit_array[pos] = d
+                ok = true
+                if pos >= 3
+                    a = digit_array[pos - 2]
+                    b = digit_array[pos - 1]
+                    c = digit_array[pos]
+                    value = a * 100 + b * 10 + c
+                    p = prime_list[pos - 3]
+                    if value % p != 0
+                        ok = false
+                    end
+                end
+                if ok
+                    used[d] = true
+                    search(pos + 1, digit_array, used, prime_list, results)
+                    used[d] = false
+                end
+            end
+            d = d + 1
+        end
+    end
+    return null
+end
+
+prime_list = [2, 3, 5, 7, 11, 13, 17]
+digit_array = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+used = [false, false, false, false, false, false, false, false, false, false]
+results = []
+
+search(0, digit_array, used, prime_list, results)
+
+total = 0
+i = 0
+while i < len(results)
+    total = total + num(results[i])
+    i = i + 1
+end
+
+print total

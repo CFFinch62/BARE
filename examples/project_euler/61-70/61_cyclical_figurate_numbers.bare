@@ -1,0 +1,102 @@
+# Project Euler 61: Cyclical Figurate Numbers
+# 8128, 2882, 8281 are 4-digit triangle, pentagonal, and square numbers
+# (in some order) forming a cycle: the last two digits of each equal the
+# first two digits of the next, wrapping around. Find the sum of the
+# only ordered set of six 4-digit numbers where each of triangle,
+# square, pentagonal, hexagonal, heptagonal, and octagonal is
+# represented exactly once, and the set is cyclic.
+# Answer: 28684
+# Note: backtracking with the chaining rule applied at every step (not
+# just at the end) prunes almost everything — each type only has 40-96
+# four-digit members, and a candidate is rejected the moment it doesn't
+# match the previous number's last two digits, so the search never gets
+# close to trying every ordering.
+
+sub copy_list(lst)
+    result = []
+    i = 0
+    while i < len(lst)
+        append(result, lst[i])
+        i = i + 1
+    end
+    return result
+end
+
+sub build_figurate_list(a, b, c)
+    result = []
+    building = true
+    n = 1
+    while building
+        v = (a * n * n + b * n) / c
+        if v > 9999
+            building = false
+        else
+            if v >= 1000
+                append(result, v)
+            end
+            n = n + 1
+        end
+    end
+    return result
+end
+
+sub search(depth, used, chain, lists, best)
+    if depth == 6
+        first = chain[0]
+        last = chain[5]
+        if last[2] == first[0] and last[3] == first[1]
+            total = 0
+            i = 0
+            while i < 6
+                total = total + num(chain[i])
+                i = i + 1
+            end
+            if best[0] == -1 or total < best[0]
+                best[0] = total
+            end
+        end
+    else
+        t = 0
+        while t < 6
+            if not used[t]
+                type_list = lists[t]
+                v = 0
+                while v < len(type_list)
+                    candidate = str(type_list[v])
+                    ok = true
+                    if depth > 0
+                        prev = chain[depth - 1]
+                        if not (prev[2] == candidate[0] and prev[3] == candidate[1])
+                            ok = false
+                        end
+                    end
+                    if ok
+                        new_used = copy_list(used)
+                        new_used[t] = true
+                        new_chain = copy_list(chain)
+                        append(new_chain, candidate)
+                        search(depth + 1, new_used, new_chain, lists, best)
+                    end
+                    v = v + 1
+                end
+            end
+            t = t + 1
+        end
+    end
+    return null
+end
+
+triangle = build_figurate_list(1, 1, 2)
+square = build_figurate_list(2, 0, 2)
+pentagonal = build_figurate_list(3, -1, 2)
+hexagonal = build_figurate_list(4, -2, 2)
+heptagonal = build_figurate_list(5, -3, 2)
+octagonal = build_figurate_list(6, -4, 2)
+
+lists = [triangle, square, pentagonal, hexagonal, heptagonal, octagonal]
+used = [false, false, false, false, false, false]
+best = [-1]
+
+search(0, used, [], lists, best)
+
+print best[0]

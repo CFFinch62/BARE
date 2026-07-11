@@ -1,0 +1,27 @@
+Problem 49: Prime Permutations
+
+The arithmetic sequence, 1487, 4817, 8147, in which each of the terms increases by 3330, is unusual in two ways: (i) each of the three terms are prime, and (ii) each of the 4-digit numbers are permutations of one another.
+
+There are no arithmetic sequences made up of three 1-, 2-, or 3-digit primes, exhibiting this property, but there is one other 4-digit increasing sequence.
+
+What 12-digit number do you form by concatenating the three terms in this sequence?
+
+Hint:
+1. We need to find a 4-digit arithmetic sequence of primes that are permutations of each other
+2. Strategy:
+   - Generate all 4-digit primes
+   - For each prime, generate all its permutations
+   - Check if any three permutations form an arithmetic sequence
+3. Implementation:
+   - Use a sieve to generate all 4-digit primes
+   - For each prime, generate its permutations
+   - Check if any three permutations form an arithmetic sequence
+4. Optimization:
+   - Skip primes that can't be part of the sequence (e.g., primes with repeated digits)
+   - Only check permutations that are also prime
+   - Check for arithmetic sequences among the prime permutations
+5. Key points:
+   - All three numbers must be prime
+   - All three numbers must be permutations of each other
+   - The numbers must form an arithmetic sequence
+   - The sequence must be different from 1487, 4817, 8147 

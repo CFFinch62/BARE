@@ -1,0 +1,49 @@
+# Project Euler 56: Powerful Digit Sum
+# Considering natural numbers of the form a^b, where a, b < 100, what is
+# the maximum digital sum?
+# Answer: 972
+# Note: 99^99 has 198 digits — far beyond exact float range, so each
+# a^b is built as a digit STRING via repeated multiply_big() calls, the
+# same technique as 20_factorial_digit_sum.bare, just walked over every
+# (a, b) pair instead of one factorial chain.
+
+sub multiply_big(a, m)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    while i >= 0 or carry > 0
+        digit = 0
+        if i >= 0
+            digit = num(a[i])
+        end
+        total = digit * m + carry
+        new_digit = total % 10
+        carry = (total - new_digit) / 10
+        result = str(new_digit) + result
+        i = i - 1
+    end
+    return result
+end
+
+best = 0
+a = 2
+while a < 100
+    power = "1"
+    b = 1
+    while b < 100
+        power = multiply_big(power, a)
+        digit_sum = 0
+        i = 0
+        while i < len(power)
+            digit_sum = digit_sum + num(power[i])
+            i = i + 1
+        end
+        if digit_sum > best
+            best = digit_sum
+        end
+        b = b + 1
+    end
+    a = a + 1
+end
+
+print best

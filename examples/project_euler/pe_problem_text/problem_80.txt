@@ -1,0 +1,27 @@
+Problem 80: Square Root Digital Expansion
+
+It is well known that if the square root of a natural number is not an integer, then it is irrational. The decimal expansion of such square roots is infinite without any repeating pattern at all.
+
+The square root of two is 1.41421356237309504880..., and the digital sum of the first one hundred decimal digits is 475.
+
+For the first one hundred natural numbers, find the total of all the digital sums of the first one hundred decimal digits for all the irrational square roots.
+
+Hint:
+1. We need to sum digits of irrational square roots up to 100 decimal places
+2. Strategy:
+   - Calculate precise square roots
+   - Extract first 100 decimal digits
+   - Sum digits for irrational roots
+3. Implementation:
+   - Use arbitrary precision arithmetic
+   - Handle decimal point carefully
+   - Skip perfect squares
+4. Optimization:
+   - Pre-compute perfect squares
+   - Use efficient square root algorithm
+   - Consider mathematical properties
+5. Key points:
+   - Need high precision calculation
+   - Skip rational square roots
+   - Handle decimal expansion carefully
+   - Consider numerical stability 

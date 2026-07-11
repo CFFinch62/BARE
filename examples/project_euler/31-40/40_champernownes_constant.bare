@@ -1,0 +1,49 @@
+# Project Euler 40: Champernowne's Constant
+# The Champernowne constant is built by concatenating the positive
+# integers: 0.123456789101112... Let dn be the nth digit of the
+# fractional part. Find d1 x d10 x d100 x d1000 x d10000 x d100000 x
+# d1000000.
+# Answer: 210
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# The obvious approach — build the digit string by concatenating 1, 2,
+# 3, ... until it's a million characters long — would work, but BARE
+# strings are immutable (see docs/language-spec.md): every `+=` makes a
+# brand new copy of the whole string so far. Building a million-character
+# string one small piece at a time like that costs time proportional to
+# the SQUARE of the final length — roughly a trillion character copies
+# here, which would make this program hang rather than finish.
+#
+# So this skips building the string at all. Numbers of a given digit
+# length contribute a known, countable number of digits to the sequence
+# (9 one-digit numbers = 9 digits, 90 two-digit numbers = 180 digits,
+# and so on), so digit_at_position() jumps straight to the number that
+# contains a given position with simple arithmetic, and only ever
+# converts that ONE number to a string.
+
+sub digit_at_position(pos)
+    digits_per_number = 1
+    count_numbers = 9
+    start_number = 1
+    while pos > digits_per_number * count_numbers
+        pos = pos - digits_per_number * count_numbers
+        digits_per_number = digits_per_number + 1
+        start_number = start_number * 10
+        count_numbers = count_numbers * 10
+    end
+    number_index = (pos - 1 - (pos - 1) % digits_per_number) / digits_per_number
+    digit_index = (pos - 1) % digits_per_number
+    number = start_number + number_index
+    s = str(number)
+    return num(s[digit_index])
+end
+
+positions = [1, 10, 100, 1000, 10000, 100000, 1000000]
+result = 1
+i = 0
+while i < len(positions)
+    result = result * digit_at_position(positions[i])
+    i = i + 1
+end
+
+print result

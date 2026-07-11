@@ -1,0 +1,22 @@
+# Project Euler 28: Number Spiral Diagonals
+# Starting with 1 and spiraling clockwise, a 5x5 spiral's diagonals sum
+# to 101. What is the sum of the diagonals in a 1001x1001 spiral formed
+# the same way?
+# Answer: 669171001
+# Note: no need to build the spiral at all. For a ring with side length n
+# (n = 3, 5, 7, ...), the top-right corner is always n^2, and each of the
+# other three corners is exactly (n - 1) less than the one before it —
+# so the four corners of every ring are computed directly.
+
+total = 1
+n = 3
+while n <= 1001
+    top_right = n * n
+    top_left = top_right - (n - 1)
+    bottom_left = top_left - (n - 1)
+    bottom_right = bottom_left - (n - 1)
+    total = total + top_right + top_left + bottom_left + bottom_right
+    n = n + 2
+end
+
+print total

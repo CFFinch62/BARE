@@ -1,0 +1,91 @@
+# Project Euler 79: Passcode Derivation
+# keylog.txt records 50 successful logins, each entering three digits
+# of an unknown passcode in the correct relative order (e.g. "319"
+# means the digit '3' was typed before '1', which was typed before
+# '9'). Find the shortest passcode consistent with every login.
+# Answer: 73162890
+# Note: BARE has no file I/O, so keylog.txt's 50 lines are pasted in
+# directly as one list of 3-character strings, the same way every
+# other file-dependent problem in this set embeds its data. Each login
+# "abc" gives three ordering facts (a before b, b before c, a before
+# c); collecting every such fact and repeatedly pulling out whichever
+# digit has nothing left ordered before it (a topological sort, done
+# by hand with plain lists since BARE has no set or graph type) rebuilds
+# the passcode one digit at a time.
+
+logins = ["319", "680", "180", "690", "129", "620", "762", "689", "762", "318", "368", "710", "720", "710", "629", "168", "160", "689", "716", "731", "736", "729", "316", "729", "729", "710", "769", "290", "719", "680", "318", "389", "162", "289", "162", "718", "729", "319", "790", "680", "890", "362", "319", "760", "316", "729", "380", "319", "728", "716"]
+
+sub contains_digit(lst, d)
+    i = 0
+    while i < len(lst)
+        if lst[i] == d
+            return true
+        end
+        i = i + 1
+    end
+    return false
+end
+
+digits = []
+before_pairs = []
+
+l = 0
+while l < len(logins)
+    code = logins[l]
+    a = code[0]
+    b = code[1]
+    c = code[2]
+
+    if not contains_digit(digits, a)
+        append(digits, a)
+    end
+    if not contains_digit(digits, b)
+        append(digits, b)
+    end
+    if not contains_digit(digits, c)
+        append(digits, c)
+    end
+
+    append(before_pairs, [a, b])
+    append(before_pairs, [b, c])
+    append(before_pairs, [a, c])
+
+    l = l + 1
+end
+
+passcode = ""
+remaining = digits
+
+while len(remaining) > 0
+    chosen = ""
+    r = 0
+    while r < len(remaining) and chosen == ""
+        candidate = remaining[r]
+        has_incoming = false
+        p = 0
+        while p < len(before_pairs) and not has_incoming
+            pair = before_pairs[p]
+            if pair[1] == candidate and contains_digit(remaining, pair[0]) and pair[0] != candidate
+                has_incoming = true
+            end
+            p = p + 1
+        end
+        if not has_incoming
+            chosen = candidate
+        end
+        r = r + 1
+    end
+
+    passcode = passcode + chosen
+    new_remaining = []
+    i = 0
+    while i < len(remaining)
+        if remaining[i] != chosen
+            append(new_remaining, remaining[i])
+        end
+        i = i + 1
+    end
+    remaining = new_remaining
+end
+
+print passcode

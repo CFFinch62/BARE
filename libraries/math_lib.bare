@@ -1,0 +1,201 @@
+# math_lib — numeric helpers BARE doesn't ship as builtins.
+#
+# BARE's only builtin math is round() and the +-*/%^ operators. There's no
+# sqrt, no floor/ceil, no min/max/sum over a list. Each one below is built
+# from the operators BARE does have — math_sqrt in particular is Newton's
+# method by hand, which is the actual reason sqrt() is a builtin in almost
+# every other language: it's tedious to get right yourself, every time.
+#
+# Self-contained: every sub below only calls other subs in this same file.
+# Prefix: every name starts with math_.
+#
+# To use: copy the sub(s) you want into your personal library (My Library
+# panel → Edit Library File...), or open this file directly in the IDE.
+
+# math_abs(x)
+sub math_abs(x)
+    if x < 0
+        return 0 - x
+    end
+    return x
+end
+
+# math_sign(x) — -1, 0, or 1.
+sub math_sign(x)
+    if x > 0
+        return 1
+    end
+    if x < 0
+        return -1
+    end
+    return 0
+end
+
+# math_clamp(x, low, high) — pulls x into the [low, high] range.
+sub math_clamp(x, low, high)
+    if x < low
+        return low
+    end
+    if x > high
+        return high
+    end
+    return x
+end
+
+# math_floor(x) — largest whole number <= x. BARE's % follows the sign of
+# the divisor (like most languages' floored modulo), so x % 1 is always the
+# non-negative fractional part left over, even for negative x.
+sub math_floor(x)
+    return x - (x % 1)
+end
+
+# math_ceil(x) — smallest whole number >= x.
+sub math_ceil(x)
+    floor_x = math_floor(x)
+    if floor_x == x
+        return floor_x
+    end
+    return floor_x + 1
+end
+
+# math_sqrt(x) — Newton's method: start with a guess, repeatedly average it
+# with x / guess, and it converges on the square root. Returns -1 for
+# negative input, since BARE subs have no way to raise a runtime error of
+# their own.
+sub math_sqrt(x)
+    if x < 0
+        return -1
+    end
+    if x == 0
+        return 0
+    end
+    guess = x
+    diff = 1
+    while diff > 0.0000001
+        next_guess = (guess + x / guess) / 2
+        diff = math_abs(guess - next_guess)
+        guess = next_guess
+    end
+    return guess
+end
+
+# math_gcd(a, b) — Euclidean algorithm, assumes non-negative inputs.
+sub math_gcd(a, b)
+    while b != 0
+        remainder = a % b
+        a = b
+        b = remainder
+    end
+    return a
+end
+
+# math_lcm(a, b)
+sub math_lcm(a, b)
+    return a * b / math_gcd(a, b)
+end
+
+# math_is_prime(n)
+sub math_is_prime(n)
+    if n < 2
+        return false
+    end
+    divisor = 2
+    while divisor * divisor <= n
+        if n % divisor == 0
+            return false
+        end
+        divisor = divisor + 1
+    end
+    return true
+end
+
+# math_factorial(n) — iterative, n! for n >= 0.
+sub math_factorial(n)
+    result = 1
+    i = 2
+    while i <= n
+        result = result * i
+        i = i + 1
+    end
+    return result
+end
+
+# math_max(numbers) — largest value in a non-empty list of numbers.
+sub math_max(numbers)
+    biggest = numbers[0]
+    i = 1
+    while i < len(numbers)
+        if numbers[i] > biggest
+            biggest = numbers[i]
+        end
+        i = i + 1
+    end
+    return biggest
+end
+
+# math_min(numbers) — smallest value in a non-empty list of numbers.
+sub math_min(numbers)
+    smallest = numbers[0]
+    i = 1
+    while i < len(numbers)
+        if numbers[i] < smallest
+            smallest = numbers[i]
+        end
+        i = i + 1
+    end
+    return smallest
+end
+
+# math_sum(numbers)
+sub math_sum(numbers)
+    total = 0
+    i = 0
+    while i < len(numbers)
+        total = total + numbers[i]
+        i = i + 1
+    end
+    return total
+end
+
+# math_average(numbers) — non-empty list of numbers.
+sub math_average(numbers)
+    return math_sum(numbers) / len(numbers)
+end
+
+# math_sorted_copy(numbers) — ascending bubble sort that returns a *new*
+# list, leaving the one you passed in untouched. Used internally by
+# math_median below; also handy on its own when you don't want a mutation.
+sub math_sorted_copy(numbers)
+    copy = []
+    i = 0
+    while i < len(numbers)
+        append(copy, numbers[i])
+        i = i + 1
+    end
+    n = len(copy)
+    i = 0
+    while i < n - 1
+        j = 0
+        while j < n - 1 - i
+            if copy[j] > copy[j + 1]
+                temp = copy[j]
+                copy[j] = copy[j + 1]
+                copy[j + 1] = temp
+            end
+            j = j + 1
+        end
+        i = i + 1
+    end
+    return copy
+end
+
+# math_median(numbers) — non-empty list of numbers.
+sub math_median(numbers)
+    sorted_numbers = math_sorted_copy(numbers)
+    n = len(sorted_numbers)
+    middle = math_floor(n / 2)
+    if n % 2 == 0
+        return (sorted_numbers[middle - 1] + sorted_numbers[middle]) / 2
+    end
+    return sorted_numbers[middle]
+end

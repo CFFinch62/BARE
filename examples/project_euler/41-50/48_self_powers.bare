@@ -1,0 +1,53 @@
+# Project Euler 48: Self Powers
+# 1^1 + 2^2 + 3^3 + ... + 10^10 = 10405071317. Find the last ten digits
+# of 1^1 + 2^2 + ... + 1000^1000.
+# Answer: 9110846700
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# 1000^1000 has 3001 digits. But the question only wants the last TEN,
+# so everything can be done modulo 10^10 instead of hand-rolling a full
+# bignum power (contrast with 16_power_digit_sum.bare, which genuinely
+# needs every digit). The catch: even keeping numbers under 10^10, a
+# single multiplication step in modular exponentiation squares a value
+# up to just under 10^10 — landing near 10^20, far past the ~15-16
+# reliable digits of BARE's one numeric type (a float). mulmod() below
+# works around that by turning "multiply mod m" into repeated doubling
+# and adding mod m (the same trick as Russian peasant multiplication),
+# so no intermediate value ever exceeds about 2 x 10^10.
+
+sub mulmod(a, b, m)
+    result = 0
+    a = a % m
+    while b > 0
+        if b % 2 == 1
+            result = (result + a) % m
+        end
+        a = (a * 2) % m
+        b = (b - b % 2) / 2
+    end
+    return result
+end
+
+sub modpow(base, exponent, m)
+    result = 1
+    b = base % m
+    e = exponent
+    while e > 0
+        if e % 2 == 1
+            result = mulmod(result, b, m)
+        end
+        b = mulmod(b, b, m)
+        e = (e - e % 2) / 2
+    end
+    return result
+end
+
+modulus = 10000000000
+total = 0
+n = 1
+while n <= 1000
+    total = (total + modpow(n, n, modulus)) % modulus
+    n = n + 1
+end
+
+print total

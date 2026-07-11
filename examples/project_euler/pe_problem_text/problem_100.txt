@@ -1,0 +1,29 @@
+Problem 100: Arranged Probability
+
+If a box contains twenty-one coloured discs, composed of fifteen blue discs and six red discs, and two discs were taken at random, it can be seen that the probability of taking two blue discs, P(BB) = (15/21)×(14/20) = 1/2.
+
+The next such arrangement, for which there is exactly 50% chance of taking two blue discs at random, is a box containing eighty-five blue discs and thirty-five red discs.
+
+By finding the first arrangement to contain over 10^12 = 1,000,000,000,000 discs in total, determine the number of blue discs that the box would contain.
+
+Hint:
+1. We need to find integer solutions to a probability equation
+2. Strategy:
+   - Formulate the probability equation
+   - Convert to Diophantine equation
+   - Find solutions using Pell's equation
+   - Find first solution above threshold
+3. Implementation:
+   - Set up the probability equation
+   - Transform to quadratic form
+   - Use continued fractions
+   - Find minimal solution
+4. Optimization:
+   - Use recurrence relations
+   - Skip non-solutions
+   - Track minimal solutions
+5. Key points:
+   - Probability formulation
+   - Diophantine equations
+   - Pell's equation
+   - Large number handling 

@@ -1,0 +1,61 @@
+# Project Euler 58: Spiral Primes
+# In a square number spiral, 8 of the 13 numbers on the diagonals of the
+# 7x7 spiral are prime. If the spiral keeps growing, what side length is
+# the first where the ratio of primes on the diagonals falls below 10%?
+# Answer: 26241
+# Note: like 28_number_spiral_diagonals.bare, the four corners of each
+# new ring are generated directly from the previous corner (each is a
+# fixed step apart, and the step grows by 2 every ring) — no need to
+# build the actual grid. One of the four corners in every ring is a
+# perfect square, which can never be prime, so it's added to the total
+# count but skipped from the primality test.
+
+sub is_prime(n)
+    if n < 2
+        return false
+    end
+    if n % 2 == 0
+        return n == 2
+    end
+    if n % 3 == 0
+        return n == 3
+    end
+    i = 5
+    while i * i <= n
+        if n % i == 0 or n % (i + 2) == 0
+            return false
+        end
+        i = i + 6
+    end
+    return true
+end
+
+side = 1
+value = 1
+count_prime = 0
+count_total = 1
+step = 2
+
+below_threshold = false
+while not below_threshold
+    k = 0
+    while k < 3
+        value = value + step
+        count_total = count_total + 1
+        if is_prime(value)
+            count_prime = count_prime + 1
+        end
+        k = k + 1
+    end
+    value = value + step
+    count_total = count_total + 1
+
+    side = side + 2
+    step = step + 2
+
+    if count_prime / count_total < 0.10
+        below_threshold = true
+    end
+end
+
+print side

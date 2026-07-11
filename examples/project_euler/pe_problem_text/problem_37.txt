@@ -1,0 +1,16 @@
+Problem 37: Truncatable Primes
+
+The number 3797 has an interesting property. Being prime itself, it is possible to continuously remove digits from left to right, and remain prime at each stage: 3797, 797, 97, and 7. Similarly we can work from right to left: 3797, 379, 37, and 3.
+
+Find the sum of the only eleven primes that are both truncatable from left to right and right to left.
+
+NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
+
+Hint:
+1. Generate primes using the Sieve of Eratosthenes
+2. For each prime, check if it is truncatable from both left and right
+3. To check truncatability:
+   - Remove digits from left to right and check if all resulting numbers are prime
+   - Remove digits from right to left and check if all resulting numbers are prime
+4. Sum all primes that are truncatable from both sides
+5. Note that truncatable primes cannot contain even digits (except 2) or 5 

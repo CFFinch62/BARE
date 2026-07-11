@@ -1,0 +1,60 @@
+# Project Euler 44: Pentagon Numbers
+# Pentagonal numbers are Pn = n(3n-1)/2. Find the pair Pj, Pk for which
+# both their sum and their difference are pentagonal, and D = |Pk - Pj|
+# is minimised. What is D?
+# Answer: 5482660
+# Note: testing "is x pentagonal?" needs a square root — solve
+# n(3n-1)/2 = x for n and check whether n is a whole number. BARE has no
+# sqrt() built in, but `^` accepts a fractional exponent, so x^0.5 asks
+# the interpreter's native float power for the same answer in one step
+# — much faster than hand-rolling Newton's method or a binary search,
+# both of which were tried here first and took over ten minutes on the
+# ~2 million candidate pairs this search needs. round() then confirms
+# the result was a whole number rather than a rounding artefact.
+# Once a candidate D is found, the inner loop over j stops as soon as
+# the running difference reaches it — pentagonal numbers only grow, so
+# nothing further out could improve on it.
+
+sub is_pentagonal(x)
+    n = 1 + 24 * x
+    r = round(n ^ 0.5, 0)
+    if r * r != n
+        return false
+    end
+    return (1 + r) % 6 == 0
+end
+
+pentagonals = []
+k = 1
+while k <= 2200
+    append(pentagonals, k * (3 * k - 1) / 2)
+    k = k + 1
+end
+
+best_d = -1
+k = 1
+while k <= 2200
+    pk = pentagonals[k - 1]
+    j = k - 2
+    keep_going = true
+    while j >= 0 and keep_going
+        pj = pentagonals[j]
+        diff_val = pk - pj
+        if best_d != -1 and diff_val >= best_d
+            keep_going = false
+        else
+            if is_pentagonal(diff_val)
+                sum_val = pk + pj
+                if is_pentagonal(sum_val)
+                    if best_d == -1 or diff_val < best_d
+                        best_d = diff_val
+                    end
+                end
+            end
+            j = j - 1
+        end
+    end
+    k = k + 1
+end
+
+print best_d

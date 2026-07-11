@@ -1,0 +1,217 @@
+# Project Euler 93: Arithmetic Expressions
+# Using {1,2,3,4} exactly once with +, -, *, /, and parentheses, 31
+# different positive integer targets between 1 and 36 are reachable,
+# and they form an unbroken run 1, 2, 3, ... before the first gap.
+# Find the four digits a<b<c<d whose reachable targets form the
+# LONGEST such unbroken run, as the string "abcd".
+# Answer: 1258
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# Division needs EXACT arithmetic — checking "is 8/3 an integer" with
+# BARE's float and a rounded comparison is exactly the silent-wrong-
+# answer trap this whole example folder keeps coming back to (see
+# docs/language-spec.md: floats are exact only to about 15-16 digits).
+# So every intermediate value here is a [numerator, denominator] pair,
+# combined with plain integer arithmetic, and "is this a positive
+# integer" is one exact remainder check, never a float comparison.
+#
+# The first version of this program tried every permutation of the
+# four digits separately and was drastically slower than it needed to
+# be — about 5000 combine steps per permutation, 24 permutations,
+# times 126 four-digit choices, well over a hundred thousand redundant
+# combine calls. It turns out permutation order never mattered in the
+# first place: since every combine step already tries both a-b and
+# b-a, a/b and b/a, the reachable set only depends on which four
+# digits are chosen, never their order — reducing the permutation loop
+# to nothing. The remaining inefficiency was recomputing the same
+# three-digit and two-digit sub-combinations over and over inside
+# different splits. Precomputing the value-set for each of a 4-digit
+# set's 15 possible subsets exactly once — smallest subsets first,
+# each built from two already-solved smaller pieces — turns roughly
+# 618 combine calls per digit set into the whole answer, no
+# permutations needed at all.
+
+sub frac_add(a, b)
+    return [a[0] * b[1] + b[0] * a[1], a[1] * b[1]]
+end
+
+sub frac_sub(a, b)
+    return [a[0] * b[1] - b[0] * a[1], a[1] * b[1]]
+end
+
+sub frac_mul(a, b)
+    return [a[0] * b[0], a[1] * b[1]]
+end
+
+sub frac_div(a, b)
+    if b[0] == 0
+        return null
+    end
+    return [a[0] * b[1], a[1] * b[0]]
+end
+
+sub combine_all(a, b, results)
+    append(results, frac_add(a, b))
+    append(results, frac_sub(a, b))
+    append(results, frac_sub(b, a))
+    append(results, frac_mul(a, b))
+    d1 = frac_div(a, b)
+    if d1 != null
+        append(results, d1)
+    end
+    d2 = frac_div(b, a)
+    if d2 != null
+        append(results, d2)
+    end
+    return null
+end
+
+sub combine_lists(list_a, list_b, results)
+    i = 0
+    while i < len(list_a)
+        j = 0
+        while j < len(list_b)
+            combine_all(list_a[i], list_b[j], results)
+            j = j + 1
+        end
+        i = i + 1
+    end
+    return null
+end
+
+sub contains_int(lst, value)
+    i = 0
+    while i < len(lst)
+        if lst[i] == value
+            return true
+        end
+        i = i + 1
+    end
+    return false
+end
+
+sub generate_combinations(start, k, total_choices, prefix, results)
+    if len(prefix) == k
+        copy = []
+        i = 0
+        while i < len(prefix)
+            append(copy, prefix[i])
+            i = i + 1
+        end
+        append(results, copy)
+    else
+        i = start
+        while i < total_choices
+            new_prefix = []
+            j = 0
+            while j < len(prefix)
+                append(new_prefix, prefix[j])
+                j = j + 1
+            end
+            append(new_prefix, i)
+            generate_combinations(i + 1, k, total_choices, new_prefix, results)
+            i = i + 1
+        end
+    end
+    return null
+end
+
+sub longest_run(digits)
+    d0 = [digits[0], 1]
+    d1 = [digits[1], 1]
+    d2 = [digits[2], 1]
+    d3 = [digits[3], 1]
+
+    v0 = [d0]
+    v1 = [d1]
+    v2 = [d2]
+    v3 = [d3]
+
+    v01 = []
+    combine_lists(v0, v1, v01)
+    v02 = []
+    combine_lists(v0, v2, v02)
+    v03 = []
+    combine_lists(v0, v3, v03)
+    v12 = []
+    combine_lists(v1, v2, v12)
+    v13 = []
+    combine_lists(v1, v3, v13)
+    v23 = []
+    combine_lists(v2, v3, v23)
+
+    v012 = []
+    combine_lists(v0, v12, v012)
+    combine_lists(v01, v2, v012)
+    combine_lists(v02, v1, v012)
+
+    v013 = []
+    combine_lists(v0, v13, v013)
+    combine_lists(v01, v3, v013)
+    combine_lists(v03, v1, v013)
+
+    v023 = []
+    combine_lists(v0, v23, v023)
+    combine_lists(v02, v3, v023)
+    combine_lists(v03, v2, v023)
+
+    v123 = []
+    combine_lists(v1, v23, v123)
+    combine_lists(v12, v3, v123)
+    combine_lists(v13, v2, v123)
+
+    v0123 = []
+    combine_lists(v0, v123, v0123)
+    combine_lists(v01, v23, v0123)
+    combine_lists(v02, v13, v0123)
+    combine_lists(v03, v12, v0123)
+    combine_lists(v012, v3, v0123)
+    combine_lists(v013, v2, v0123)
+    combine_lists(v023, v1, v0123)
+
+    reachable = []
+    r = 0
+    while r < len(v0123)
+        f = v0123[r]
+        num = f[0]
+        den = f[1]
+        if den < 0
+            num = 0 - num
+            den = 0 - den
+        end
+        if num > 0 and den > 0 and num % den == 0
+            value = num / den
+            if not contains_int(reachable, value)
+                append(reachable, value)
+            end
+        end
+        r = r + 1
+    end
+
+    n = 1
+    while contains_int(reachable, n)
+        n = n + 1
+    end
+    return n - 1
+end
+
+digit_pool = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+combos = []
+generate_combinations(0, 4, 9, [], combos)
+
+best_length = 0
+best_digits = ""
+
+c = 0
+while c < len(combos)
+    idxs = combos[c]
+    digits = [digit_pool[idxs[0]], digit_pool[idxs[1]], digit_pool[idxs[2]], digit_pool[idxs[3]]]
+    run_length = longest_run(digits)
+    if run_length > best_length
+        best_length = run_length
+        best_digits = str(digits[0]) + str(digits[1]) + str(digits[2]) + str(digits[3])
+    end
+    c = c + 1
+end
+
+print best_digits

@@ -1,0 +1,58 @@
+# Project Euler 27: Quadratic Primes
+# Considering quadratics of the form n^2 + an + b, where |a| < 1000 and
+# |b| <= 1000, find the product of the coefficients a and b that produce
+# the maximum number of primes for consecutive values of n, starting at
+# n = 0.
+# Answer: -59231
+# Note: at n = 0 the formula equals b, so b itself must be prime — that
+# alone rules out most of the |b| <= 1000 range and keeps the search fast.
+
+sub is_prime(n)
+    if n < 2
+        return false
+    end
+    divisor = 2
+    while divisor * divisor <= n
+        if n % divisor == 0
+            return false
+        end
+        divisor = divisor + 1
+    end
+    return true
+end
+
+primes_b = []
+b = 2
+while b <= 999
+    if is_prime(b)
+        append(primes_b, b)
+    end
+    b = b + 1
+end
+
+best_count = 0
+best_a = 0
+best_b = 0
+
+i = 0
+while i < len(primes_b)
+    b = primes_b[i]
+    a = -999
+    while a < 1000
+        n = 0
+        count = 0
+        while is_prime(n * n + a * n + b)
+            count = count + 1
+            n = n + 1
+        end
+        if count > best_count
+            best_count = count
+            best_a = a
+            best_b = b
+        end
+        a = a + 1
+    end
+    i = i + 1
+end
+
+print best_a * best_b

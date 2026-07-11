@@ -1,0 +1,42 @@
+# Project Euler 39: Integer Right Triangles
+# If p is the perimeter of a right triangle with integer sides {a,b,c},
+# there are exactly three solutions for p = 120. For which p <= 1000 is
+# the number of solutions maximised?
+# Answer: 840
+# Note: checking every (a, b) pair for every perimeter is technically
+# correct but does about 28 million checks in this interpreter — slow
+# enough to notice. Solving a + b + c = p and a^2 + b^2 = c^2 together
+# for b in terms of a and p (b = p(p - 2a) / (2(p - a))) turns the inner
+# loop from "try every b" into "compute the one b that could work,"
+# cutting the work by roughly two orders of magnitude.
+
+best_p = 0
+best_count = 0
+
+p = 12
+while p <= 1000
+    count = 0
+    a_max = (p - p % 3) / 3
+    a = 1
+    while a <= a_max
+        numerator = p * (p - 2 * a)
+        denominator = 2 * (p - a)
+        if denominator != 0 and numerator % denominator == 0
+            b = numerator / denominator
+            if b > a
+                c = p - a - b
+                if c > b
+                    count = count + 1
+                end
+            end
+        end
+        a = a + 1
+    end
+    if count > best_count
+        best_count = count
+        best_p = p
+    end
+    p = p + 1
+end
+
+print best_p

@@ -1,0 +1,130 @@
+# sort_lib — sorting and searching, since BARE has no sort() builtin.
+#
+# Every algorithm here works on a list of numbers *or* a list of strings
+# without changes, because BARE's < and > already compare strings
+# alphabetically — the same comparison, just a different kind of value.
+# That's why every parameter below is called "items" instead of "numbers".
+#
+# sort_bubble, sort_selection, and sort_insertion all sort in place (they
+# mutate the list you pass in, then hand it back) and are all worse than
+# each other in different ways on purpose — comparing them is most of the
+# point of having three. sort_linear_search and sort_binary_search are the
+# other half of the lesson: binary search is dramatically faster, but only
+# works if the list is already sorted first.
+#
+# Self-contained: every sub below only calls other subs in this same file.
+# Prefix: every name starts with sort_.
+#
+# To use: copy the sub(s) you want into your personal library (My Library
+# panel → Edit Library File...), or open this file directly in the IDE.
+
+# sort_is_sorted(items) — true if items is already in ascending order.
+sub sort_is_sorted(items)
+    i = 0
+    while i < len(items) - 1
+        if items[i] > items[i + 1]
+            return false
+        end
+        i = i + 1
+    end
+    return true
+end
+
+# sort_bubble(items) — repeatedly walks the list swapping neighbors that are
+# out of order. Simplest sort to understand, slowest to run.
+sub sort_bubble(items)
+    n = len(items)
+    i = 0
+    while i < n - 1
+        j = 0
+        while j < n - 1 - i
+            if items[j] > items[j + 1]
+                temp = items[j]
+                items[j] = items[j + 1]
+                items[j + 1] = temp
+            end
+            j = j + 1
+        end
+        i = i + 1
+    end
+    return items
+end
+
+# sort_selection(items) — for each position, find the smallest remaining
+# item and swap it into place. Fewer swaps than bubble sort, same number of
+# comparisons.
+sub sort_selection(items)
+    n = len(items)
+    i = 0
+    while i < n - 1
+        smallest_index = i
+        j = i + 1
+        while j < n
+            if items[j] < items[smallest_index]
+                smallest_index = j
+            end
+            j = j + 1
+        end
+        if smallest_index != i
+            temp = items[i]
+            items[i] = items[smallest_index]
+            items[smallest_index] = temp
+        end
+        i = i + 1
+    end
+    return items
+end
+
+# sort_insertion(items) — builds up a sorted section at the front of the
+# list one item at a time, sliding each new item left until it's in place.
+# Fast on lists that are already mostly sorted.
+sub sort_insertion(items)
+    n = len(items)
+    i = 1
+    while i < n
+        current = items[i]
+        j = i - 1
+        while j >= 0 and items[j] > current
+            items[j + 1] = items[j]
+            j = j - 1
+        end
+        items[j + 1] = current
+        i = i + 1
+    end
+    return items
+end
+
+# sort_linear_search(items, target) — checks every item one at a time.
+# Works on an unsorted list. Returns the first matching index, or -1.
+sub sort_linear_search(items, target)
+    i = 0
+    while i < len(items)
+        if items[i] == target
+            return i
+        end
+        i = i + 1
+    end
+    return -1
+end
+
+# sort_binary_search(items, target) — items MUST already be sorted
+# ascending (see sort_bubble/sort_selection/sort_insertion above). Cuts the
+# search space in half every step instead of checking one item at a time.
+# Returns a matching index, or -1.
+sub sort_binary_search(items, target)
+    low = 0
+    high = len(items) - 1
+    while low <= high
+        raw_mid = (low + high) / 2
+        mid = raw_mid - (raw_mid % 1)
+        if items[mid] == target
+            return mid
+        end
+        if items[mid] < target
+            low = mid + 1
+        else
+            high = mid - 1
+        end
+    end
+    return -1
+end

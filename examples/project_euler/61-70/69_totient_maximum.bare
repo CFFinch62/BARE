@@ -1,0 +1,24 @@
+# Project Euler 69: Totient Maximum
+# Euler's totient function phi(n) counts integers below n that are
+# coprime to n. Find the value of n <= 1,000,000 for which n/phi(n) is
+# a maximum.
+# Answer: 510510
+# Note: n/phi(n) = product of p/(p-1) over n's distinct prime factors —
+# it grows with each NEW distinct prime factor, regardless of how many
+# times that prime divides n. So the best n is the product of as many
+# of the smallest primes as will fit under the limit: 2*3*5*7*11*13*17 =
+# 510510 (the next prime, 19, would push it over one million).
+
+primes = [2, 3, 5, 7, 11, 13, 17, 19, 23]
+
+product = 1
+i = 0
+while i < len(primes)
+    candidate = product * primes[i]
+    if candidate <= 1000000
+        product = candidate
+    end
+    i = i + 1
+end
+
+print product

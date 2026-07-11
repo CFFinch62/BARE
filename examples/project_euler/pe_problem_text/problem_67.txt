@@ -1,0 +1,34 @@
+Problem 67: Maximum Path Sum II
+
+By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
+
+   3
+  7 4
+ 2 4 6
+8 5 9 3
+
+That is, 3 + 7 + 4 + 9 = 23.
+
+Find the maximum total from top to bottom in triangle.txt (right click and 'Save Link/Target As...'), a 15K text file containing a triangle with one-hundred rows.
+
+NOTE: This is a much more difficult version of Problem 18. It is not possible to try every route to solve this problem, as the number of possible routes increases exponentially. If you could check one trillion (10¹²) routes every second it would take over twenty billion years to check them all. There is an efficient algorithm to solve this.
+
+Hint:
+1. We need to find the maximum path sum in a large triangle
+2. Strategy:
+   - Work from bottom to top
+   - For each number, add the maximum of the two possible numbers below
+   - Continue until reaching the top
+3. Implementation:
+   - Read the triangle from the file
+   - Use dynamic programming to find maximum path
+   - Start from second-to-last row
+4. Optimization:
+   - Only need to store two rows at a time
+   - Can modify the triangle in place
+   - No need to try all paths
+5. Key points:
+   - Similar to Problem 18 but much larger
+   - Cannot use brute force approach
+   - Dynamic programming gives optimal solution
+   - Work backwards from bottom 

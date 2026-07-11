@@ -1,0 +1,30 @@
+Problem 87: Prime Power Triples
+
+The smallest number expressible as the sum of a prime square, prime cube, and prime fourth power is 28. In fact, there are exactly four numbers below fifty that can be expressed in such a way:
+
+28 = 2² + 2³ + 2⁴
+33 = 3² + 2³ + 2⁴
+49 = 5² + 2³ + 2⁴
+47 = 2² + 3³ + 2⁴
+
+How many numbers below fifty million can be expressed as the sum of a prime square, prime cube, and prime fourth power?
+
+Hint:
+1. We need to count numbers expressible as sum of prime powers
+2. Strategy:
+   - Generate primes up to limit
+   - Calculate all possible combinations
+   - Count unique sums
+3. Implementation:
+   - Use sieve for primes
+   - Calculate powers efficiently
+   - Store sums in set
+4. Optimization:
+   - Pre-calculate powers
+   - Use early termination
+   - Consider mathematical bounds
+5. Key points:
+   - Need to handle large numbers
+   - Consider all prime combinations
+   - Track unique sums
+   - Use efficient prime generation 

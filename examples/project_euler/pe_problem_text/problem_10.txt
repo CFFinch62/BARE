@@ -1,0 +1,10 @@
+Problem 10: Summation of Primes
+
+The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
+
+Find the sum of all the primes below two million.
+
+Hint:
+1. Generate all prime numbers below 2,000,000
+2. Sum them up
+3. Consider using the Sieve of Eratosthenes for efficiency 

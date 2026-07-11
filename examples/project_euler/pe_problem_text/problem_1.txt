@@ -1,0 +1,10 @@
+Problem 1: Multiples of 3 or 5
+
+If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
+
+Find the sum of all the multiples of 3 or 5 below 1000.
+
+Hint: 
+1. You can use a loop to iterate through numbers from 1 to 999
+2. Use the modulo operator (%) to check if a number is divisible by 3 or 5
+3. Add the numbers that meet the condition to a running total 

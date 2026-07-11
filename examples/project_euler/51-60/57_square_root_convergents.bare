@@ -1,0 +1,52 @@
+# Project Euler 57: Square Root Convergents
+# The continued fraction for sqrt(2) produces convergents 3/2, 7/5,
+# 17/12, ... where each new numerator/denominator pair is
+# (num + 2*den) / (num + den). In the first 1000 expansions, how many
+# have a numerator with more digits than its denominator?
+# Answer: 153
+# Note: by the 1000th expansion, both numerator and denominator have
+# hundreds of digits — long past exact float range — so both are kept
+# as STRINGS and built up with add_big(), same as 13_large_sum.bare.
+# num + 2*den is just two additions: (num + den) + den.
+
+sub add_big(a, b)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    j = len(b) - 1
+    while i >= 0 or j >= 0 or carry > 0
+        digit_a = 0
+        if i >= 0
+            digit_a = num(a[i])
+        end
+        digit_b = 0
+        if j >= 0
+            digit_b = num(b[j])
+        end
+        total = digit_a + digit_b + carry
+        digit = total % 10
+        carry = (total - digit) / 10
+        result = str(digit) + result
+        i = i - 1
+        j = j - 1
+    end
+    return result
+end
+
+numerator = "1"
+denominator = "1"
+count = 0
+
+i = 0
+while i < 1000
+    new_denominator = add_big(numerator, denominator)
+    new_numerator = add_big(new_denominator, denominator)
+    numerator = new_numerator
+    denominator = new_denominator
+    if len(numerator) > len(denominator)
+        count = count + 1
+    end
+    i = i + 1
+end
+
+print count

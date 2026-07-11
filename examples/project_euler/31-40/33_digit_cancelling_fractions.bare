@@ -1,0 +1,64 @@
+# Project Euler 33: Digit Cancelling Fractions
+# There are exactly four non-trivial fractions less than one, with two
+# digits in numerator and denominator, where cancelling a shared digit
+# gives the same value as the original fraction (like 49/98 = 4/8).
+# If the product of the four fractions is given in lowest terms, find
+# the denominator.
+# Answer: 100
+
+sub gcd(a, b)
+    while b != 0
+        temp = b
+        b = a % b
+        a = temp
+    end
+    return a
+end
+
+sub check_case(cancel_n, keep_n, cancel_d, keep_d, n, d)
+    if cancel_n == cancel_d and cancel_n != 0 and keep_d != 0
+        if keep_n * d == keep_d * n
+            return true
+        end
+    end
+    return false
+end
+
+numerator_product = 1
+denominator_product = 1
+
+d = 10
+while d <= 99
+    n = 10
+    while n < d
+        n_tens = (n - n % 10) / 10
+        n_ones = n % 10
+        d_tens = (d - d % 10) / 10
+        d_ones = d % 10
+
+        if n_ones != 0
+            matched = false
+            if check_case(n_tens, n_ones, d_tens, d_ones, n, d)
+                matched = true
+            end
+            if check_case(n_tens, n_ones, d_ones, d_tens, n, d)
+                matched = true
+            end
+            if check_case(n_ones, n_tens, d_tens, d_ones, n, d)
+                matched = true
+            end
+            if check_case(n_ones, n_tens, d_ones, d_tens, n, d)
+                matched = true
+            end
+            if matched
+                numerator_product = numerator_product * n
+                denominator_product = denominator_product * d
+            end
+        end
+        n = n + 1
+    end
+    d = d + 1
+end
+
+g = gcd(numerator_product, denominator_product)
+print denominator_product / g

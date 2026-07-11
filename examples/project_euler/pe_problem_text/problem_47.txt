@@ -1,0 +1,31 @@
+Problem 47: Distinct Primes Factors
+
+The first two consecutive numbers to have two distinct prime factors are:
+
+14 = 2 × 7
+15 = 3 × 5
+
+The first three consecutive numbers to have three distinct prime factors are:
+
+644 = 2² × 7 × 23
+645 = 3 × 5 × 43
+646 = 2 × 17 × 19
+
+Find the first four consecutive integers to have four distinct prime factors each. What is the first of these numbers?
+
+Hint:
+1. We need to find four consecutive numbers that each have exactly four distinct prime factors
+2. Strategy:
+   - Generate numbers in order
+   - For each number, count its distinct prime factors
+   - Check if the next three numbers also have exactly four distinct prime factors
+3. Implementation:
+   - Use a sieve to pre-compute the number of distinct prime factors for each number
+   - For each number, check if it and the next three numbers have exactly four distinct prime factors
+4. Optimization:
+   - Use a modified sieve of Eratosthenes to count distinct prime factors
+   - Skip numbers that can't be part of the sequence (e.g., numbers with fewer than 4 prime factors)
+5. Key points:
+   - Need to count distinct prime factors, not total prime factors
+   - The numbers must be consecutive
+   - Each number must have exactly four distinct prime factors 

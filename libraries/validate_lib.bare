@@ -1,0 +1,199 @@
+# validate_lib — yes/no checks on strings and numbers.
+#
+# Every "is this a valid X" check here is a plain character-by-character
+# scan — the same thing you'd do by hand if someone handed you a string on
+# paper and asked "is every character in this a letter?" BARE has no
+# regular expressions and no character-class builtins (no is_digit(), no
+# is_alpha()), so a lookup string plus a while loop is the whole toolkit.
+#
+# Self-contained: every sub below only calls other subs in this same file.
+# Prefix: every name starts with valid_.
+#
+# To use: copy the sub(s) you want into your personal library (My Library
+# panel → Edit Library File...), or open this file directly in the IDE.
+
+# valid_in_range(n, low, high) — inclusive on both ends.
+sub valid_in_range(n, low, high)
+    return n >= low and n <= high
+end
+
+# valid_is_leap_year(year) — standard Gregorian calendar rule.
+sub valid_is_leap_year(year)
+    if year % 400 == 0
+        return true
+    end
+    if year % 100 == 0
+        return false
+    end
+    if year % 4 == 0
+        return true
+    end
+    return false
+end
+
+# valid_is_numeric(s) — true if s parses as a plain number: optional
+# leading "-", digits, at most one ".". Rejects "", "-", and ".".
+sub valid_is_numeric(s)
+    if len(s) == 0
+        return false
+    end
+    digits = "0123456789"
+    i = 0
+    if s[0] == "-"
+        i = 1
+    end
+    if i >= len(s)
+        return false
+    end
+    seen_digit = false
+    seen_dot = false
+    while i < len(s)
+        ch = s[i]
+        if ch == "."
+            if seen_dot
+                return false
+            end
+            seen_dot = true
+        else
+            found = false
+            j = 0
+            while j < len(digits)
+                if digits[j] == ch
+                    found = true
+                end
+                j = j + 1
+            end
+            if not found
+                return false
+            end
+            seen_digit = true
+        end
+        i = i + 1
+    end
+    return seen_digit
+end
+
+# valid_is_alpha(s) — true if s is non-empty and every character is an
+# ASCII letter (upper or lower case).
+sub valid_is_alpha(s)
+    if len(s) == 0
+        return false
+    end
+    letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    i = 0
+    while i < len(s)
+        ch = s[i]
+        found = false
+        j = 0
+        while j < len(letters)
+            if letters[j] == ch
+                found = true
+            end
+            j = j + 1
+        end
+        if not found
+            return false
+        end
+        i = i + 1
+    end
+    return true
+end
+
+# valid_is_alnum(s) — true if s is non-empty and every character is an
+# ASCII letter or digit.
+sub valid_is_alnum(s)
+    if len(s) == 0
+        return false
+    end
+    allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    i = 0
+    while i < len(s)
+        ch = s[i]
+        found = false
+        j = 0
+        while j < len(allowed)
+            if allowed[j] == ch
+                found = true
+            end
+            j = j + 1
+        end
+        if not found
+            return false
+        end
+        i = i + 1
+    end
+    return true
+end
+
+# valid_is_upper(s) — true if s contains at least one letter and no
+# lowercase letters (non-letter characters like spaces or digits are fine).
+sub valid_is_upper(s)
+    lower = "abcdefghijklmnopqrstuvwxyz"
+    upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    has_letter = false
+    i = 0
+    while i < len(s)
+        ch = s[i]
+        j = 0
+        while j < len(lower)
+            if lower[j] == ch
+                return false
+            end
+            j = j + 1
+        end
+        j = 0
+        while j < len(upper)
+            if upper[j] == ch
+                has_letter = true
+            end
+            j = j + 1
+        end
+        i = i + 1
+    end
+    return has_letter
+end
+
+# valid_is_lower(s) — true if s contains at least one letter and no
+# uppercase letters.
+sub valid_is_lower(s)
+    lower = "abcdefghijklmnopqrstuvwxyz"
+    upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    has_letter = false
+    i = 0
+    while i < len(s)
+        ch = s[i]
+        j = 0
+        while j < len(upper)
+            if upper[j] == ch
+                return false
+            end
+            j = j + 1
+        end
+        j = 0
+        while j < len(lower)
+            if lower[j] == ch
+                has_letter = true
+            end
+            j = j + 1
+        end
+        i = i + 1
+    end
+    return has_letter
+end
+
+# valid_is_palindrome(s) — true if s reads the same forwards and backwards.
+# Case-sensitive: "Racecar" is not a palindrome by this check, only
+# "racecar" is — lowercase it first with string_lib's str_to_lower if you
+# want a case-insensitive check.
+sub valid_is_palindrome(s)
+    left = 0
+    right = len(s) - 1
+    while left < right
+        if s[left] != s[right]
+            return false
+        end
+        left = left + 1
+        right = right - 1
+    end
+    return true
+end

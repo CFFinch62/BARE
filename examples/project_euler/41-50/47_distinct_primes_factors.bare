@@ -1,0 +1,42 @@
+# Project Euler 47: Distinct Primes Factors
+# 644 = 2^2 x 7 x 23, 645 = 3 x 5 x 43, 646 = 2 x 17 x 19 — the first
+# three consecutive numbers with exactly three distinct prime factors
+# each. Find the first of the first four consecutive integers to each
+# have four distinct prime factors.
+# Answer: 134043
+
+sub distinct_prime_factor_count(n)
+    m = n
+    count = 0
+    p = 2
+    while p * p <= m
+        if m % p == 0
+            count = count + 1
+            while m % p == 0
+                m = m / p
+            end
+        end
+        p = p + 1
+    end
+    if m > 1
+        count = count + 1
+    end
+    return count
+end
+
+n = 2
+run_length = 0
+answer = 0
+while answer == 0
+    if distinct_prime_factor_count(n) == 4
+        run_length = run_length + 1
+        if run_length == 4
+            answer = n - 3
+        end
+    else
+        run_length = 0
+    end
+    n = n + 1
+end
+
+print answer

@@ -1,0 +1,92 @@
+# Project Euler 87: Prime Power Triples
+# 28 = 2^2 + 2^3 + 2^4 is the smallest number expressible as a prime
+# square plus a prime cube plus a prime fourth power. How many numbers
+# below fifty million can be expressed this way?
+# Answer: 1097343
+# Note: the fourth-power prime only needs to go up to 50,000,000^0.25
+# (~84), the cube up to ^(1/3) (~368), and the square up to ^0.5
+# (~7071) — three small sieves instead of one over the full fifty
+# million. A boolean "have we seen this sum before" array over the
+# full fifty million range is still needed to count DISTINCT sums
+# (28 might be reachable in only one way, but nothing rules out two
+# different prime triples landing on the same total), so building that
+# array is the slow part of this program, not the triple search itself.
+
+sub sieve_primes(limit)
+    is_composite = []
+    i = 0
+    while i <= limit
+        append(is_composite, false)
+        i = i + 1
+    end
+    p = 2
+    while p * p <= limit
+        if not is_composite[p]
+            multiple = p * p
+            while multiple <= limit
+                is_composite[multiple] = true
+                multiple = multiple + p
+            end
+        end
+        p = p + 1
+    end
+    result = []
+    n = 2
+    while n <= limit
+        if not is_composite[n]
+            append(result, n)
+        end
+        n = n + 1
+    end
+    return result
+end
+
+limit = 50000000
+
+primes4 = sieve_primes(85)
+primes3 = sieve_primes(370)
+primes2 = sieve_primes(7075)
+
+seen = []
+i = 0
+while i <= limit
+    append(seen, false)
+    i = i + 1
+end
+
+count = 0
+
+i4 = 0
+while i4 < len(primes4)
+    v4 = primes4[i4] * primes4[i4] * primes4[i4] * primes4[i4]
+    if v4 < limit
+        i3 = 0
+        still3 = true
+        while i3 < len(primes3) and still3
+            v3 = primes3[i3] * primes3[i3] * primes3[i3]
+            if v4 + v3 >= limit
+                still3 = false
+            else
+                i2 = 0
+                still2 = true
+                while i2 < len(primes2) and still2
+                    v2 = primes2[i2] * primes2[i2]
+                    total = v4 + v3 + v2
+                    if total >= limit
+                        still2 = false
+                    else
+                        if not seen[total]
+                            seen[total] = true
+                            count = count + 1
+                        end
+                        i2 = i2 + 1
+                    end
+                end
+                i3 = i3 + 1
+            end
+        end
+    end
+    i4 = i4 + 1
+end
+
+print count

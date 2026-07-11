@@ -40,6 +40,7 @@ To build a standalone executable (no Python install required to run it):
 |---|---|---|
 | [docs/language-spec.md](docs/language-spec.md) | Anyone writing BARE programs | The full language: syntax, types, control flow, subs, builtins, examples |
 | [docs/user-guide.md](docs/user-guide.md) | Anyone using the IDE | Editor tabs, the file browser, running/debugging programs, breakpoints, Preferences, the personal library |
+| [libraries/README.md](libraries/README.md) | Anyone writing BARE programs | String/math/data/sort/list/format/validation helpers, written entirely in BARE, ready to copy into your personal library |
 | [curriculum/](curriculum/) | Teachers | A full K-12 learn-to-program curriculum built on BARE (see below) |
 | [dev-docs/ARCHITECTURE.md](dev-docs/ARCHITECTURE.md) | Contributors | Component responsibilities, data flow, threading model |
 | [dev-docs/TESTING_STRATEGY.md](dev-docs/TESTING_STRATEGY.md) | Contributors | Test pyramid, fixtures, how to run the suite |
@@ -82,7 +83,10 @@ print factorial(5)
 ```
 
 See [docs/language-spec.md](docs/language-spec.md) for the complete reference, or
-[examples/](examples/) for runnable sample programs.
+[examples/](examples/) for runnable sample programs. [libraries/](libraries/)
+goes a step further: string, math, dictionary/set, sorting, list, formatting,
+and validation helpers — built entirely out of BARE's 11 keywords and 8
+builtins, proof that a small language can still get you a long way.
 
 ## Project layout
 
@@ -91,6 +95,7 @@ src/bare_core/   Lexer, parser, tree-walking interpreter — no GUI dependency
 src/bare_ide/    PyQt6 IDE: editor, console, debugger, themes, settings
 tests/           Unit + integration tests for bare_core (234 tests)
 examples/        Sample .bare programs (FizzBuzz, factorial, lists, ...)
+libraries/       String/math/data/sort/list/format/validation helpers, written in BARE
 docs/            User-facing language spec and IDE user guide
 curriculum/      K-12 learn-to-program curriculum: lesson plans, worksheets, assessments
 dev-docs/        Design docs, implementation plan, architecture notes

@@ -1,0 +1,39 @@
+# Project Euler 86: Cuboid Route
+# A spider at one corner of a 6x5x3 cuboid room and a fly at the
+# opposite corner have a shortest surface route of length 10. There are
+# exactly 2060 cuboids (up to a maximum side M) with integer dimensions
+# for which that shortest route is also an integer, when M = 100. Find
+# the least M for which the count first exceeds one million.
+# Answer: 1818
+# Note: for the longest side M, the shortest surface route unfolds to a
+# straight line of length sqrt((a+b)^2 + M^2) for the other two sides
+# a <= b <= M — so only the SUM s = a+b matters, not a and b
+# individually. Instead of trying every (a, b) pair (which is what an
+# earlier, much slower version of this file did), this counts how many
+# (a, b) pairs share each sum s directly from a formula, and tests each
+# s only once — turning an O(M^2) sweep per M into an O(M) one.
+
+limit_target = 1000000
+
+M = 0
+count = 0
+while count <= limit_target
+    M = M + 1
+    s = 2
+    while s <= 2 * M
+        if s <= M + 1
+            pairs = (s - s % 2) / 2
+        else
+            half = (s - s % 2) / 2
+            pairs = half - (s - M) + 1
+        end
+        val = s * s + M * M
+        r = round(val ^ 0.5, 0)
+        if r * r == val
+            count = count + pairs
+        end
+        s = s + 1
+    end
+end
+
+print M

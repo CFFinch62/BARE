@@ -1,0 +1,32 @@
+Problem 95: Amicable Chains
+
+The proper divisors of a number are all the divisors excluding the number itself. For example, the proper divisors of 28 are 1, 2, 4, 7, and 14. As the sum of these divisors is equal to 28, we call it a perfect number.
+
+Interestingly, 220 is not a perfect number, but the sum of its proper divisors is 284, and the sum of the proper divisors of 284 is 220, forming a chain of two numbers. For this reason, 220 and 284 are called an amicable pair.
+
+Perhaps less well known are longer chains. For example, starting with 12496, we form a chain of five numbers:
+12496 → 14288 → 15472 → 14536 → 14264 → 12496 → ...
+
+Since this chain returns to its starting point, it is called an amicable chain.
+
+Find the smallest member of the longest amicable chain with no element exceeding one million.
+
+Hint:
+1. We need to find amicable chains
+2. Strategy:
+   - Calculate proper divisor sums
+   - Track chain lengths
+   - Find longest chain
+3. Implementation:
+   - Divisor sum calculator
+   - Chain generator
+   - Cycle detector
+4. Optimization:
+   - Use sieve for divisor sums
+   - Cache intermediate results
+   - Skip numbers in known chains
+5. Key points:
+   - Proper divisors only
+   - Chain must return to start
+   - No element > 1 million
+   - Find smallest member 

@@ -1,0 +1,42 @@
+# Project Euler 72: Counting Fractions
+# For d <= 8 there are 21 reduced proper fractions. How many are there
+# for d <= 1,000,000?
+# Answer: 303963552391
+# Note: the count of reduced fractions with denominator exactly d is
+# phi(d) (Euler's totient), so the answer is the sum of phi(d) for
+# d = 2..1,000,000. Rather than factoring every d separately, this
+# builds all of phi(2..1,000,000) at once with a sieve: phi[i] starts
+# at i, and every time a prime p is found, phi[m] is scaled down by
+# (1 - 1/p) — written as m/p subtracted off — for every multiple m of
+# p. Same sieve shape as 10_summation_of_primes.bare, just updating a
+# running value at each multiple instead of a true/false flag.
+
+limit = 1000000
+
+phi = []
+i = 0
+while i <= limit
+    append(phi, i)
+    i = i + 1
+end
+
+p = 2
+while p <= limit
+    if phi[p] == p
+        m = p
+        while m <= limit
+            phi[m] = phi[m] - phi[m] / p
+            m = m + p
+        end
+    end
+    p = p + 1
+end
+
+total = 0
+n = 2
+while n <= limit
+    total = total + phi[n]
+    n = n + 1
+end
+
+print total

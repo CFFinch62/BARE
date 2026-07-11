@@ -1,0 +1,66 @@
+# Project Euler 41: Pandigital Prime
+# An n-digit pandigital number uses each of the digits 1 to n exactly
+# once (e.g. 2143 is 4-digit pandigital, and prime). What is the largest
+# n-digit pandigital prime that exists?
+# Answer: 7652413
+# Note: 8-digit and 9-digit pandigital numbers always have a digit sum
+# divisible by 3 (1+...+8=36, 1+...+9=45), which means the number itself
+# is always divisible by 3 — never prime. So only 7-digit pandigitals
+# (digit sum 28) are worth generating at all; every permutation of
+# 1234567 is built recursively and checked for primality.
+
+sub remove_at(lst, idx)
+    result = []
+    i = 0
+    while i < len(lst)
+        if i != idx
+            append(result, lst[i])
+        end
+        i = i + 1
+    end
+    return result
+end
+
+sub generate_permutations(remaining, prefix, results)
+    if len(remaining) == 0
+        append(results, prefix)
+    else
+        i = 0
+        while i < len(remaining)
+            next_remaining = remove_at(remaining, i)
+            generate_permutations(next_remaining, prefix + remaining[i], results)
+            i = i + 1
+        end
+    end
+    return null
+end
+
+sub is_prime(n)
+    if n < 2
+        return false
+    end
+    divisor = 2
+    while divisor * divisor <= n
+        if n % divisor == 0
+            return false
+        end
+        divisor = divisor + 1
+    end
+    return true
+end
+
+digits = ["1", "2", "3", "4", "5", "6", "7"]
+results = []
+generate_permutations(digits, "", results)
+
+best = 0
+i = 0
+while i < len(results)
+    n = num(results[i])
+    if is_prime(n) and n > best
+        best = n
+    end
+    i = i + 1
+end
+
+print best

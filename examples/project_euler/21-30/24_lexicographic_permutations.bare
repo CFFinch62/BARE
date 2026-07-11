@@ -1,0 +1,39 @@
+# Project Euler 24: Lexicographic Permutations
+# A permutation is an ordered arrangement of objects. There are 3628800
+# (10!) permutations of the digits 0-9. What is the millionth permutation
+# in lexicographic (dictionary) order?
+# Answer: 2783915460
+# Note: rather than generating and sorting all 3,628,800 permutations,
+# this uses the factorial number system: with 10 digits left to place,
+# there are 9! permutations starting with each choice of first digit, so
+# dividing the target index by 9! picks the first digit outright. Repeat
+# with one fewer digit and one smaller factorial each time.
+
+sub remove_at(lst, idx)
+    result = []
+    i = 0
+    while i < len(lst)
+        if i != idx
+            append(result, lst[i])
+        end
+        i = i + 1
+    end
+    return result
+end
+
+digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+factorials = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
+
+remaining = 999999
+result = ""
+pos = 9
+while pos >= 0
+    f = factorials[pos]
+    idx = (remaining - remaining % f) / f
+    result = result + str(digits[idx])
+    digits = remove_at(digits, idx)
+    remaining = remaining % f
+    pos = pos - 1
+end
+
+print result

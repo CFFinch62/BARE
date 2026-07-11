@@ -1,0 +1,92 @@
+# Project Euler 70: Totient Permutation
+# 87109 and phi(87109) = 79180 are permutations of each other. Find the
+# value of n, 1 < n < 10^7, for which phi(n) is a permutation of n and
+# n/phi(n) is a minimum.
+# Answer: 8319823
+# Note: checking every n up to ten million (and factoring each one)
+# would be far too slow in this interpreter. n/phi(n) is smallest when
+# n has few, large prime factors, so this only considers n = p*q for
+# two distinct primes p, q near sqrt(10^7) — for a product of exactly
+# two primes, phi(n) = (p-1)(q-1), no factorization search needed at
+# all. That search space is a few hundred primes instead of ten million
+# numbers.
+
+sub digit_signature(n)
+    counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    m = n
+    while m > 0
+        d = m % 10
+        m = (m - d) / 10
+        counts[d] = counts[d] + 1
+    end
+    sig = ""
+    d = 0
+    while d <= 9
+        k = 0
+        while k < counts[d]
+            sig = sig + str(d)
+            k = k + 1
+        end
+        d = d + 1
+    end
+    return sig
+end
+
+limit = 4000
+
+is_composite = []
+i = 0
+while i <= limit
+    append(is_composite, false)
+    i = i + 1
+end
+p = 2
+while p * p <= limit
+    if not is_composite[p]
+        multiple = p * p
+        while multiple <= limit
+            is_composite[multiple] = true
+            multiple = multiple + p
+        end
+    end
+    p = p + 1
+end
+
+primes = []
+n = 2
+while n < limit
+    if not is_composite[n]
+        append(primes, n)
+    end
+    n = n + 1
+end
+
+best_n = -1
+best_ratio = 0
+
+i = 0
+while i < len(primes)
+    p = primes[i]
+    j = i + 1
+    still_in_range = true
+    while j < len(primes) and still_in_range
+        q = primes[j]
+        n = p * q
+        if n >= 10000000
+            still_in_range = false
+        else
+            phi = (p - 1) * (q - 1)
+            if digit_signature(n) == digit_signature(phi)
+                ratio = n / phi
+                if best_n == -1 or ratio < best_ratio
+                    best_n = n
+                    best_ratio = ratio
+                end
+            end
+            j = j + 1
+        end
+    end
+    i = i + 1
+end
+
+print best_n

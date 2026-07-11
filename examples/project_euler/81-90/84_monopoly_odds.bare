@@ -1,0 +1,194 @@
+# Project Euler 84: Monopoly Odds
+# Landing probabilities on a Monopoly board aren't uniform once Chance,
+# Community Chest, and "Go To Jail" are accounted for. Using standard
+# 6-sided dice, what are the three most-landed-on squares, as a 6-digit
+# string of their two-digit square numbers in descending order of
+# probability?
+# Answer: 102400 (JAIL=10, E3=24, GO=00)
+# Note: the Chance deck's "go back 3 squares" card can itself land you
+# on Community Chest — which then needs its own card drawn — so
+# resolve_landing() loops until a turn's move truly settles, capped at
+# a few iterations as a safety net. This is a probability problem, not
+# an algebra one: rather than building an exact (and much more
+# complicated) 40-square Markov chain, this plays several million
+# simulated turns with BARE's random() and counts how often each
+# square gets landed on — the same approach most published solutions
+# to this problem use, since the long-run visit frequency is exactly
+# what "probability of landing here" means.
+# GO and D3 (square 19) turned out to be close enough in true
+# probability that a smaller trial run — a few hundred thousand turns —
+# occasionally ranked D3 ahead of GO, which is what led to widening
+# this to several million turns in the first place: not every close
+# race in a simulation is noise, but this particular one was, and
+# there was no way to tell without just running more turns and
+# watching the ranking stabilize.
+
+sub resolve_landing(state)
+    pos = state[0]
+    cc_index = state[1]
+    ch_index = state[2]
+
+    still_resolving = true
+    iterations = 0
+    while still_resolving and iterations < 10
+        iterations = iterations + 1
+        still_resolving = false
+
+        if pos == 30
+            pos = 10
+        end
+
+        is_cc = pos == 2 or pos == 17 or pos == 33
+        if is_cc
+            card = cc_index % 16
+            cc_index = cc_index + 1
+            if card == 0
+                pos = 0
+            end
+            if card == 1
+                pos = 10
+            end
+        end
+
+        is_ch = pos == 7 or pos == 22 or pos == 36
+        if is_ch
+            ch_square = pos
+            card = ch_index % 16
+            ch_index = ch_index + 1
+            handled = false
+
+            if card == 0
+                pos = 0
+                handled = true
+            end
+            if card == 1 and not handled
+                pos = 10
+                handled = true
+            end
+            if card == 2 and not handled
+                pos = 11
+                handled = true
+            end
+            if card == 3 and not handled
+                pos = 24
+                handled = true
+            end
+            if card == 4 and not handled
+                pos = 39
+                handled = true
+            end
+            if card == 5 and not handled
+                pos = 5
+                handled = true
+            end
+            if (card == 6 or card == 7) and not handled
+                if ch_square == 7
+                    pos = 15
+                end
+                if ch_square == 22
+                    pos = 25
+                end
+                if ch_square == 36
+                    pos = 5
+                end
+                handled = true
+            end
+            if card == 8 and not handled
+                if ch_square == 7
+                    pos = 12
+                end
+                if ch_square == 22
+                    pos = 28
+                end
+                if ch_square == 36
+                    pos = 12
+                end
+                handled = true
+            end
+            if card == 9 and not handled
+                pos = pos - 3
+                still_resolving = true
+                handled = true
+            end
+        end
+    end
+
+    state[0] = pos
+    state[1] = cc_index
+    state[2] = ch_index
+    return null
+end
+
+visits = []
+i = 0
+while i < 40
+    append(visits, 0)
+    i = i + 1
+end
+
+state = [0, 0, 0]
+doubles_count = 0
+total_turns = 3000000
+
+turn = 0
+while turn < total_turns
+    d1 = random(1, 6)
+    d2 = random(1, 6)
+    if d1 == d2
+        doubles_count = doubles_count + 1
+    else
+        doubles_count = 0
+    end
+
+    if doubles_count == 3
+        state[0] = 10
+        doubles_count = 0
+    else
+        state[0] = (state[0] + d1 + d2) % 40
+        resolve_landing(state)
+    end
+
+    visits[state[0]] = visits[state[0]] + 1
+    turn = turn + 1
+end
+
+top3 = []
+excluded = []
+k = 0
+while k < 3
+    best_idx = -1
+    best_val = -1
+    i = 0
+    while i < 40
+        already = false
+        j = 0
+        while j < len(excluded)
+            if excluded[j] == i
+                already = true
+            end
+            j = j + 1
+        end
+        if not already and visits[i] > best_val
+            best_val = visits[i]
+            best_idx = i
+        end
+        i = i + 1
+    end
+    append(top3, best_idx)
+    append(excluded, best_idx)
+    k = k + 1
+end
+
+result = ""
+i = 0
+while i < 3
+    idx = top3[i]
+    s = str(idx)
+    if len(s) == 1
+        s = "0" + s
+    end
+    result = result + s
+    i = i + 1
+end
+
+print result

@@ -1,0 +1,157 @@
+# Project Euler 66: Diophantine Equation
+# For x^2 - D*y^2 = 1 (Pell's equation), find the D <= 1000 (D not a
+# perfect square) whose minimal solution has the largest x.
+# Answer: 661
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# D=661's minimal x has 41 digits — nowhere near a float's exact range.
+# The continued fraction of sqrt(D) generates convergents h_k/k_k via
+# h_k = a_k*h_(k-1) + h_(k-2), and the first one where h^2 - D*k^2 = 1
+# is the minimal solution (standard Pell's equation theory), so h and k
+# are kept as digit STRINGS the whole way, exactly like every other
+# bignum problem in this set. The new wrinkle here: checking h^2 needs
+# multiplying a big number by ITSELF, not by a small int, so
+# multiply_big_general() below extends the multiply-by-a-single-digit
+# trick from 20_factorial_digit_sum.bare into full schoolbook long
+# multiplication — multiply by each digit of the second number
+# separately, shift, and add the partial results together with
+# add_big(). Comparing h^2 to D*k^2 + 1 as strings also sidesteps ever
+# needing bignum subtraction (which would have to handle sign).
+
+sub add_big(a, b)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    j = len(b) - 1
+    while i >= 0 or j >= 0 or carry > 0
+        digit_a = 0
+        if i >= 0
+            digit_a = num(a[i])
+        end
+        digit_b = 0
+        if j >= 0
+            digit_b = num(b[j])
+        end
+        total = digit_a + digit_b + carry
+        digit = total % 10
+        carry = (total - digit) / 10
+        result = str(digit) + result
+        i = i - 1
+        j = j - 1
+    end
+    return result
+end
+
+sub multiply_big(a, m)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    while i >= 0 or carry > 0
+        digit = 0
+        if i >= 0
+            digit = num(a[i])
+        end
+        total = digit * m + carry
+        new_digit = total % 10
+        carry = (total - new_digit) / 10
+        result = str(new_digit) + result
+        i = i - 1
+    end
+    return result
+end
+
+sub append_zeros(s, count)
+    result = s
+    i = 0
+    while i < count
+        result = result + "0"
+        i = i + 1
+    end
+    return result
+end
+
+sub multiply_big_general(a, b)
+    result = "0"
+    i = len(b) - 1
+    shift = 0
+    while i >= 0
+        digit = num(b[i])
+        if digit != 0
+            partial = append_zeros(multiply_big(a, digit), shift)
+            result = add_big(result, partial)
+        end
+        shift = shift + 1
+        i = i - 1
+    end
+    return result
+end
+
+sub isqrt(x)
+    r = round(x ^ 0.5, 0)
+    while r * r > x
+        r = r - 1
+    end
+    while (r + 1) * (r + 1) <= x
+        r = r + 1
+    end
+    return r
+end
+
+best_x = ""
+best_d = -1
+
+d_val = 2
+while d_val <= 1000
+    a0 = isqrt(d_val)
+    if a0 * a0 != d_val
+        m = 0
+        d = 1
+        a = a0
+        h_prev2 = "1"
+        h_prev1 = str(a0)
+        k_prev2 = "0"
+        k_prev1 = "1"
+
+        found = false
+        while not found
+            m = d * a - m
+            d = (d_val - m * m) / d
+            a = (a0 + m - (a0 + m) % d) / d
+
+            h = add_big(multiply_big(h_prev1, a), h_prev2)
+            k = add_big(multiply_big(k_prev1, a), k_prev2)
+
+            h_squared = multiply_big_general(h, h)
+            k_squared = multiply_big_general(k, k)
+            rhs = add_big(multiply_big(k_squared, d_val), "1")
+
+            if h_squared == rhs
+                found = true
+                better = false
+                if len(best_x) == 0
+                    better = true
+                else
+                    if len(h) > len(best_x)
+                        better = true
+                    else
+                        if len(h) == len(best_x) and h > best_x
+                            better = true
+                        end
+                    end
+                end
+                if better
+                    best_x = h
+                    best_d = d_val
+                end
+            else
+                h_prev2 = h_prev1
+                h_prev1 = h
+                k_prev2 = k_prev1
+                k_prev1 = k
+            end
+        end
+    end
+    d_val = d_val + 1
+end
+
+print best_d

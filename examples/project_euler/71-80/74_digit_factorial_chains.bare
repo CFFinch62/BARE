@@ -1,0 +1,116 @@
+# Project Euler 74: Digit Factorial Chains
+# 145 = 1! + 4! + 5!. Starting from 69, the chain 69 -> 363600 -> 1454 ->
+# 169 -> 363601 (-> 1454 -> ... a repeat) has five non-repeating terms
+# before it loops. How many starting numbers below one million produce
+# a chain with exactly sixty non-repeating terms?
+# Answer: 402
+# Note: following every chain from scratch for all 999,999 starting
+# numbers would repeat a huge amount of work, since chains merge into
+# shared tails constantly. cache[] remembers the chain length for every
+# number as soon as it's known, so chain_length() only ever walks the
+# NEW part of a chain — the moment it hits a cached number or a number
+# it's already seen in the current walk (closing a loop), it stops and
+# back-fills the length for everything it just walked, including
+# marking every member of a freshly-discovered loop with the loop's own
+# length.
+
+sub digit_factorial_sum(n, factorials)
+    total = 0
+    m = n
+    while m > 0
+        digit = m % 10
+        m = (m - digit) / 10
+        total = total + factorials[digit]
+    end
+    return total
+end
+
+sub index_of(lst, value)
+    i = 0
+    while i < len(lst)
+        if lst[i] == value
+            return i
+        end
+        i = i + 1
+    end
+    return -1
+end
+
+sub chain_length(start, cache, factorials)
+    seq = []
+    x = start
+    cache_found = false
+    loop_found = false
+    while not cache_found and not loop_found
+        if x < len(cache) and cache[x] != 0
+            cache_found = true
+        else
+            idx = index_of(seq, x)
+            if idx != -1
+                loop_found = true
+            else
+                append(seq, x)
+                x = digit_factorial_sum(x, factorials)
+            end
+        end
+    end
+
+    tail = []
+    base = 0
+    if cache_found
+        base = cache[x]
+        tail = seq
+    else
+        idx = index_of(seq, x)
+        loop_len = len(seq) - idx
+        k = idx
+        while k < len(seq)
+            v = seq[k]
+            if v < len(cache)
+                cache[v] = loop_len
+            end
+            k = k + 1
+        end
+        base = loop_len
+        k = 0
+        while k < idx
+            append(tail, seq[k])
+            k = k + 1
+        end
+    end
+
+    offset = 1
+    m = len(tail) - 1
+    while m >= 0
+        v = tail[m]
+        length = base + offset
+        if v < len(cache)
+            cache[v] = length
+        end
+        offset = offset + 1
+        m = m - 1
+    end
+
+    return cache[start]
+end
+
+factorials = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
+
+cache_size = 2200000
+cache = []
+i = 0
+while i <= cache_size
+    append(cache, 0)
+    i = i + 1
+end
+
+count = 0
+start = 1
+while start < 1000000
+    if chain_length(start, cache, factorials) == 60
+        count = count + 1
+    end
+    start = start + 1
+end
+
+print count

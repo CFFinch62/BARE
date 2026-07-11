@@ -1,0 +1,113 @@
+# Project Euler 95: Amicable Chains
+# 220 and 284 are an amicable pair: the proper divisors of each sum to
+# the other. Longer chains exist too, like 12496 -> 14288 -> 15472 ->
+# 14536 -> 14264 -> back to 12496. Find the smallest member of the
+# longest such chain with no element exceeding one million.
+# Answer: 14316
+# Note: a divisor-sum sieve (mark every multiple of every d, like
+# 10_summation_of_primes.bare but adding d instead of flagging it)
+# builds proper-divisor sums for the whole range at once. Each chain is
+# then walked only once ever, caching every number touched as either
+# "part of a cycle of length L" or "not part of any cycle" — so the
+# million starting points only do a total of about a million steps of
+# real work between them, not a million chains' worth.
+
+sub index_of(lst, value)
+    i = 0
+    while i < len(lst)
+        if lst[i] == value
+            return i
+        end
+        i = i + 1
+    end
+    return -1
+end
+
+sub process_chain(start, divisor_sum, status, limit, best)
+    seq = []
+    x = start
+    stopped_reason = 0
+    while stopped_reason == 0
+        if x < 2 or x > limit
+            stopped_reason = 1
+        else
+            if status[x] != 0
+                stopped_reason = 3
+            else
+                idx = index_of(seq, x)
+                if idx != -1
+                    stopped_reason = 2
+                else
+                    append(seq, x)
+                    x = divisor_sum[x]
+                end
+            end
+        end
+    end
+
+    if stopped_reason == 2
+        idx = index_of(seq, x)
+        cycle_len = len(seq) - idx
+        smallest = seq[idx]
+        k = idx
+        while k < len(seq)
+            if seq[k] < smallest
+                smallest = seq[k]
+            end
+            status[seq[k]] = cycle_len
+            k = k + 1
+        end
+        k = 0
+        while k < idx
+            status[seq[k]] = -1
+            k = k + 1
+        end
+        if cycle_len > best[0]
+            best[0] = cycle_len
+            best[1] = smallest
+        end
+    else
+        k = 0
+        while k < len(seq)
+            status[seq[k]] = -1
+            k = k + 1
+        end
+    end
+    return null
+end
+
+limit = 1000000
+
+divisor_sum = []
+i = 0
+while i <= limit
+    append(divisor_sum, 0)
+    i = i + 1
+end
+d = 1
+while d <= limit
+    m = 2 * d
+    while m <= limit
+        divisor_sum[m] = divisor_sum[m] + d
+        m = m + d
+    end
+    d = d + 1
+end
+
+status = []
+i = 0
+while i <= limit
+    append(status, 0)
+    i = i + 1
+end
+
+best = [0, 0]
+start = 2
+while start <= limit
+    if status[start] == 0
+        process_chain(start, divisor_sum, status, limit, best)
+    end
+    start = start + 1
+end
+
+print best[1]

@@ -1,0 +1,28 @@
+Problem 99: Largest Exponential
+
+Comparing two numbers written in index form like 2^11 and 3^7 is not difficult, as any calculator would confirm that 2^11 = 2048 < 3^7 = 2187.
+
+However, confirming that 632382^518061 > 519432^525806 would be much more difficult, as both numbers contain over three million digits.
+
+Using base_exp.txt (right click and 'Save Link/Target As...'), a 22K text file containing one thousand lines with a base/exponent pair on each line, determine which line number has the greatest numerical value.
+
+Hint:
+1. We need to compare very large numbers
+2. Strategy:
+   - Use logarithms for comparison
+   - Compare exponents * log(base)
+   - Find maximum value
+3. Implementation:
+   - Read base/exp pairs
+   - Calculate logarithms
+   - Compare values
+   - Track maximum
+4. Optimization:
+   - Use natural logarithms
+   - Avoid direct computation
+   - Process line by line
+5. Key points:
+   - Large number comparison
+   - Logarithmic transformation
+   - Line number tracking
+   - Precision handling 

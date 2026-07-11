@@ -1,0 +1,23 @@
+Problem 41: Pandigital Prime
+
+We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once. For example, 2143 is a 4-digit pandigital and is also prime.
+
+What is the largest n-digit pandigital prime that exists?
+
+Hint:
+1. A number is pandigital if it uses each digit from 1 to n exactly once
+2. Key observations:
+   - For n=9: Sum of digits 1+2+...+9 = 45, which is divisible by 3
+   - For n=8: Sum of digits 1+2+...+8 = 36, which is divisible by 3
+   - For n=7: Sum of digits 1+2+...+7 = 28, which is not divisible by 3
+   - Numbers divisible by 3 cannot be prime
+3. Therefore, the largest possible pandigital prime must be 7 digits or less
+4. Strategy:
+   - Start with 7-digit pandigital numbers and work downwards
+   - Generate all permutations of digits 1-7
+   - Check each permutation for primality
+   - Return the first prime found (since we're checking from largest to smallest)
+5. Optimization:
+   - Use a sieve to pre-compute primes up to the maximum possible value
+   - Generate permutations in descending order to find the largest prime faster
+   - Skip even numbers and numbers ending in 5 

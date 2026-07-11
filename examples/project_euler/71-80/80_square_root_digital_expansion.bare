@@ -1,0 +1,188 @@
+# Project Euler 80: Square Root Digital Expansion
+# sqrt(2) = 1.41421356237309504880..., and the digit sum of its first
+# 100 decimal digits is 475. For the first 100 natural numbers, sum the
+# digit sums of the first 100 decimal digits of every irrational
+# square root among them.
+# Answer: 40886
+# Note on "first 100 decimal digits": working the sqrt(2) example
+# backwards shows the problem actually wants the first 100 digits of
+# the digit stream "141421356237309504880..." AS A WHOLE, leading '1'
+# included — not 100 digits strictly after the decimal point (which
+# would give 481, not 475, for sqrt(2)). Since every root in this
+# range has exactly one digit before the point, that's 1 + 99 rather
+# than 100 fractional digits — hence summing root[0..99] below, not
+# root[1..100].
+#
+# A LESSON IN LANGUAGE DESIGN, NOT JUST ALGORITHMS:
+# 100 decimal digits is nowhere near a float's exact range, so this
+# can't lean on `^0.5` the way 44_pentagon_numbers.bare and
+# 64_odd_period_square_roots.bare do — this problem needs the digits
+# themselves, not just a yes/no perfect-square check. Instead it uses
+# the pencil-and-paper long-division method for square roots: bring
+# down two digits at a time, and at each step find the largest next
+# digit d such that (20*root + d)*d doesn't exceed the running
+# remainder. Every quantity here (the root being built, the remainder,
+# each trial candidate) is a STRING, because both grow to over 100
+# digits long — this is the same bignum-as-string idea as every other
+# large-number problem in this set, just with a genuinely new
+# operation this folder hasn't needed before: bignum SUBTRACTION,
+# which needs to borrow across digits the way add_big() carries.
+
+sub strip_leading_zeros(s)
+    k = 0
+    while k < len(s) - 1 and s[k] == "0"
+        k = k + 1
+    end
+    result = ""
+    i = k
+    while i < len(s)
+        result = result + s[i]
+        i = i + 1
+    end
+    return result
+end
+
+sub add_big(a, b)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    j = len(b) - 1
+    while i >= 0 or j >= 0 or carry > 0
+        digit_a = 0
+        if i >= 0
+            digit_a = num(a[i])
+        end
+        digit_b = 0
+        if j >= 0
+            digit_b = num(b[j])
+        end
+        total = digit_a + digit_b + carry
+        digit = total % 10
+        carry = (total - digit) / 10
+        result = str(digit) + result
+        i = i - 1
+        j = j - 1
+    end
+    return result
+end
+
+sub multiply_big(a, m)
+    result = ""
+    carry = 0
+    i = len(a) - 1
+    while i >= 0 or carry > 0
+        digit = 0
+        if i >= 0
+            digit = num(a[i])
+        end
+        total = digit * m + carry
+        new_digit = total % 10
+        carry = (total - new_digit) / 10
+        result = str(new_digit) + result
+        i = i - 1
+    end
+    if result == ""
+        result = "0"
+    end
+    return result
+end
+
+sub subtract_big(a, b)
+    result = ""
+    borrow = 0
+    i = len(a) - 1
+    j = len(b) - 1
+    while i >= 0
+        digit_a = num(a[i])
+        digit_b = 0
+        if j >= 0
+            digit_b = num(b[j])
+        end
+        diff = digit_a - digit_b - borrow
+        if diff < 0
+            diff = diff + 10
+            borrow = 1
+        else
+            borrow = 0
+        end
+        result = str(diff) + result
+        i = i - 1
+        j = j - 1
+    end
+    return strip_leading_zeros(result)
+end
+
+sub bignum_gte(a, b)
+    a2 = strip_leading_zeros(a)
+    b2 = strip_leading_zeros(b)
+    if len(a2) != len(b2)
+        return len(a2) > len(b2)
+    end
+    return a2 >= b2
+end
+
+sub compute_candidate(root, d)
+    twenty_root = multiply_big(root, 20)
+    base = add_big(twenty_root, str(d))
+    return multiply_big(base, d)
+end
+
+sub find_best_digit(root, remainder)
+    d = 9
+    while d >= 0
+        candidate = compute_candidate(root, d)
+        if bignum_gte(remainder, candidate)
+            return d
+        end
+        d = d - 1
+    end
+    return 0
+end
+
+sub sqrt_digit_sum(n)
+    n_str = str(n)
+    if len(n_str) == 1
+        n_str = "0" + n_str
+    end
+
+    root = "0"
+    remainder = "0"
+
+    remainder = add_big(multiply_big(remainder, 100), n_str)
+    digit = find_best_digit(root, remainder)
+    remainder = subtract_big(remainder, compute_candidate(root, digit))
+    root = strip_leading_zeros(root + str(digit))
+
+    p = 0
+    while p < 100
+        remainder = add_big(multiply_big(remainder, 100), "0")
+        digit = find_best_digit(root, remainder)
+        remainder = subtract_big(remainder, compute_candidate(root, digit))
+        root = strip_leading_zeros(root + str(digit))
+        p = p + 1
+    end
+
+    total = 0
+    i = 0
+    while i < 100
+        total = total + num(root[i])
+        i = i + 1
+    end
+    return total
+end
+
+sub is_perfect_square(n)
+    r = round(n ^ 0.5, 0)
+    return r * r == n
+end
+
+grand_total = 0
+n = 2
+while n <= 100
+    if not is_perfect_square(n)
+        grand_total = grand_total + sqrt_digit_sum(n)
+    end
+    n = n + 1
+end
+
+print grand_total

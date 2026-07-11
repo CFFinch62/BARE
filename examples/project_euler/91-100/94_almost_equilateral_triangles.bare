@@ -1,0 +1,52 @@
+# Project Euler 94: Almost Equilateral Triangles
+# The "almost equilateral" triangle 5-5-6 has integer sides and integer
+# area (12). Find the sum of the perimeters of all almost equilateral
+# triangles (two sides equal, the third off by exactly one) with
+# integer sides and area, and perimeter <= 1,000,000,000.
+# Answer: 518408346
+# Note: checking every candidate side length directly (an earlier,
+# abandoned version of this file did this) means testing on the order
+# of 300 million values one at a time — far too slow. Solutions turn
+# out to follow a linear recurrence: writing each valid triangle as
+# (a, a, a+diff) with diff = +-1, the sequence of a values satisfies
+# a(n+1) = 4*a(n) - a(n-1) +- 2 (sign matching the new term's diff),
+# a fact discoverable by brute-force checking small cases and noticing
+# the pattern — then trusting the pattern to leap straight to the 14
+# solutions below the billion-perimeter limit instead of scanning for
+# them.
+
+a1 = 5
+d1 = 1
+a2 = 17
+d2 = -1
+
+limit = 1000000000
+total = 0
+
+p1 = 3 * a1 + d1
+if p1 <= limit
+    total = total + p1
+end
+p2 = 3 * a2 + d2
+if p2 <= limit
+    total = total + p2
+end
+
+prev2 = a1
+prev1 = a2
+d = d2
+still_going = true
+while still_going
+    d = 0 - d
+    next_a = 4 * prev1 - prev2 + 2 * d
+    perimeter = 3 * next_a + d
+    if perimeter > limit
+        still_going = false
+    else
+        total = total + perimeter
+        prev2 = prev1
+        prev1 = next_a
+    end
+end
+
+print total

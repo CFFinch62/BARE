@@ -1,0 +1,35 @@
+# Project Euler 45: Triangular, Pentagonal, and Hexagonal
+# T285 = P165 = H143 = 40755. Find the next triangle number that is
+# also pentagonal and hexagonal.
+# Answer: 1533776805
+# Note: every hexagonal number is also triangular (a fact provable from
+# the two formulas), so the search only needs to walk hexagonal numbers
+# — each one already satisfies the triangular half of the requirement —
+# and test each for being pentagonal too, starting just past the known
+# H143 = 40755. "Is x pentagonal?" needs a square root; BARE has no
+# sqrt() built in, but `^` accepts a fractional exponent, so x^0.5 does
+# the job in one native step (see 44_pentagon_numbers.bare for the same
+# trick, and why it beats hand-rolling Newton's method).
+
+sub is_pentagonal(x)
+    n = 1 + 24 * x
+    r = round(n ^ 0.5, 0)
+    if r * r != n
+        return false
+    end
+    return (1 + r) % 6 == 0
+end
+
+n = 144
+found = false
+answer = 0
+while not found
+    h = n * (2 * n - 1)
+    if is_pentagonal(h)
+        answer = h
+        found = true
+    end
+    n = n + 1
+end
+
+print answer

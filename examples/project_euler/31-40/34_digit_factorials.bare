@@ -1,0 +1,35 @@
+# Project Euler 34: Digit Factorials
+# 145 = 1! + 4! + 5!. Find the sum of all numbers which are equal to the
+# sum of the factorial of their digits (1! and 2! don't count, since
+# they aren't sums of more than one digit).
+# Answer: 40730
+# Note: the search only needs to go up to 2540160 (7 x 9!) — an 8-digit
+# number can never equal a sum of only 7 digit-factorials, since even
+# eight 9!s (2903040) has too few digits to reach 8 digits' worth of
+# value... but 7 digits' worth (2540160) is itself only 7 digits, so
+# nothing past 7 digits can ever qualify.
+
+sub digit_factorial_sum(n, factorials)
+    total = 0
+    m = n
+    while m > 0
+        digit = m % 10
+        m = (m - digit) / 10
+        total = total + factorials[digit]
+    end
+    return total
+end
+
+factorials = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
+
+limit = 2540160
+total_sum = 0
+n = 10
+while n <= limit
+    if digit_factorial_sum(n, factorials) == n
+        total_sum = total_sum + n
+    end
+    n = n + 1
+end
+
+print total_sum

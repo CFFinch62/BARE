@@ -1,0 +1,86 @@
+# Project Euler 90: Cube Digit Pairs
+# Two cubes, each with six different digits (0-9) on their faces, can
+# be arranged side by side to show 2-digit numbers. Allowing 6 and 9 to
+# stand in for each other (so a cube can show "09" using a 6 turned
+# upside down), how many distinct pairs of cubes can display all nine
+# square numbers below 100 (01, 04, 09, 16, 25, 36, 49, 64, 81)?
+# Answer: 1217
+# Note: only 210 distinct 6-from-10 digit sets exist (C(10,6)), so all
+# of them are generated once, and then every pair of sets — including a
+# cube paired with itself — is checked against all nine squares. The
+# 6/9 rule is handled inside contains_digit(): asking a set whether it
+# has a 6 also counts having a 9, and vice versa.
+
+sub generate_combinations(start, k, total, prefix, results)
+    if len(prefix) == k
+        append(results, prefix)
+    else
+        i = start
+        while i < total
+            new_prefix = []
+            j = 0
+            while j < len(prefix)
+                append(new_prefix, prefix[j])
+                j = j + 1
+            end
+            append(new_prefix, i)
+            generate_combinations(i + 1, k, total, new_prefix, results)
+            i = i + 1
+        end
+    end
+    return null
+end
+
+sub contains_digit(comb, digit)
+    i = 0
+    while i < len(comb)
+        v = comb[i]
+        if v == digit
+            return true
+        end
+        if digit == 6 and v == 9
+            return true
+        end
+        if digit == 9 and v == 6
+            return true
+        end
+        i = i + 1
+    end
+    return false
+end
+
+sub check_pair(comb1, comb2, squares)
+    k = 0
+    while k < len(squares)
+        pair = squares[k]
+        a = pair[0]
+        b = pair[1]
+        order1 = contains_digit(comb1, a) and contains_digit(comb2, b)
+        order2 = contains_digit(comb2, a) and contains_digit(comb1, b)
+        if not (order1 or order2)
+            return false
+        end
+        k = k + 1
+    end
+    return true
+end
+
+combos = []
+generate_combinations(0, 6, 10, [], combos)
+
+squares = [[0, 1], [0, 4], [0, 9], [1, 6], [2, 5], [3, 6], [4, 9], [6, 4], [8, 1]]
+
+count = 0
+i = 0
+while i < len(combos)
+    j = i
+    while j < len(combos)
+        if check_pair(combos[i], combos[j], squares)
+            count = count + 1
+        end
+        j = j + 1
+    end
+    i = i + 1
+end
+
+print count

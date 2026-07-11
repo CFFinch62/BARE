@@ -1,0 +1,27 @@
+Problem 94: Almost Equilateral Triangles
+
+It is easily proved that no equilateral triangle exists with integral length sides and integral area. However, the almost equilateral triangle 5-5-6 has an area of 12 square units.
+
+We shall define an almost equilateral triangle to be a triangle for which two sides are equal and the third differs by no more than one unit.
+
+Find the sum of the perimeters of all almost equilateral triangles with integral side lengths and area and whose perimeters do not exceed one billion (1,000,000,000).
+
+Hint:
+1. We need to find almost equilateral triangles
+2. Strategy:
+   - Generate Heronian triangles
+   - Check almost equilateral condition
+   - Sum perimeters under limit
+3. Implementation:
+   - Triangle generator
+   - Area calculator
+   - Perimeter checker
+4. Optimization:
+   - Use parametric formulas
+   - Skip non-integral areas
+   - Efficient perimeter calculation
+5. Key points:
+   - Two sides equal
+   - Third side differs by 1
+   - Integral area required
+   - Perimeter limit: 1 billion 

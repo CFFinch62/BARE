@@ -1,0 +1,22 @@
+Problem 39: Integer Right Triangles
+
+If p is the perimeter of a right angle triangle with integral length sides, {a,b,c}, there are exactly three solutions for p = 120.
+
+{20,48,52}, {24,45,51}, {30,40,50}
+
+For which value of p ≤ 1000, is the number of solutions maximised?
+
+Hint:
+1. For a right triangle with sides a, b, c and perimeter p:
+   - a² + b² = c² (Pythagorean theorem)
+   - a + b + c = p
+   - a < b < c
+2. For each perimeter p from 12 to 1000:
+   - Find all possible combinations of a, b, c that satisfy both equations
+   - Count the number of valid solutions
+3. Optimization:
+   - a must be less than p/3 (since a < b < c)
+   - b must be greater than a and less than (p - a)/2
+   - c can be calculated as p - a - b
+4. Keep track of the perimeter with the maximum number of solutions
+5. Note that the minimum perimeter for a right triangle is 12 (3,4,5) 

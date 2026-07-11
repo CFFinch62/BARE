@@ -1,0 +1,43 @@
+# Project Euler 38: Pandigital Multiples
+# 192 x (1,2,3) concatenates to 192384576, a 1 to 9 pandigital number.
+# What is the largest 1 to 9 pandigital 9-digit number that can be formed
+# as the concatenated product of an integer with (1, 2, ..., n) for some
+# n > 1?
+# Answer: 932718654
+
+sub is_pandigital_1to9(s)
+    if len(s) != 9
+        return false
+    end
+    seen = [false, false, false, false, false, false, false, false, false, false]
+    i = 0
+    while i < 9
+        d = num(s[i])
+        if d == 0 or seen[d]
+            return false
+        end
+        seen[d] = true
+        i = i + 1
+    end
+    return true
+end
+
+best = 0
+base = 1
+while base <= 9999
+    combined = ""
+    n = 1
+    while len(combined) < 9
+        combined = combined + str(base * n)
+        n = n + 1
+    end
+    if len(combined) == 9 and is_pandigital_1to9(combined)
+        value = num(combined)
+        if value > best
+            best = value
+        end
+    end
+    base = base + 1
+end
+
+print best

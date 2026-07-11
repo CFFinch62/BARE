@@ -1,0 +1,24 @@
+Problem 56: Powerful Digit Sum
+
+A googol (10¹⁰⁰) is a massive number: one followed by one-hundred zeros; 100¹⁰⁰ is almost unimaginably larger: one followed by two-hundred zeros. Despite their size, the sum of the digits in each number is only 1.
+
+Considering natural numbers of the form, a^b, where a, b < 100, what is the maximum digital sum?
+
+Hint:
+1. We need to find the largest sum of digits for numbers of the form a^b where a,b < 100
+2. Strategy:
+   - Generate all numbers a^b where a,b < 100
+   - Calculate the sum of digits for each number
+   - Keep track of the maximum sum found
+3. Implementation:
+   - Use arbitrary-precision arithmetic for large numbers
+   - Convert numbers to strings to sum digits
+   - Try all combinations of a and b
+4. Optimization:
+   - Skip a=1 and b=1 as they give trivial results
+   - Consider that larger values of a and b tend to give larger sums
+   - Use efficient methods for digit sum calculation
+5. Key points:
+   - Need to handle very large numbers
+   - Consider all valid combinations of a and b
+   - Look for patterns that might give large digit sums 

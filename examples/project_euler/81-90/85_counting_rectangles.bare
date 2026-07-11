@@ -1,0 +1,36 @@
+# Project Euler 85: Counting Rectangles
+# A 3x2 grid contains 18 rectangles. No grid contains exactly two
+# million rectangles — find the area of the grid that comes closest.
+# Answer: 2772
+# Note: an m x n grid contains C(m+1,2) x C(n+1,2) rectangles (choose 2
+# of the m+1 vertical lines and 2 of the n+1 horizontal lines). For
+# each m, n only needs to grow until the count passes two million, so
+# the search stays small.
+
+best_diff = -1
+best_area = 0
+
+m = 1
+while m <= 2000
+    n = 1
+    still_going = true
+    while still_going
+        count = (m * (m + 1) / 2) * (n * (n + 1) / 2)
+        diff = count - 2000000
+        if diff < 0
+            diff = 0 - diff
+        end
+        if best_diff == -1 or diff < best_diff
+            best_diff = diff
+            best_area = m * n
+        end
+        if count > 2000000
+            still_going = false
+        else
+            n = n + 1
+        end
+    end
+    m = m + 1
+end
+
+print best_area
