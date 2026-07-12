@@ -1,0 +1,302 @@
+
+<style>
+  .era-nav { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1.5rem; }
+  .era-btn { padding:6px 14px; font-size:13px; font-weight:500; border:0.5px solid var(--color-border-secondary); border-radius:var(--border-radius-md); background:var(--color-background-primary); color:var(--color-text-secondary); cursor:pointer; transition:background .15s, color .15s, border-color .15s; }
+  .era-btn.active { background:var(--color-background-info); color:var(--color-text-info); border-color:var(--color-border-info); }
+  .era-btn:hover:not(.active) { background:var(--color-background-secondary); color:var(--color-text-primary); }
+  .era-panel { display:none; }
+  .era-panel.visible { display:block; }
+  .code-block { font-family:var(--font-mono); font-size:13px; line-height:1.7; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:1rem 1.25rem; white-space:pre; overflow-x:auto; color:var(--color-text-primary); }
+  .ln  { color:var(--color-text-tertiary); user-select:none; display:inline-block; min-width:2.5rem; }
+  .kw  { color:var(--color-text-info); font-weight:500; }
+  .str { color:var(--color-text-success); }
+  .num { color:var(--color-text-warning); }
+  .cmt { color:var(--color-text-tertiary); font-style:italic; }
+  .era-meta { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:1rem; font-size:12px; }
+  .era-tag { padding:3px 10px; border-radius:var(--border-radius-md); background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); color:var(--color-text-secondary); }
+  .era-title { font-size:16px; font-weight:500; color:var(--color-text-primary); margin:0 0 4px; }
+  .era-subtitle { font-size:13px; color:var(--color-text-secondary); margin:0 0 1rem; }
+  .feat-list { font-size:13px; color:var(--color-text-secondary); margin:.75rem 0 0; line-height:1.8; }
+  .feat-list li { list-style:none; padding:0; }
+  .feat-list li::before { content:'+ '; color:var(--color-text-success); font-weight:500; }
+  .feat-gone li::before { content:'— '; color:var(--color-text-danger); }
+  .section-label { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-tertiary); margin:1rem 0 .4rem; }
+</style>
+
+<div style="padding:1rem 0">
+
+<div class="era-nav">
+  <button class="era-btn active" onclick="show(0)">1964 — Original</button>
+  <button class="era-btn" onclick="show(1)">1968 — GOSUB</button>
+  <button class="era-btn" onclick="show(2)">1975 — Microcomputer</button>
+  <button class="era-btn" onclick="show(3)">1985 — Structured</button>
+  <button class="era-btn" onclick="show(4)">1990s — Modern</button>
+  <button class="era-btn" onclick="show(5)">Today — FreeBASIC</button>
+</div>
+
+<!-- ERA 0: Original Dartmouth -->
+<div class="era-panel visible" id="era-0">
+  <p class="era-title">Dartmouth BASIC (1964)</p>
+  <p class="era-subtitle">Kemeny &amp; Kurtz. Every statement needs a line number. Flow control is pure GOTO. No subroutines.</p>
+  <div class="era-meta">
+    <span class="era-tag">Line numbers required</span>
+    <span class="era-tag">GOTO only</span>
+    <span class="era-tag">No subroutines</span>
+    <span class="era-tag">No string ops</span>
+  </div>
+  <div class="section-label">Program — sum of 1 to N, print if divisible by 3</div>
+  <div class="code-block"><span class="ln">10 </span><span class="kw">REM</span> <span class="cmt">SUM INTEGERS 1 TO N, PRINT MULTIPLES OF 3</span>
+<span class="ln">20 </span><span class="kw">LET</span> N = <span class="num">20</span>
+<span class="ln">30 </span><span class="kw">LET</span> S = <span class="num">0</span>
+<span class="ln">40 </span><span class="kw">LET</span> I = <span class="num">1</span>
+<span class="ln">50 </span><span class="kw">IF</span> I > N <span class="kw">THEN</span> <span class="num">100</span>
+<span class="ln">60 </span><span class="kw">LET</span> S = S + I
+<span class="ln">70 </span><span class="kw">LET</span> R = S - <span class="num">3</span> * <span class="kw">INT</span>(S / <span class="num">3</span>)
+<span class="ln">80 </span><span class="kw">IF</span> R = <span class="num">0</span> <span class="kw">THEN</span> <span class="num">90</span>
+<span class="ln">85 </span><span class="kw">GOTO</span> <span class="num">95</span>
+<span class="ln">90 </span><span class="kw">PRINT</span> <span class="str">"SUM="</span>, S, <span class="str">" AT I="</span>, I
+<span class="ln">95 </span><span class="kw">LET</span> I = I + <span class="num">1</span>
+<span class="ln">96 </span><span class="kw">GOTO</span> <span class="num">50</span>
+<span class="ln">100</span><span class="kw"> PRINT</span> <span class="str">"DONE"</span>
+<span class="ln">110</span><span class="kw"> END</span></div>
+  <ul class="feat-list">
+    <li>LET required for assignment</li>
+    <li>IF/THEN targets a line number only — no ELSE</li>
+    <li>Loops built entirely from IF + GOTO</li>
+    <li>MOD doesn't exist — integer trick needed</li>
+    <li>All variable names one letter (or letter+digit)</li>
+  </ul>
+</div>
+
+<!-- ERA 1: GOSUB era -->
+<div class="era-panel" id="era-1">
+  <p class="era-title">BASIC with GOSUB (late 1960s)</p>
+  <p class="era-subtitle">GOSUB/RETURN added subroutine calls. Still fully line-numbered. FOR/NEXT loops appear. Logic is cleaner but spaghetti persists.</p>
+  <div class="era-meta">
+    <span class="era-tag">Line numbers required</span>
+    <span class="era-tag">GOSUB / RETURN</span>
+    <span class="era-tag">FOR / NEXT</span>
+    <span class="era-tag">Still GOTO-heavy</span>
+  </div>
+  <div class="section-label">Same program — now using GOSUB for the print action</div>
+  <div class="code-block"><span class="ln">10 </span><span class="kw">REM</span> <span class="cmt">SUM 1 TO N, PRINT MULTIPLES OF 3 VIA GOSUB</span>
+<span class="ln">20 </span><span class="kw">LET</span> N = <span class="num">20</span>
+<span class="ln">30 </span><span class="kw">LET</span> S = <span class="num">0</span>
+<span class="ln">40 </span><span class="kw">FOR</span> I = <span class="num">1</span> <span class="kw">TO</span> N
+<span class="ln">50 </span>  <span class="kw">LET</span> S = S + I
+<span class="ln">60 </span>  <span class="kw">IF</span> (<span class="kw">INT</span>(S/<span class="num">3</span>))*<span class="num">3</span> = S <span class="kw">THEN</span> <span class="kw">GOSUB</span> <span class="num">200</span>
+<span class="ln">70 </span><span class="kw">NEXT</span> I
+<span class="ln">80 </span><span class="kw">PRINT</span> <span class="str">"DONE"</span>
+<span class="ln">90 </span><span class="kw">END</span>
+<span class="ln">200</span><span class="kw"> REM</span> <span class="cmt">SUBROUTINE: PRINT CURRENT SUM AND INDEX</span>
+<span class="ln">210</span><span class="kw"> PRINT</span> <span class="str">"SUM="</span>; S; <span class="str">" AT I="</span>; I
+<span class="ln">220</span><span class="kw"> RETURN</span></div>
+  <ul class="feat-list">
+    <li>FOR/NEXT replaces manual loop counter GOTO</li>
+    <li>GOSUB jumps to a subroutine; RETURN comes back</li>
+    <li>Subroutines share global variables — no parameters</li>
+    <li>Subroutines identified only by line number</li>
+    <li>IF/THEN still targets a line or GOSUB — no ELSE yet</li>
+  </ul>
+</div>
+
+<!-- ERA 2: Microcomputer BASIC -->
+<div class="era-panel" id="era-2">
+  <p class="era-title">Microcomputer BASIC (1975–1983)</p>
+  <p class="era-subtitle">Microsoft BASIC, Applesoft, Commodore, TRS-80. Line numbers everywhere. Strings, INPUT, PEEK/POKE. The era of the magazine type-in.</p>
+  <div class="era-meta">
+    <span class="era-tag">Line numbers required</span>
+    <span class="era-tag">String variables ($)</span>
+    <span class="era-tag">INPUT statement</span>
+    <span class="era-tag">PEEK / POKE</span>
+    <span class="era-tag">ON/GOTO dispatch</span>
+  </div>
+  <div class="section-label">Same logic — now interactive, with string output</div>
+  <div class="code-block"><span class="ln">10 </span><span class="kw">REM</span> <span class="cmt">MICROCOMPUTER BASIC - SUM & DIVISIBILITY</span>
+<span class="ln">20 </span><span class="kw">INPUT</span> <span class="str">"HOW HIGH? "</span>, N
+<span class="ln">30 </span>S = <span class="num">0</span>
+<span class="ln">40 </span><span class="kw">FOR</span> I = <span class="num">1</span> <span class="kw">TO</span> N
+<span class="ln">50 </span>  S = S + I
+<span class="ln">60 </span>  <span class="kw">IF</span> S <span class="kw">MOD</span> <span class="num">3</span> = <span class="num">0</span> <span class="kw">THEN</span> <span class="kw">GOSUB</span> <span class="num">200</span>
+<span class="ln">70 </span><span class="kw">NEXT</span> I
+<span class="ln">80 </span><span class="kw">PRINT</span> <span class="str">"ALL DONE!"</span>
+<span class="ln">90 </span><span class="kw">END</span>
+<span class="ln">200</span><span class="kw"> REM</span> <span class="cmt">PRINT SUBROUTINE</span>
+<span class="ln">210</span>A$ = <span class="str">"SUM="</span> + <span class="kw">STR$</span>(S) + <span class="str">" AT I="</span> + <span class="kw">STR$</span>(I)
+<span class="ln">220</span><span class="kw">PRINT</span> A$
+<span class="ln">230</span><span class="kw">RETURN</span></div>
+  <ul class="feat-list">
+    <li>LET now optional — plain assignment works</li>
+    <li>MOD operator available on most dialects</li>
+    <li>String variables use $ suffix; STR$() converts numbers</li>
+    <li>INPUT prompts the user at runtime</li>
+    <li>ON X GOTO / ON X GOSUB for dispatch tables</li>
+    <li>PEEK/POKE for direct memory access (hardware era)</li>
+  </ul>
+</div>
+
+<!-- ERA 3: Structured BASIC -->
+<div class="era-panel" id="era-3">
+  <p class="era-title">Structured BASIC (1985–1990)</p>
+  <p class="era-subtitle">BASICA, GW-BASIC, then QuickBASIC. WHILE/WEND, THEN/ELSE, named SUBs and FUNCTIONs. Line numbers become optional. The spaghetti starts to untangle.</p>
+  <div class="era-meta">
+    <span class="era-tag">Line numbers optional</span>
+    <span class="era-tag">WHILE / WEND</span>
+    <span class="era-tag">IF / THEN / ELSE</span>
+    <span class="era-tag">Named SUB / FUNCTION</span>
+    <span class="era-tag">Local variables</span>
+  </div>
+  <div class="section-label">Same program — named SUB, ELSE branch, no line numbers needed</div>
+  <div class="code-block"><span class="kw">REM</span> <span class="cmt">QUICKBASIC-STYLE STRUCTURED BASIC</span>
+
+<span class="kw">DECLARE SUB</span> PrintSum (s <span class="kw">AS</span> <span class="kw">INTEGER</span>, i <span class="kw">AS</span> <span class="kw">INTEGER</span>)
+
+<span class="kw">DIM</span> n <span class="kw">AS</span> <span class="kw">INTEGER</span>
+<span class="kw">DIM</span> s <span class="kw">AS</span> <span class="kw">INTEGER</span>
+
+<span class="kw">INPUT</span> <span class="str">"How high? "</span>, n
+s = <span class="num">0</span>
+<span class="kw">FOR</span> i = <span class="num">1</span> <span class="kw">TO</span> n
+  s = s + i
+  <span class="kw">IF</span> s <span class="kw">MOD</span> <span class="num">3</span> = <span class="num">0</span> <span class="kw">THEN</span>
+    <span class="kw">CALL</span> PrintSum(s, i)
+  <span class="kw">ELSE</span>
+    <span class="kw">REM</span> <span class="cmt">not a multiple — keep going</span>
+  <span class="kw">END IF</span>
+<span class="kw">NEXT</span> i
+<span class="kw">PRINT</span> <span class="str">"Done."</span>
+
+<span class="kw">SUB</span> PrintSum (s <span class="kw">AS</span> <span class="kw">INTEGER</span>, i <span class="kw">AS</span> <span class="kw">INTEGER</span>)
+  <span class="kw">PRINT</span> <span class="str">"Sum="</span>; s; <span class="str">" at i="</span>; i
+<span class="kw">END SUB</span></div>
+  <ul class="feat-list">
+    <li>Named SUB/FUNCTION with typed parameters</li>
+    <li>IF / THEN / ELSE / END IF blocks — multi-line</li>
+    <li>DIM for variable declarations with types</span>
+    <li>WHILE / WEND (and later DO / LOOP) for conditional loops</li>
+    <li>GOTO still works but is no longer necessary</li>
+    <li>SELECT CASE replaces ON/GOTO dispatch</li>
+  </ul>
+  <ul class="feat-list feat-gone">
+    <li>Line numbers no longer required</li>
+    <li>GOSUB to a number is deprecated in favor of CALL</li>
+  </ul>
+</div>
+
+<!-- ERA 4: 1990s BASIC (VB-era style) -->
+<div class="era-panel" id="era-4">
+  <p class="era-title">1990s BASIC (Visual Basic / QB era)</p>
+  <p class="era-subtitle">Visual Basic, QBasic, PowerBASIC. Full structured programming. Types, arrays, user-defined types. Line numbers gone. Reads like pseudocode.</p>
+  <div class="era-meta">
+    <span class="era-tag">No line numbers</span>
+    <span class="era-tag">DO / LOOP</span>
+    <span class="era-tag">TYPE records</span>
+    <span class="era-tag">Arrays</span>
+    <span class="era-tag">String functions</span>
+  </div>
+  <div class="section-label">Same program — clean modern style, result in a string</div>
+  <div class="code-block"><span class="kw">FUNCTION</span> RunningSum(n <span class="kw">AS</span> <span class="kw">INTEGER</span>) <span class="kw">AS</span> <span class="kw">STRING</span>
+  <span class="kw">DIM</span> s    <span class="kw">AS</span> <span class="kw">INTEGER</span>
+  <span class="kw">DIM</span> i    <span class="kw">AS</span> <span class="kw">INTEGER</span>
+  <span class="kw">DIM</span> out  <span class="kw">AS</span> <span class="kw">STRING</span>
+  s = <span class="num">0</span>
+  out = <span class="str">""</span>
+  <span class="kw">FOR</span> i = <span class="num">1</span> <span class="kw">TO</span> n
+    s = s + i
+    <span class="kw">IF</span> s <span class="kw">MOD</span> <span class="num">3</span> = <span class="num">0</span> <span class="kw">THEN</span>
+      out = out + <span class="str">"Sum="</span> + <span class="kw">STR</span>(s) + <span class="str">" at i="</span> + <span class="kw">STR</span>(i) + <span class="kw">CHR</span>(<span class="num">10</span>)
+    <span class="kw">END IF</span>
+  <span class="kw">NEXT</span> i
+  RunningSum = out
+<span class="kw">END FUNCTION</span>
+
+<span class="kw">DIM</span> n <span class="kw">AS</span> <span class="kw">INTEGER</span>
+<span class="kw">INPUT</span> <span class="str">"How high? "</span>, n
+<span class="kw">PRINT</span> RunningSum(n)
+<span class="kw">PRINT</span> <span class="str">"Done."</span></div>
+  <ul class="feat-list">
+    <li>FUNCTION returns a value — assigned by name</li>
+    <li>Fully local variables with DIM inside procedures</li>
+    <li>String concatenation with + operator</li>
+    <li>CHR() / ASC() / LEN() / MID() string library</li>
+    <li>SELECT CASE, DO WHILE / LOOP, DO / LOOP UNTIL</li>
+    <li>User-defined TYPE records (like structs)</li>
+  </ul>
+  <ul class="feat-list feat-gone">
+    <li>GOTO essentially gone from well-written code</li>
+    <li>GOSUB completely replaced by CALL and FUNCTION</li>
+  </ul>
+</div>
+
+<!-- ERA 5: FreeBASIC -->
+<div class="era-panel" id="era-5">
+  <p class="era-title">FreeBASIC (2004–present)</p>
+  <p class="era-subtitle">Full C-level power with BASIC syntax. Pointers, UDTs, operator overloading, namespaces, inline assembly. Compiles to native binaries.</p>
+  <div class="era-meta">
+    <span class="era-tag">Compiled to native</span>
+    <span class="era-tag">Pointers</span>
+    <span class="era-tag">UDT / TYPE</span>
+    <span class="era-tag">Namespaces</span>
+    <span class="era-tag">No line numbers</span>
+  </div>
+  <div class="section-label">Same program — typed, procedural, native-compiled</div>
+  <div class="code-block"><span class="cmt">' FreeBASIC: sum 1..n, collect divisible-by-3 results</span>
+
+<span class="kw">Type</span> SumResult
+  total  <span class="kw">As Integer</span>
+  atStep <span class="kw">As Integer</span>
+<span class="kw">End Type</span>
+
+<span class="kw">Function</span> CollectSums(n <span class="kw">As Integer</span>) <span class="kw">As String</span>
+  <span class="kw">Dim As Integer</span> s = <span class="num">0</span>, i
+  <span class="kw">Dim As String</span>  out = <span class="str">""</span>
+  <span class="kw">Dim</span> r <span class="kw">As</span> SumResult
+  <span class="kw">For</span> i = <span class="num">1</span> <span class="kw">To</span> n
+    s += i
+    <span class="kw">If</span> s <span class="kw">Mod</span> <span class="num">3</span> = <span class="num">0</span> <span class="kw">Then</span>
+      r.total  = s
+      r.atStep = i
+      out += <span class="str">"Sum="</span> & r.total & <span class="str">" at i="</span> & r.atStep & !<span class="str">"\n"</span>
+    <span class="kw">End If</span>
+  <span class="kw">Next</span> i
+  <span class="kw">Return</span> out
+<span class="kw">End Function</span>
+
+<span class="kw">Dim As Integer</span> n
+<span class="kw">Input</span> <span class="str">"How high? "</span>, n
+<span class="kw">Print</span> CollectSums(n)
+<span class="kw">Print</span> <span class="str">"Done."</span></div>
+  <ul class="feat-list">
+    <li>TYPE (UDT) as proper record structs</li>
+    <li>Compound assignment: +=, -=, *=</li>
+    <li>& string concatenation (vs + which can be ambiguous)</li>
+    <li>Escape sequences in strings with !</li>
+    <li>RETURN keyword to return a value from FUNCTION</li>
+    <li>Pointers, dynamic memory, inline ASM available</li>
+    <li>Compiles to x86/x86-64 native — no interpreter</li>
+  </ul>
+  <ul class="feat-list feat-gone">
+    <li>Line numbers: completely gone</li>
+    <li>GOTO: available but virtually unused</li>
+    <li>GOSUB: gone — replaced entirely by SUB/FUNCTION</li>
+  </ul>
+</div>
+
+</div>
+
+<script>
+function show(n) {
+  document.querySelectorAll('.era-panel').forEach((p,i) => p.classList.toggle('visible', i===n));
+  document.querySelectorAll('.era-btn').forEach((b,i) => b.classList.toggle('active', i===n));
+}
+</script>
+
+The GOTO problem. In 1964, GOTO wasn't bad style — it was the only branching tool that existed. The IF statement could only jump to a line number; there was no IF/THEN/ELSE block. So every decision tree was woven out of numbered lines and jumps, and any program of modest size became very hard to follow.
+
+GOSUB was a big deal. When GOSUB/RETURN arrived it let you think in terms of reusable actions, even though subroutines were still identified by line number, took no parameters, and shared all variables globally. It planted the seed of the idea that became named SUBs.
+
+The microcomputer era froze things. Microsoft BASIC shipped on nearly every home machine from 1975 through the mid-80s, and it was essentially the GOSUB-era dialect with strings and PEEK/POKE bolted on. A whole generation of programmers learned on it.
+
+QuickBASIC was the real structural shift. Named SUBs with typed parameters, IF/THEN/ELSE/END IF blocks, WHILE/DO loops — suddenly BASIC looked like Pascal. GOTO became unnecessary rather than unavoidable.
+
+FreeBASIC closes the gap with C. It keeps the BASIC readability while adding UDTs, pointers, compound assignment, native compilation, and inline assembly. The language you used for a CS elective class and the language you'd write embedded firmware in are the same language.

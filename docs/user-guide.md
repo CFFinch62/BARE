@@ -232,6 +232,15 @@ a mystery where an unfamiliar function came from. The **My Library** panel
 lists every saved function's name and parameters; double-click an entry to
 insert a ready-to-fill-in call at your cursor.
 
+**Starting from ready-made functions**: you don't have to write everything
+from scratch. [`libraries/`](../libraries/) in the project folder has nine
+`.bare` files of subs — string manipulation, math, trigonometry,
+dictionaries built from lists, sorting, list utilities, number formatting,
+validation, and console text UI — all written in plain BARE, ready to
+select and **Save Selection to Library** the same way as any sub you write
+yourself. See [`libraries/README.md`](../libraries/README.md) for what
+each file has and how to pull functions out of it.
+
 **Editing or refactoring your whole library**: saving one sub at a time is
 fine for adding new functions, but sooner or later you'll want to rename
 something, delete an old one, or just clean the file up — for that, use

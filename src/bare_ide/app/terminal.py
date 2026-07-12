@@ -11,7 +11,16 @@ that value to the worker's threading.Event bridge. Nothing here blocks —
 the worker thread is what's waiting, not the GUI.
 """
 
-from PyQt6.QtWidgets import QPlainTextEdit, QWidget, QVBoxLayout, QLabel, QLineEdit
+from PyQt6.QtWidgets import (
+    QPlainTextEdit,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QFrame,
+    QLabel,
+    QLineEdit,
+    QToolButton,
+)
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont, QColor, QTextCursor, QTextCharFormat
 
@@ -42,10 +51,25 @@ class ConsolePane(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        # Header label
-        self.header = QLabel("  CONSOLE")
+        # Header bar: title label + clear button
+        self.header = QFrame()
         self.header.setObjectName("panel_label")
         self.header.setFixedHeight(24)
+        header_layout = QHBoxLayout(self.header)
+        header_layout.setContentsMargins(8, 0, 4, 0)
+        header_layout.setSpacing(0)
+
+        self.header_label = QLabel("CONSOLE")
+        header_layout.addWidget(self.header_label)
+        header_layout.addStretch()
+
+        self.clear_btn = QToolButton()
+        self.clear_btn.setText("🗑")
+        self.clear_btn.setToolTip("Clear Console (Ctrl+L)")
+        self.clear_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.clear_btn.clicked.connect(self.clear)
+        header_layout.addWidget(self.clear_btn)
+
         layout.addWidget(self.header)
 
         # Output area
@@ -93,13 +117,25 @@ class ConsolePane(QWidget):
             }}
         """)
         self.header.setStyleSheet(f"""
-            QLabel {{
+            QFrame#panel_label {{
                 background-color: {theme.panel_background};
-                color: {theme.editor_gutter_fg};
                 border-bottom: 1px solid {theme.panel_border};
+            }}
+            QLabel {{
+                color: {theme.editor_gutter_fg};
                 font-size: 11px;
                 font-weight: bold;
-                padding-left: 8px;
+            }}
+            QToolButton {{
+                background-color: transparent;
+                color: {theme.editor_gutter_fg};
+                border: none;
+                border-radius: 3px;
+                padding: 2px 4px;
+                font-size: 12px;
+            }}
+            QToolButton:hover {{
+                background-color: {theme.browser_item_hover};
             }}
         """)
         self.input_line.setFont(self.output.font())

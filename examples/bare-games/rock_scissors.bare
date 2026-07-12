@@ -1,0 +1,95 @@
+# Rock Scissors (Paper) — ported from BASIC_Games/rockscissors.bas
+# (Creative Computing / David Ahl, "BASIC Computer Games", 1973). Play a
+# fixed number of rounds (at most 10) of rock-paper-scissors against the
+# computer.
+#
+# See ../README.md for general conventions. The original decides the
+# winner through a tangle of `ON X GOTO` and chained `IF`s (see the
+# `.bas` source if curious) that, worked through case by case, resolves
+# to plain rock-paper-scissors rules under the numbering `1=PAPER,
+# 2=SCISSORS, 3=ROCK`. This port states that outcome directly instead of
+# replaying the GOTO maze — same winner in every one of the 6 non-tie
+# combinations, verified case by case against the original.
+
+print "                     GAME OF ROCK, SCISSORS, PAPER"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+
+game_count = 0
+valid_count = false
+while not valid_count
+    game_count = num(input("HOW MANY GAMES? "))
+    if game_count < 11
+        valid_count = true
+    else
+        print "SORRY, BUT WE AREN'T ALLOWED TO PLAY THAT MANY."
+    end
+end
+
+computer_wins = 0
+player_wins = 0
+
+g = 1
+while g <= game_count
+    print ""
+    print "GAME NUMBER " + str(g)
+
+    computer_choice = random(1, 3)
+
+    valid_choice = false
+    while not valid_choice
+        print "3=ROCK...2=SCISSORS...1=PAPER"
+        player_choice = num(input("1...2...3...WHAT'S YOUR CHOICE? "))
+        if player_choice == 1 or player_choice == 2 or player_choice == 3
+            valid_choice = true
+        else
+            print "INVALID."
+        end
+    end
+
+    print "THIS IS MY CHOICE..."
+    if computer_choice == 1
+        print "...PAPER"
+    else
+        if computer_choice == 2
+            print "...SCISSORS"
+        else
+            print "...ROCK"
+        end
+    end
+
+    if computer_choice == player_choice
+        print "TIE GAME.  NO WINNER."
+    else
+        player_beats_computer = false
+        if computer_choice == 1 and player_choice == 2
+            player_beats_computer = true
+        end
+        if computer_choice == 2 and player_choice == 3
+            player_beats_computer = true
+        end
+        if computer_choice == 3 and player_choice == 1
+            player_beats_computer = true
+        end
+
+        if player_beats_computer
+            print "YOU WIN!!!"
+            player_wins = player_wins + 1
+        else
+            print "WOW!  I WIN!!!"
+            computer_wins = computer_wins + 1
+        end
+    end
+
+    g = g + 1
+end
+
+print ""
+print "HERE IS THE FINAL GAME SCORE:"
+print "I HAVE WON " + str(computer_wins) + " GAME(S)."
+print "YOU HAVE WON " + str(player_wins) + " GAME(S)."
+print "AND " + str(game_count - (computer_wins + player_wins)) + " GAME(S) ENDED IN A TIE."
+print ""
+print "THANKS FOR PLAYING!!"

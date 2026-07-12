@@ -1,0 +1,75 @@
+# Hurkle — ported from BASIC_Games/hurkle.bas (Creative Computing / David
+# Ahl, "BASIC Computer Games", 1973). A hurkle hides at a random point on
+# a 10x10 grid; guess its (x, y) and get a compass-direction hint each
+# time you miss. Plays forever, same as the original (no quit prompt).
+#
+# See ../README.md for general conventions. Specific to this file: the
+# original's direction hint is built from two separate PRINT statements
+# with no space between them — "SOUTH" immediately followed by "EAST"
+# prints as the single word "SOUTHEAST". hurkle_hint() below reproduces
+# that exact concatenation-with-no-space behavior on purpose.
+
+sub hurkle_hint(guess_x, guess_y, target_x, target_y)
+    hint = "GO "
+    if guess_y > target_y
+        hint = hint + "SOUTH"
+    else
+        if guess_y < target_y
+            hint = hint + "NORTH"
+        end
+    end
+    if guess_x > target_x
+        hint = hint + "WEST"
+    else
+        if guess_x < target_x
+            hint = hint + "EAST"
+        end
+    end
+    return hint
+end
+
+tries_allowed = 5
+grid_size = 10
+
+while true
+    target_x = random(0, grid_size - 1)
+    target_y = random(0, grid_size - 1)
+
+    print ""
+    print "A HURKLE IS HIDING ON A " + str(grid_size) + " BY " + str(grid_size) + " GRID. HOMEBASE"
+    print "ON THE GRID IS POINT 0,0 IN THE SOUTHWEST CORNER,"
+    print "AND ANY POINT ON THE GRID IS DESIGNATED BY A"
+    print "PAIR OF WHOLE NUMBERS. THE FIRST NUMBER IS THE"
+    print "HORIZONTAL POSITION AND THE SECOND NUMBER"
+    print "IS THE VERTICAL POSITION. YOU MUST TRY TO"
+    print "GUESS THE HURKLE'S GRIDPOINT. YOU GET " + str(tries_allowed) + " TRIES."
+    print "AFTER EACH TRY, I WILL TELL YOU THE APPROXIMATE"
+    print "DIRECTION TO GO TO LOOK FOR THE HURKLE."
+    print ""
+
+    found = false
+    tries_used = 0
+    k = 1
+    while k <= tries_allowed and not found
+        guess_x = num(input("GUESS #" + str(k) + " - X? "))
+        guess_y = num(input("GUESS #" + str(k) + " - Y? "))
+        if guess_x == target_x and guess_y == target_y
+            found = true
+            tries_used = k
+        else
+            print hurkle_hint(guess_x, guess_y, target_x, target_y)
+            print ""
+        end
+        k = k + 1
+    end
+
+    print ""
+    if found
+        print "YOU FOUND HIM IN " + str(tries_used) + " GUESSES!"
+    else
+        print "SORRY, THAT'S " + str(tries_allowed) + " GUESSES."
+        print "THE HURKLE IS AT " + str(target_x) + "," + str(target_y)
+    end
+    print ""
+    print "LET'S PLAY AGAIN, HURKLE IS HIDING."
+end

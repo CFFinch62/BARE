@@ -1,0 +1,60 @@
+# Dice — ported from BASIC_Games/dice.bas (Creative Computing / David Ahl;
+# original by Danny Freidus). Rolls a pair of dice as many times as you
+# ask, then prints how often each total (2-12) came up.
+#
+# See ../README.md for general conventions. Specific to this file: the
+# original's `PRINT V,F(V)` uses BASIC print-zone columns (a comma jumps
+# to the next ~14-character zone) to line up the two-column table. BARE
+# has no print zones, so pad_right() below pads each row to a fixed width
+# by hand instead — the same technique tui_lib.bare uses, inlined here to
+# keep this file self-contained.
+
+sub pad_right(text, width)
+    result = text
+    while len(result) < width
+        result = result + " "
+    end
+    return result
+end
+
+print "                                  DICE"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+print "THIS PROGRAM SIMULATES THE ROLLING OF A"
+print "PAIR OF DICE."
+print "YOU ENTER THE NUMBER OF TIMES YOU WANT THE COMPUTER TO"
+print "'ROLL' THE DICE.  WATCH OUT, VERY LARGE NUMBERS TAKE"
+print "A LONG TIME.  IN PARTICULAR, NUMBERS OVER 5000."
+
+keep_rolling = true
+while keep_rolling
+    frequency = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    print ""
+    rolls = num(input("HOW MANY ROLLS? "))
+
+    s = 1
+    while s <= rolls
+        die_a = random(1, 6)
+        die_b = random(1, 6)
+        total = die_a + die_b
+        frequency[total] = frequency[total] + 1
+        s = s + 1
+    end
+
+    print ""
+    print pad_right("TOTAL SPOTS", 16) + "NUMBER OF TIMES"
+    v = 2
+    while v <= 12
+        print pad_right(str(v), 16) + str(frequency[v])
+        v = v + 1
+    end
+
+    print ""
+    again = input("TRY AGAIN? ")
+    if again != "YES"
+        keep_rolling = false
+    end
+end

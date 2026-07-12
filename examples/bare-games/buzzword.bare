@@ -1,0 +1,40 @@
+# Buzzword Generator — ported from BASIC_Games/buzzword.bas (Creative
+# Computing / David Ahl, "BASIC Computer Games", 1973). Picks one random
+# word from each of three 13-word lists and prints them as a fake
+# "educator-speak" phrase.
+#
+# See ../README.md for general conventions. The original's one 39-slot
+# DATA array is split into three 13-word lists here — same three groups
+# the original picked from (`INT(13*RND(1)+1)`, `+14`, `+27`), just
+# addressed directly instead of via an offset into one big array.
+
+words1 = ["ABILITY", "BASAL", "BEHAVIORAL", "CHILD-CENTERED", "DIFFERENTIATED", "DISCOVERY", "FLEXIBLE", "HETEROGENEOUS", "HOMOGENEOUS", "MANIPULATIVE", "MODULAR", "TAVISTOCK", "INDIVIDUALIZED"]
+words2 = ["LEARNING", "EVALUATIVE", "OBJECTIVE", "COGNITIVE", "ENRICHMENT", "SCHEDULING", "HUMANISTIC", "INTEGRATED", "NON-GRADED", "TRAINING", "VERTICAL AGE", "MOTIVATIONAL", "CREATIVE"]
+words3 = ["GROUPING", "MODIFICATION", "ACCOUNTABILITY", "PROCESS", "CORE CURRICULUM", "ALGORITHM", "PERFORMANCE", "REINFORCEMENT", "OPEN CLASSROOM", "RESOURCE", "STRUCTURE", "FACILITY", "ENVIRONMENT"]
+
+print "                          BUZZWORD GENERATOR"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+print "THIS PROGRAM PRINTS HIGHLY ACCEPTABLE PHRASES IN"
+print "'EDUCATOR-SPEAK'THAT YOU CAN WORK INTO REPORTS"
+print "AND SPEECHES.  WHENEVER A QUESTION MARK IS PRINTED,"
+print "TYPE A 'Y' FOR ANOTHER PHRASE OR 'N' TO QUIT."
+print ""
+print ""
+print "HERE'S THE FIRST PHRASE:"
+
+playing = true
+while playing
+    phrase = words1[random(0, 12)] + " " + words2[random(0, 12)] + " " + words3[random(0, 12)]
+    print phrase
+    print ""
+
+    again = input("? ")
+    if again != "Y"
+        playing = false
+    end
+end
+
+print "COME BACK WHEN YOU NEED HELP WITH ANOTHER REPORT!"

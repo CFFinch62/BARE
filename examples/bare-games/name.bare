@@ -1,0 +1,80 @@
+# Name — ported from BASIC_Games/name.bas (Creative Computing / David
+# Ahl, "BASIC Computer Games", 1973). The computer asks your name,
+# prints it backwards as a "mistake", then sorts its letters
+# alphabetically as a consolation. Runs once and ends — no replay loop
+# in the original.
+#
+# See ../README.md for general conventions. The alphabetization is a
+# textbook insertion sort in the original (`FOR J=2 TO L: ... IF T$>B$(I)
+# THEN ... ELSE shift right`); ported directly as the same algorithm over
+# a BARE list of single characters, since that's exactly what it is.
+
+print "                                  NAME"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+
+print "HELLO."
+print "MY NAME IS CREATIVE COMPUTER."
+name = input("WHAT'S YOUR NAME (FIRST AND LAST)? ")
+
+letters = []
+i = 0
+while i < len(name)
+    append(letters, name[i])
+    i = i + 1
+end
+
+print ""
+reversed_name = ""
+i = len(letters) - 1
+while i >= 0
+    reversed_name = reversed_name + letters[i]
+    i = i - 1
+end
+print "THANK YOU, " + reversed_name + "."
+print "OOPS!  I GUESS I GOT IT BACKWARDS.  A SMART"
+print "COMPUTER LIKE ME SHOULDN'T MAKE A MISTAKE LIKE THAT!"
+print ""
+
+print "BUT I JUST NOTICED YOUR LETTERS ARE OUT OF ORDER."
+
+j = 1
+while j < len(letters)
+    key = letters[j]
+    k = j - 1
+    shifting = true
+    while k >= 0 and shifting
+        if letters[k] > key
+            letters[k + 1] = letters[k]
+            k = k - 1
+        else
+            shifting = false
+        end
+    end
+    letters[k + 1] = key
+    j = j + 1
+end
+
+sorted_name = ""
+i = 0
+while i < len(letters)
+    sorted_name = sorted_name + letters[i]
+    i = i + 1
+end
+print "LET'S PUT THEM IN ORDER LIKE THIS: " + sorted_name
+print ""
+
+agree = input("DON'T YOU LIKE THAT BETTER? ")
+if agree == "YES"
+    print ""
+    print "I KNEW YOU'D AGREE!!"
+else
+    print ""
+    print "I'M SORRY YOU DON'T LIKE IT THAT WAY."
+end
+
+print ""
+print "I REALLY ENJOYED MEETING YOU " + name + "."
+print "HAVE A NICE DAY!"

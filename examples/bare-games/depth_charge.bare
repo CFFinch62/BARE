@@ -1,0 +1,114 @@
+# Depth Charge — ported from BASIC_Games/depthcharge.bas (Creative
+# Computing / David Ahl, "BASIC Computer Games", 1973). Guess a 3-D
+# coordinate to sink a submarine within a limited number of shots, with
+# a compass + too-high/too-low hint after each miss.
+#
+# See ../README.md for general conventions. The original computes
+# `N=INT(LOG(G)/LOG(2))+1` — floor(log2(search area))+1, the number of
+# shots you get — purely as a "how many times can I halve G" count, same
+# trick `guess.bare` uses; BARE has no `log()` at all, so it's a counting
+# loop instead of a log division here too. `INPUT X,Y,Z` becomes three
+# separate labeled prompts, and `ABS()` is the same small local helper
+# used in the other ports that need it.
+
+sub abs_of(x)
+    if x < 0
+        return -x
+    end
+    return x
+end
+
+print "                              DEPTH CHARGE"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+
+search_size = num(input("DIMENSION OF SEARCH AREA? "))
+print ""
+
+remaining = search_size
+shots = 0
+while remaining >= 2
+    remaining = (remaining - (remaining % 2)) / 2
+    shots = shots + 1
+end
+shots = shots + 1
+
+print "YOU ARE THE CAPTAIN OF THE DESTROYER USS COMPUTER"
+print "AN ENEMY SUB HAS BEEN CAUSING YOU TROUBLE.  YOUR"
+print "MISSION IS TO DESTROY IT.  YOU HAVE " + str(shots) + " SHOTS."
+print "SPECIFY DEPTH CHARGE EXPLOSION POINT WITH A"
+print "TRIO OF NUMBERS -- THE FIRST TWO ARE THE"
+print "SURFACE COORDINATES; THE THIRD IS THE DEPTH."
+
+playing = true
+while playing
+    print ""
+    print "GOOD LUCK !"
+    print ""
+
+    sub_x = random(0, search_size - 1)
+    sub_y = random(0, search_size - 1)
+    sub_z = random(0, search_size - 1)
+
+    trial = 1
+    found = false
+    while trial <= shots and not found
+        print ""
+        x = num(input("TRIAL #" + str(trial) + " - X? "))
+        y = num(input("TRIAL #" + str(trial) + " - Y? "))
+        z = num(input("TRIAL #" + str(trial) + " - Z? "))
+
+        if abs_of(x - sub_x) + abs_of(y - sub_y) + abs_of(z - sub_z) == 0
+            found = true
+        else
+            hint = "SONAR REPORTS SHOT WAS "
+            if y > sub_y
+                hint = hint + "NORTH"
+            end
+            if y < sub_y
+                hint = hint + "SOUTH"
+            end
+            if x > sub_x
+                hint = hint + "EAST"
+            end
+            if x < sub_x
+                hint = hint + "WEST"
+            end
+            if y != sub_y or x != sub_x
+                hint = hint + " AND"
+            end
+            if z > sub_z
+                hint = hint + " TOO LOW."
+            end
+            if z < sub_z
+                hint = hint + " TOO HIGH."
+            end
+            if z == sub_z
+                hint = hint + " DEPTH OK."
+            end
+            print hint
+            print ""
+            trial = trial + 1
+        end
+    end
+
+    if found
+        print ""
+        print "B O O M ! ! YOU FOUND IT IN " + str(trial) + " TRIES!"
+    else
+        print ""
+        print "YOU HAVE BEEN TORPEDOED!  ABANDON SHIP!"
+        print "THE SUBMARINE WAS AT " + str(sub_x) + "," + str(sub_y) + "," + str(sub_z)
+    end
+
+    print ""
+    print ""
+    again = input("ANOTHER GAME (Y OR N)? ")
+    if again != "Y"
+        playing = false
+    end
+end
+
+print "OK.  HOPE YOU ENJOYED YOURSELF."

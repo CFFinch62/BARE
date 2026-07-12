@@ -1,8 +1,9 @@
 # libraries/
 
-Seven `.bare` files that build "missing" functionality — string manipulation,
-math, dictionaries, sorting, list utilities, number formatting, validation —
-entirely out of BARE itself: 11 keywords, one loop, one collection type, and
+Nine `.bare` files that build "missing" functionality — string manipulation,
+math, trigonometry, dictionaries, sorting, list utilities, number
+formatting, validation, console text UI — entirely out of BARE itself: 11
+keywords, one loop, one collection type, and
 [8 builtins](../docs/language-spec.md#10-built-in-functions). No Python, no
 new interpreter code, nothing outside the language a student is learning.
 
@@ -23,11 +24,13 @@ problem.
 |---|---|---|
 | [string_lib.bare](string_lib.bare) | `str_` | Reverse, upper/lower/title case, substring, search, trim, split/join, padding, repeat, replace, numeric check |
 | [math_lib.bare](math_lib.bare) | `math_` | abs/sign/clamp, floor/ceil, sqrt (Newton's method), gcd/lcm, primality, factorial, max/min/sum/average/median |
+| [trig_lib.bare](trig_lib.bare) | `trig_` | sin/cos/tan, asin/acos/atan/atan2, exp, natural log (ln), sqrt, deg/rad conversion, pi/e — all via Taylor series with range reduction |
 | [data_lib.bare](data_lib.bare) | `dict_` / `set_` | A dictionary and a set, both built from BARE's one collection type: the list |
 | [sort_lib.bare](sort_lib.bare) | `sort_` | Bubble, selection, and insertion sort; linear and binary search |
 | [list_lib.bare](list_lib.bare) | `list_` | contains, index_of, count, slice, remove_at, insert_at, reverse, concat, unique |
 | [format_lib.bare](format_lib.bare) | `format_` | Zero-padding, thousands separators, binary/hex conversion, Roman numerals, ordinals (1st, 2nd, 3rd...) |
 | [validate_lib.bare](validate_lib.bare) | `valid_` | is-numeric, is-alpha, is-alnum, is-upper, is-lower, is-palindrome, is-leap-year, in-range |
+| [tui_lib.bare](tui_lib.bare) | `tui_` | Boxes, banners, dividers, progress bars, numbered menus, aligned tables, and a busy-wait sleep — console output dressed up with plain strings (no color/cursor control — see the file header for why) |
 
 Every sub is prefixed by its file so you can pull functions from several
 files into the same personal library without name collisions — `str_reverse`

@@ -1,0 +1,308 @@
+# trig_lib — sin, cos, tan, asin, acos, atan, atan2, exp, and ln (log),
+# none of which BARE has as builtins. Every function here is a classic
+# numerical-methods trick, the same kind of "how would you compute this
+# with just a pencil and a lot of patience" technique real math libraries
+# used before anyone trusted a single instruction to do it in hardware:
+#
+#   - sin/cos: Taylor series, after reducing the angle to [-pi, pi] first
+#     (feeding a huge angle straight into a Taylor series either converges
+#     agonizingly slowly or loses all its precision to cancellation).
+#   - atan: Taylor series too, but only converges fast for small inputs,
+#     so large or near-1 inputs get reduced first using two exact
+#     identities (atan(x) = pi/2 - atan(1/x), and the "complementary
+#     angle" trick atan(x) = pi/4 - atan((1-x)/(1+x))) before summing.
+#   - asin/acos: not their own series — built from atan2 and a square
+#     root instead (asin(x) = atan2(x, sqrt(1-x^2)), acos(x) =
+#     atan2(sqrt(1-x^2), x)). That needs a square root, which trig_sqrt
+#     below provides — it's the exact same Newton's-method loop as
+#     math_lib.bare's math_sqrt, duplicated here on purpose rather than
+#     calling across to math_lib.bare, so this file stays self-contained
+#     (see ../libraries/README.md).
+#   - exp: Taylor series after halving x repeatedly until it's small
+#     (e^x = (e^(x/2))^2), then squaring the result back up — the same
+#     repeated-squaring idea used for fast modular exponentiation in
+#     examples/project-euler/91-100/97_large_non_mersenne_prime.bare.
+#   - log (natural log): reduce x into [1, 2) by repeated halving/doubling
+#     (tracking how many halvings, since each one is a factor of ln(2)),
+#     then a fast-converging series for the part that's left.
+#
+# Angles are in radians throughout; trig_deg_to_rad/trig_rad_to_deg
+# convert if you're working with a game or problem that thinks in degrees.
+#
+# Prefix: every name starts with trig_.
+#
+# To use: copy the sub(s) you want into your personal library (My Library
+# panel → Edit Library File...), or open this file directly in the IDE.
+
+# trig_pi() — pi to double precision. BARE has no way to declare a shared
+# constant (subs can't see anything outside their own parameters), so
+# every sub below that needs pi just writes the literal directly; this is
+# here purely so your own code doesn't have to retype the digits.
+sub trig_pi()
+    return 3.141592653589793
+end
+
+# trig_e() — Euler's number, to double precision.
+sub trig_e()
+    return 2.718281828459045
+end
+
+# trig_deg_to_rad(degrees)
+sub trig_deg_to_rad(degrees)
+    pi = 3.141592653589793
+    return degrees * pi / 180
+end
+
+# trig_rad_to_deg(radians)
+sub trig_rad_to_deg(radians)
+    pi = 3.141592653589793
+    return radians * 180 / pi
+end
+
+# trig_sin(x) — x in radians. Reduces x to [-pi, pi] first (using round()
+# to find the nearest multiple of 2*pi to subtract off), then sums the
+# Taylor series x - x^3/3! + x^5/5! - ... term by term, where each term is
+# built from the previous one instead of recomputing a factorial from
+# scratch every time.
+sub trig_sin(x)
+    two_pi = 6.283185307179586
+    k = round(x / two_pi, 0)
+    reduced = x - k * two_pi
+
+    x_squared = reduced * reduced
+    term = reduced
+    result = reduced
+    n = 0
+    i = 0
+    while i < 15
+        n = n + 1
+        denom = (2 * n) * (2 * n + 1)
+        term = term * (0 - x_squared) / denom
+        result = result + term
+        i = i + 1
+    end
+    return result
+end
+
+# trig_cos(x) — x in radians. Same idea as trig_sin: reduce to [-pi, pi],
+# then sum 1 - x^2/2! + x^4/4! - ...
+sub trig_cos(x)
+    two_pi = 6.283185307179586
+    k = round(x / two_pi, 0)
+    reduced = x - k * two_pi
+
+    x_squared = reduced * reduced
+    term = 1
+    result = 1
+    n = 0
+    i = 0
+    while i < 15
+        n = n + 1
+        denom = (2 * n - 1) * (2 * n)
+        term = term * (0 - x_squared) / denom
+        result = result + term
+        i = i + 1
+    end
+    return result
+end
+
+# trig_tan(x) — x in radians. Just sin/cos — BARE's own division-by-zero
+# check will complain if x lands exactly on an asymptote (pi/2, 3*pi/2,
+# ...), the same as dividing by zero anywhere else in BARE.
+sub trig_tan(x)
+    return trig_sin(x) / trig_cos(x)
+end
+
+# trig_atan(x) — arctangent, result in radians in (-pi/2, pi/2). The
+# direct Taylor series (x - x^3/3 + x^5/5 - ...) only converges fast for
+# small x, so this reduces first: |x| > 1 uses atan(x) = pi/2 - atan(1/x)
+# to get into [0, 1], then |x| > 0.5 uses the complementary-angle identity
+# atan(x) = pi/4 - atan((1-x)/(1+x)) to shrink further into [0, 1/3] where
+# the series converges in a handful of terms.
+sub trig_atan(x)
+    pi = 3.141592653589793
+    negative = false
+    value = x
+    if value < 0
+        negative = true
+        value = 0 - value
+    end
+
+    used_reciprocal = false
+    if value > 1
+        value = 1 / value
+        used_reciprocal = true
+    end
+
+    used_complement = false
+    if value > 0.5
+        value = (1 - value) / (1 + value)
+        used_complement = true
+    end
+
+    x_squared = value * value
+    power = value
+    result = 0
+    n = 1
+    i = 0
+    while i < 40
+        result = result + power / n
+        power = 0 - power * x_squared
+        n = n + 2
+        i = i + 1
+    end
+
+    if used_complement
+        result = pi / 4 - result
+    end
+    if used_reciprocal
+        result = pi / 2 - result
+    end
+    if negative
+        result = 0 - result
+    end
+    return result
+end
+
+# trig_atan2(y, x) — the angle (in radians, -pi to pi) of the point
+# (x, y) from the origin, handling all four quadrants and the x = 0 cases
+# that plain trig_atan(y / x) can't (it would divide by zero, or silently
+# give the wrong quadrant since y/x can't tell (1,1) apart from (-1,-1)).
+sub trig_atan2(y, x)
+    pi = 3.141592653589793
+    if x > 0
+        return trig_atan(y / x)
+    end
+    if x < 0
+        if y >= 0
+            return trig_atan(y / x) + pi
+        else
+            return trig_atan(y / x) - pi
+        end
+    end
+    if y > 0
+        return pi / 2
+    end
+    if y < 0
+        return 0 - pi / 2
+    end
+    return 0
+end
+
+# trig_sqrt(x) — Newton's method, the exact same loop as math_lib.bare's
+# math_sqrt, duplicated here (not called across files) so trig_lib.bare
+# stays self-contained. Only used internally by trig_asin/trig_acos below;
+# feel free to call it directly too, same as math_sqrt.
+sub trig_sqrt(x)
+    if x < 0
+        return -1
+    end
+    if x == 0
+        return 0
+    end
+    guess = x
+    diff = 1
+    while diff > 0.0000001
+        next_guess = (guess + x / guess) / 2
+        diff = guess - next_guess
+        if diff < 0
+            diff = 0 - diff
+        end
+        guess = next_guess
+    end
+    return guess
+end
+
+# trig_asin(x) — arcsine, result in radians in [-pi/2, pi/2]. Valid only
+# for x in [-1, 1]; out-of-domain input returns -999 (not -1 — asin's own
+# output range includes -1, e.g. asin of some valid input near -0.84, so
+# -1 wouldn't be a safe "this is invalid" signal here the way it is for
+# math_sqrt). Built from trig_atan2 and trig_sqrt via the identity
+# asin(x) = atan2(x, sqrt(1 - x^2)).
+sub trig_asin(x)
+    if x < -1 or x > 1
+        return -999
+    end
+    return trig_atan2(x, trig_sqrt(1 - x * x))
+end
+
+# trig_acos(x) — arccosine, result in radians in [0, pi]. Valid only for
+# x in [-1, 1]; out-of-domain input returns -999 (see trig_asin above for
+# why that sentinel and not -1). Built the same way as trig_asin, via
+# acos(x) = atan2(sqrt(1 - x^2), x).
+sub trig_acos(x)
+    if x < -1 or x > 1
+        return -999
+    end
+    return trig_atan2(trig_sqrt(1 - x * x), x)
+end
+
+# trig_exp(x) — e^x. Halves x repeatedly until it's small enough for the
+# Taylor series 1 + x + x^2/2! + x^3/3! + ... to converge quickly and
+# accurately, then squares the result back up the same number of times
+# (e^x = (e^(x/2))^2), the repeated-squaring trick.
+sub trig_exp(x)
+    reduced = x
+    halvings = 0
+    while reduced > 1 or reduced < -1
+        reduced = reduced / 2
+        halvings = halvings + 1
+    end
+
+    term = 1
+    result = 1
+    n = 1
+    i = 0
+    while i < 30
+        term = term * reduced / n
+        result = result + term
+        n = n + 1
+        i = i + 1
+    end
+
+    while halvings > 0
+        result = result * result
+        halvings = halvings - 1
+    end
+    return result
+end
+
+# trig_log(x) — natural log (ln). Returns -1 for x <= 0, since BARE subs
+# have no way to raise a runtime error of their own (same convention as
+# math_lib.bare's math_sqrt). Reduces x into [1, 2) by repeated
+# halving/doubling (tracking the count, since each halving/doubling is
+# worth one factor of ln(2)), then uses the fast-converging series
+# ln(m) = 2*(z + z^3/3 + z^5/5 + ...) where z = (m-1)/(m+1), which stays
+# well inside its convergence radius for any m in [1, 2).
+sub trig_log(x)
+    if x <= 0
+        return -1
+    end
+    ln2 = 0.6931471805599453
+
+    value = x
+    halvings = 0
+    while value >= 2
+        value = value / 2
+        halvings = halvings + 1
+    end
+    while value < 1
+        value = value * 2
+        halvings = halvings - 1
+    end
+
+    z = (value - 1) / (value + 1)
+    z_squared = z * z
+    term = z
+    result = 0
+    n = 1
+    i = 0
+    while i < 30
+        result = result + term / n
+        term = term * z_squared
+        n = n + 2
+        i = i + 1
+    end
+
+    return 2 * result + halvings * ln2
+end

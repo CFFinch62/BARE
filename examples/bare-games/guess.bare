@@ -1,0 +1,70 @@
+# Guess — ported from BASIC_Games/guess.bas (Creative Computing / David Ahl,
+# "BASIC Computer Games", 1973). Pick a limit, the computer picks a secret
+# number in [1, limit], you guess until you find it; entering 0 or a
+# negative number restarts with a fresh limit. Like the original, there is
+# no "quit" option beyond that — it plays forever, which is fine in the
+# BARE IDE since a runaway loop can always be stopped from there.
+#
+# See ../README.md for general conventions. Specific to this file: the
+# original computes an "optimal number of guesses" as
+# INT(LOG(L)/LOG(2))+1 — floor(log2(limit))+1, the number of guesses a
+# perfect binary search would need. BARE has no log() at all, but this
+# doesn't need one: floor(log2(L)) is just "how many times can I halve L
+# before it reaches 1", answered by a counting loop instead. Doing it with
+# exact integer halving (rather than the original's floating-point LOG
+# division) also sidesteps a float-precision quirk the original had right
+# at exact powers of two.
+
+play_with_new_limit = true
+while play_with_new_limit
+    limit = num(input("THIS IS A NUMBER GUESSING GAME. I'LL THINK OF A NUMBER\nBETWEEN 1 AND ANY LIMIT YOU WANT.\nWHAT LIMIT DO YOU WANT? "))
+    print ""
+
+    remaining = limit
+    optimal = 0
+    while remaining >= 2
+        remaining = (remaining - (remaining % 2)) / 2
+        optimal = optimal + 1
+    end
+    optimal = optimal + 1
+
+    print "I'M THINKING OF A NUMBER BETWEEN 1 AND " + str(limit)
+
+    keep_playing_same_limit = true
+    while keep_playing_same_limit
+        target = random(1, limit)
+        tries = 1
+        print "NOW YOU TRY TO GUESS WHAT IT IS."
+
+        guess = num(input("? "))
+        while guess > 0 and guess != target
+            if guess > target
+                print "TOO HIGH. TRY A SMALLER ANSWER."
+            else
+                print "TOO LOW. TRY A BIGGER ANSWER."
+            end
+            tries = tries + 1
+            guess = num(input("? "))
+        end
+
+        if guess <= 0
+            keep_playing_same_limit = false
+        else
+            print "THAT'S IT! YOU GOT IT IN " + str(tries) + " TRIES."
+            if tries < optimal
+                print "VERY GOOD."
+            else
+                if tries == optimal
+                    print "GOOD."
+                else
+                    print "YOU SHOULD HAVE BEEN ABLE TO GET IT IN ONLY " + str(optimal)
+                end
+            end
+            print ""
+            print ""
+            print ""
+            print ""
+            print ""
+        end
+    end
+end

@@ -1,0 +1,151 @@
+# Animal — ported from BASIC_Games/animal.bas (Creative Computing / David
+# Ahl, "BASIC Computer Games", 1973). The computer plays 20-questions
+# against you: it walks a yes/no decision tree trying to guess your
+# animal, and when it guesses wrong it asks you to teach it a new
+# question that tells your animal apart from its wrong guess, growing
+# the tree for next time.
+#
+# See ../README.md for general conventions. Specific to this file:
+#
+# The original stores its whole decision tree in one BASIC string array
+# (`DIM A$(200)`), with a tiny hand-rolled markup baked into each string
+# — "\Q...\Y2\N3\" for a question node (ask "...", go to slot 2 on Y, slot
+# 3 on N) or "\AFISH" for a leaf (the answer is "FISH") — because BASIC
+# arrays can only hold one type per array. BARE lists can hold anything,
+# including other lists, so the tree is ported as an actual tree instead
+# of a string format: each entry in `nodes` is either a question node
+# `["Q", question_text, yes_index, no_index]` or an answer/leaf node
+# `["A", animal_name]`. This is a restructuring, not a re-encoding —
+# same growing binary tree, same growth rule (a wrong guess gets pushed
+# to a new slot, the new animal gets pushed next to it, and the guessed
+# node itself turns into the new distinguishing question), just without
+# needing to invent and then parse a string format for it.
+#
+# Classic BASIC's `INPUT "prompt";var` auto-appends "? " after the
+# prompt (a semicolon suppresses nothing; only a comma would). Every
+# input prompt below bakes that "? " in explicitly, same as the other
+# ports.
+#
+# Tree-traversal and teach-the-answer questions require an exact
+# uppercase "Y" or "N" and re-ask until they get one (matching the
+# original's `IF C$<>"Y" AND C$<>"N" THEN ...`). The two "are you
+# thinking of an animal" / "is it a X" prompts do NOT validate — any
+# non-"Y" first character (including empty input) is silently treated
+# as "no", matching `IF LEFT$(A$,1)="Y"` with no re-ask loop around it.
+#
+# No quit path exists in the original beyond killing the process — kept
+# that way here too (see PORT_STATUS.md's note on games with no exit).
+
+print "                                ANIMAL"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+print "PLAY 'GUESS THE ANIMAL'"
+print ""
+print "THINK OF AN ANIMAL AND THE COMPUTER WILL TRY TO GUESS IT."
+print ""
+
+nodes = []
+append(nodes, ["Q", "DOES IT SWIM", 1, 2])
+append(nodes, ["A", "FISH"])
+append(nodes, ["A", "BIRD"])
+
+playing = true
+while playing
+    ready = false
+    while not ready
+        ans = input("ARE YOU THINKING OF AN ANIMAL? ")
+        if ans == "LIST"
+            print ""
+            print "ANIMALS I ALREADY KNOW ARE:"
+            row = ""
+            col = 0
+            i = 0
+            while i < len(nodes)
+                node = nodes[i]
+                if node[0] == "A"
+                    padded = node[1]
+                    while len(padded) < 15
+                        padded = padded + " "
+                    end
+                    row = row + padded
+                    col = col + 1
+                    if col == 4
+                        print row
+                        row = ""
+                        col = 0
+                    end
+                end
+                i = i + 1
+            end
+            if col > 0
+                print row
+            end
+            print ""
+            print ""
+        else
+            if len(ans) > 0 and ans[0] == "Y"
+                ready = true
+            end
+        end
+    end
+
+    current = 0
+    node = nodes[current]
+    while node[0] == "Q"
+        question = node[1]
+        yes_index = node[2]
+        no_index = node[3]
+        reply = input(question + "? ")
+        valid = false
+        while not valid
+            if len(reply) > 0 and (reply[0] == "Y" or reply[0] == "N")
+                valid = true
+            else
+                reply = input(question + "? ")
+            end
+        end
+        if reply[0] == "Y"
+            current = yes_index
+        else
+            current = no_index
+        end
+        node = nodes[current]
+    end
+
+    guessed_animal = node[1]
+    guess_reply = input("IS IT A " + guessed_animal + "? ")
+    if len(guess_reply) > 0 and guess_reply[0] == "Y"
+        print "WHY NOT TRY ANOTHER ANIMAL?"
+    else
+        new_animal = input("THE ANIMAL YOU WERE THINKING OF WAS A ? ")
+        print "PLEASE TYPE IN A QUESTION THAT WOULD DISTINGUISH A"
+        print new_animal + " FROM A " + guessed_animal
+        new_question = input("? ")
+
+        learn_reply = input("FOR A " + new_animal + " THE ANSWER WOULD BE ? ")
+        valid = false
+        while not valid
+            if len(learn_reply) > 0 and (learn_reply[0] == "Y" or learn_reply[0] == "N")
+                valid = true
+            else
+                learn_reply = input("FOR A " + new_animal + " THE ANSWER WOULD BE ? ")
+            end
+        end
+
+        old_index = len(nodes)
+        append(nodes, node)
+        new_index = len(nodes)
+        append(nodes, ["A", new_animal])
+
+        if learn_reply[0] == "Y"
+            nodes[current] = ["Q", new_question, new_index, old_index]
+        else
+            nodes[current] = ["Q", new_question, old_index, new_index]
+        end
+    end
+
+    print ""
+    print ""
+end

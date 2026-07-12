@@ -30,12 +30,12 @@
 # What BARE's language design DOES cost here is speed, not
 # expressiveness — see SKIPPED_PROBLEMS.md. The Python original takes
 # about 29 seconds. The same algorithm, same asymptotic complexity, in
-# this tree-walking interpreter is the reason problem 60 was left out
-# of the rest of this set: extrapolating from every other prime-heavy
-# example in this folder, this program is expected to take on the
-# order of HOURS to finish, for the exact same reason the two languages
-# otherwise read almost line-for-line identical. Left here to run
-# overnight if you're curious, not because anyone should wait for it.
+# this tree-walking interpreter measured at 2,279 seconds (38 minutes)
+# in the BARE IDE — ~79x slower than Python, for the exact same reason
+# the two languages otherwise read almost line-for-line identical. Slow,
+# but not the "order of HOURS" this comment originally guessed before
+# anyone had actually timed it — 38 minutes is a real wait, not an
+# overnight one.
 
 sub is_prime(n)
     if n < 2

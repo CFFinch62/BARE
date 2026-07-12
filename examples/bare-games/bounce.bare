@@ -1,0 +1,164 @@
+# Bounce — ported from BASIC_Games/bounce.bas (Creative Computing / David
+# Ahl, "BASIC Computer Games", 1973). Simulates a ball thrown straight up
+# and bouncing with a given coefficient of elasticity, plotting height
+# vs. time as rows of "0" characters — a real physics simulation and
+# ASCII plot, not just a text game, despite its short original length.
+#
+# See ../README.md for general conventions. Specific to this file:
+#
+# The original uses `TAB(n)` as an absolute column jump within a single
+# printed row (build up a row across several `PRINT ...;` statements,
+# each `TAB()` moving the "cursor" forward before the next piece is
+# written). BARE has no cursor, so each row is built as an ordinary
+# string: pad it with spaces until it's `n - 1` characters long (BASIC's
+# `TAB(n)` is 1-indexed), then append the next piece — and if the row is
+# already that long or longer, append immediately with no padding at
+# all. That second half matters: real `TAB()` never backs up, so when
+# two plotted points land in the same column (or a later one lands
+# "before" where the cursor already is), the original just runs them
+# together with no gap. This port reproduces that exactly rather than
+# smoothing it over.
+#
+# BARE has no `floor()`/`INT()` or `abs()` built in, so both are small
+# helper subs here: `floor_of` (nonnegative inputs only, which is all
+# this game ever produces — heights, times, and coefficients here never
+# go negative) and `abs_of`.
+#
+# The original's `FOR T=0 TO T(I) STEP S2` relies on BASIC's float
+# comparison happening to land on the endpoint; this port adds a tiny
+# epsilon to the `<=` check so accumulated floating-point error doesn't
+# silently drop the last tick of an arc.
+#
+# Like the source (`GOTO 135` at the very end), this reruns the
+# simulation forever with fresh inputs — no quit prompt exists in the
+# original.
+
+sub floor_of(x)
+    r = round(x, 0)
+    if r <= x
+        return r
+    end
+    return r - 1
+end
+
+sub abs_of(x)
+    if x < 0
+        return -x
+    end
+    return x
+end
+
+print "                                BOUNCE"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+print "THIS SIMULATION LETS YOU SPECIFY THE INITIAL VELOCITY"
+print "OF A BALL THROWN STRAIGHT UP, AND THE COEFFICIENT OF"
+print "ELASTICITY OF THE BALL.  PLEASE USE A DECIMAL FRACTION"
+print "COEFFICIENCY (LESS THAN 1)."
+print ""
+print "YOU ALSO SPECIFY THE TIME INCREMENT TO BE USED IN"
+print "'STROBING' THE BALL'S FLIGHT (TRY .1 INITIALLY)."
+print ""
+
+while true
+    s2 = num(input("TIME INCREMENT (SEC)? "))
+    print ""
+    v = num(input("VELOCITY (FPS)? "))
+    print ""
+    c = num(input("COEFFICIENT? "))
+    print ""
+    print "FEET"
+    print ""
+
+    arc_count = floor_of(70 / (v / (16 * s2)))
+
+    arc_time = []
+    idx = 0
+    while idx <= arc_count + 1
+        append(arc_time, 0)
+        idx = idx + 1
+    end
+    i = 1
+    while i <= arc_count
+        arc_time[i] = v * (c ^ (i - 1)) / 16
+        i = i + 1
+    end
+
+    h_start = floor_of(-16 * (v / 32) ^ 2 + (v ^ 2) / 32 + 0.5)
+
+    step_count = 0
+    h = h_start
+    while h >= 0
+        row = ""
+        if floor_of(h) == h
+            row = row + str(h)
+        end
+
+        step_count = 0
+        i = 1
+        stop_arcs = false
+        while i <= arc_count and not stop_arcs
+            decay = c ^ (i - 1)
+            t = 0
+            while t <= arc_time[i] + 0.0000001
+                step_count = step_count + 1
+                height = -16 * t ^ 2 + v * decay * t
+                diff = abs_of(h - height)
+                if diff <= 0.25
+                    target_len = step_count - 1
+                    while len(row) < target_len
+                        row = row + " "
+                    end
+                    row = row + "0"
+                end
+                t = t + s2
+            end
+
+            half_next = arc_time[i + 1] / 2
+            check_val = -16 * half_next ^ 2 + v * decay * half_next
+            if check_val < h
+                stop_arcs = true
+            end
+            i = i + 1
+        end
+
+        print row
+        h = h - 0.5
+    end
+
+    total_time = step_count * s2
+
+    dots = ""
+    dots_bound = floor_of(total_time + 1) / s2 + 1
+    n = 1
+    while n <= dots_bound
+        dots = dots + "."
+        n = n + 1
+    end
+    print dots
+
+    axis = " 0"
+    label_bound = floor_of(total_time + 0.9995)
+    n = 1
+    while n <= label_bound
+        target_len = floor_of(n / s2) - 1
+        while len(axis) < target_len
+            axis = axis + " "
+        end
+        axis = axis + str(n)
+        n = n + 1
+    end
+    print axis
+    print ""
+
+    seconds_target = floor_of(floor_of(total_time + 1) / (2 * s2) - 2) - 1
+    seconds_line = ""
+    while len(seconds_line) < seconds_target
+        seconds_line = seconds_line + " "
+    end
+    seconds_line = seconds_line + "SECONDS"
+    print seconds_line
+    print ""
+end

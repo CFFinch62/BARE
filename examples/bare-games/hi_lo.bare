@@ -1,0 +1,63 @@
+# Hi-Lo — ported from BASIC_Games/hi-lo.bas (Creative Computing / David
+# Ahl, "BASIC Computer Games", 1973). Guess the dollar amount in the
+# jackpot (6 tries) to win it and add it to your running total.
+#
+# See ../README.md for general conventions. Specific to this file: the
+# running total (`total_winnings`) carries over between rounds and is
+# reset to zero only if you fail to guess within 6 tries — a
+# push-your-luck mechanic in the original, kept exactly as written.
+
+print "                                  HI LO"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+print "THIS IS THE GAME OF HI LO."
+print ""
+print "YOU WILL HAVE 6 TRIES TO GUESS THE AMOUNT OF MONEY IN THE"
+print "HI LO JACKPOT, WHICH IS BETWEEN 1 AND 100 DOLLARS.  IF YOU"
+print "GUESS THE AMOUNT, YOU WIN ALL THE MONEY IN THE JACKPOT!"
+print "THEN YOU GET ANOTHER CHANCE TO WIN MORE MONEY.  HOWEVER,"
+print "IF YOU DO NOT GUESS THE AMOUNT, THE GAME ENDS."
+print ""
+
+total_winnings = 0
+keep_playing = true
+while keep_playing
+    jackpot = random(0, 99)
+    guesses = 0
+    won = false
+
+    while guesses < 6 and not won
+        guess = num(input("YOUR GUESS? "))
+        guesses = guesses + 1
+        if guess == jackpot
+            won = true
+        else
+            if guess > jackpot
+                print "YOUR GUESS IS TOO HIGH."
+            else
+                print "YOUR GUESS IS TOO LOW."
+            end
+            print ""
+        end
+    end
+
+    if won
+        print "GOT IT!!!!!!!!!!   YOU WIN " + str(jackpot) + " DOLLARS."
+        total_winnings = total_winnings + jackpot
+        print "YOUR TOTAL WINNINGS ARE NOW " + str(total_winnings) + " DOLLARS."
+    else
+        print "YOU BLEW IT...TOO BAD...THE NUMBER WAS " + str(jackpot)
+        total_winnings = 0
+    end
+
+    print ""
+    again = input("PLAY AGAIN (YES OR NO)? ")
+    if again != "YES"
+        keep_playing = false
+    end
+end
+
+print ""
+print "SO LONG.  HOPE YOU ENJOYED YOURSELF!!!"

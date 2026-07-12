@@ -1,0 +1,281 @@
+# tui_lib — dressing up console output with boxes, banners, menus, tables,
+# and progress bars, built out of nothing but string concatenation.
+#
+# READ THIS BEFORE YOU GO LOOKING FOR text_color() OR get_key():
+# The BARE IDE's console is a plain, read-only, append-only text log (a Qt
+# QPlainTextEdit) — every `print` adds one new line at the bottom. It is
+# NOT a terminal emulator. That means there is no way, from BARE code, to:
+#   - position text at a specific row/column (no text_at, no cursor_pos)
+#   - color text (ANSI escape codes aren't interpreted — they'd just show
+#     up as literal junk characters, not colors)
+#   - clear or redraw the screen, or move the cursor at all
+#   - read a single keystroke without the user pressing Enter (input()
+#     always blocks for a full line)
+#   - detect mouse clicks, or even ask "how wide is the console" in a
+#     meaningful sense
+# PLAIN and STEPS can do all of that because they either talk to a real
+# terminal directly or run inside one that interprets ANSI codes. That
+# capability doesn't exist anywhere in BARE's interpreter or IDE for a
+# library to reach for — it's not a "write cleverer BARE code" problem the
+# way sqrt() or sort() were, it's a missing builtin/IDE feature. Adding it
+# would be a real BARE language/IDE change, not a library file.
+#
+# What IS entirely possible: every function below *builds and returns a
+# string* — a box, a banner, a labeled divider, a progress bar frozen at
+# one instant, a numbered menu, an aligned table — and you print it like
+# any other string. That's genuinely the same trick STEPS's own low-level
+# TUI functions (box, line, banner, progress_bar) use internally; the part
+# of "TUI" that's just careful string-building works fine in BARE, only
+# the part that needs to talk to a real terminal doesn't.
+#
+# Self-contained: every sub below only calls other subs in this same file.
+# Prefix: every name starts with tui_.
+#
+# To use: copy the sub(s) you want into your personal library (My Library
+# panel → Edit Library File...), or open this file directly in the IDE.
+
+# tui_pad_text(text, width, align) — pads text to width with spaces.
+# align is "left", "right", or "center". If text is already >= width, it's
+# returned unchanged (never truncated).
+sub tui_pad_text(text, width, align)
+    gap = width - len(text)
+    if gap <= 0
+        return text
+    end
+    if align == "right"
+        padding = ""
+        i = 0
+        while i < gap
+            padding = padding + " "
+            i = i + 1
+        end
+        return padding + text
+    end
+    if align == "center"
+        left_gap = gap - (gap - (gap % 2)) / 2
+        right_gap = gap - left_gap
+        left_padding = ""
+        i = 0
+        while i < left_gap
+            left_padding = left_padding + " "
+            i = i + 1
+        end
+        right_padding = ""
+        i = 0
+        while i < right_gap
+            right_padding = right_padding + " "
+            i = i + 1
+        end
+        return left_padding + text + right_padding
+    end
+    result = text
+    i = 0
+    while i < gap
+        result = result + " "
+        i = i + 1
+    end
+    return result
+end
+
+# tui_center_text(text, width) — shorthand for tui_pad_text(text, width, "center").
+sub tui_center_text(text, width)
+    return tui_pad_text(text, width, "center")
+end
+
+# tui_line(width, style) — a horizontal rule. style is "single" (─),
+# "double" (═), "dashed" (╌), or "thick" (━); anything else falls back to
+# a plain "-".
+sub tui_line(width, style)
+    ch = "-"
+    if style == "single"
+        ch = "─"
+    end
+    if style == "double"
+        ch = "═"
+    end
+    if style == "dashed"
+        ch = "╌"
+    end
+    if style == "thick"
+        ch = "━"
+    end
+    result = ""
+    i = 0
+    while i < width
+        result = result + ch
+        i = i + 1
+    end
+    return result
+end
+
+# tui_divider(label, width) — a labeled horizontal rule, e.g.
+# tui_divider("Options", 30) is "── Options ───────────────────".
+# label == "" draws a plain unlabeled line.
+sub tui_divider(label, width)
+    if label == ""
+        return tui_line(width, "single")
+    end
+    marker = " " + label + " "
+    remaining = width - len(marker)
+    if remaining <= 0
+        return marker
+    end
+    left_len = remaining - (remaining - (remaining % 2)) / 2
+    right_len = remaining - left_len
+    return tui_line(left_len, "single") + marker + tui_line(right_len, "single")
+end
+
+# tui_box(lines, width) — a bordered box (┌─┐│└┘) around the given list of
+# text lines, each centered and padded to fit. width is the TOTAL box
+# width, borders included.
+sub tui_box(lines, width)
+    inner_width = width - 4
+    top = "┌" + tui_line(width - 2, "single") + "┐"
+    bottom = "└" + tui_line(width - 2, "single") + "┘"
+    result = top
+    i = 0
+    while i < len(lines)
+        content = tui_center_text(lines[i], inner_width)
+        result = result + "\n│ " + content + " │"
+        i = i + 1
+    end
+    result = result + "\n" + bottom
+    return result
+end
+
+# tui_banner(title, width) — a double-bordered box (╔═╗║╚╝) with one
+# centered title line. width is the TOTAL banner width, borders included.
+sub tui_banner(title, width)
+    inner_width = width - 4
+    top = "╔" + tui_line(width - 2, "double") + "╗"
+    bottom = "╚" + tui_line(width - 2, "double") + "╝"
+    content = tui_center_text(title, inner_width)
+    return top + "\n║ " + content + " ║\n" + bottom
+end
+
+# tui_progress_bar(current, total, width) — a filled/empty bar with a
+# percentage, e.g. "[████████░░░░░░░░] 40%". width is the number of
+# characters between the brackets. This is a snapshot, not a live-updating
+# bar — print it again with new numbers for the next "frame", the same way
+# the rest of the console only ever grows downward.
+sub tui_progress_bar(current, total, width)
+    fraction = current / total
+    # The tiny 0.0000001 nudge before flooring guards against float
+    # imprecision — 57/100 * 100 can land on 56.999999999999993 instead of
+    # exactly 57, which would floor to the wrong whole number without it.
+    filled = fraction * width + 0.0000001
+    filled = filled - (filled % 1)
+    if filled > width
+        filled = width
+    end
+    empty = width - filled
+    bar = "["
+    i = 0
+    while i < filled
+        bar = bar + "█"
+        i = i + 1
+    end
+    i = 0
+    while i < empty
+        bar = bar + "░"
+        i = i + 1
+    end
+    percent = fraction * 100 + 0.0000001
+    percent = percent - (percent % 1)
+    bar = bar + "] " + str(percent) + "%"
+    return bar
+end
+
+# tui_menu(options) — a numbered menu as a single multi-line string, e.g.
+#     1. Start Program
+#     2. View Logs
+#     3. Exit
+# Print the result, then use input() to read the student's choice.
+sub tui_menu(options)
+    result = ""
+    i = 0
+    while i < len(options)
+        result = result + str(i + 1) + ". " + options[i]
+        if i < len(options) - 1
+            result = result + "\n"
+        end
+        i = i + 1
+    end
+    return result
+end
+
+# tui_table(headers, rows) — an aligned text table. headers is a list of
+# column-title strings; rows is a list of rows, each row a list of values
+# (any type — non-strings are converted with str()) in the same order as
+# headers. Column widths are computed automatically from the widest value
+# in each column.
+sub tui_table(headers, rows)
+    column_count = len(headers)
+
+    widths = []
+    i = 0
+    while i < column_count
+        append(widths, len(headers[i]))
+        i = i + 1
+    end
+
+    r = 0
+    while r < len(rows)
+        row = rows[r]
+        c = 0
+        while c < column_count
+            cell_width = len(str(row[c]))
+            if cell_width > widths[c]
+                widths[c] = cell_width
+            end
+            c = c + 1
+        end
+        r = r + 1
+    end
+
+    header_line = ""
+    separator_line = ""
+    c = 0
+    while c < column_count
+        header_line = header_line + tui_pad_text(headers[c], widths[c], "left")
+        separator_line = separator_line + tui_line(widths[c], "single")
+        if c < column_count - 1
+            header_line = header_line + " │ "
+            separator_line = separator_line + "─┼─"
+        end
+        c = c + 1
+    end
+
+    result = header_line + "\n" + separator_line
+    r = 0
+    while r < len(rows)
+        row = rows[r]
+        row_line = ""
+        c = 0
+        while c < column_count
+            row_line = row_line + tui_pad_text(str(row[c]), widths[c], "left")
+            if c < column_count - 1
+                row_line = row_line + " │ "
+            end
+            c = c + 1
+        end
+        result = result + "\n" + row_line
+        r = r + 1
+    end
+
+    return result
+end
+
+# tui_sleep(seconds) — pauses execution for roughly `seconds` seconds. This
+# is a genuine busy-wait (a tight loop checking the real clock via time()),
+# not an operating-system sleep — BARE has no builtin for that — so it
+# burns CPU while it waits. Useful for pacing a sequence of printed
+# "frames" (e.g. several tui_progress_bar snapshots) so they read like an
+# animation scrolling down the console instead of appearing all at once.
+sub tui_sleep(seconds)
+    start = time()
+    while time() - start < seconds
+        waiting = true
+    end
+    return null
+end

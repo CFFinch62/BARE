@@ -1,0 +1,146 @@
+# Hello — ported from BASIC_Games/hello.bas (Creative Computing / David Ahl,
+# "BASIC Computer Games", 1973). A 1970s "ELIZA parody" chatbot: ask how
+# the visitor is doing, offer canned advice for a chosen problem category,
+# then close with a deliberately illogical bit about payment — that non
+# sequitur is the original program's joke, kept exactly as written.
+#
+# See ../README.md for the general BASIC->BARE conventions this and every
+# other port follows (GOTO -> while/if, TAB() -> leading spaces, etc).
+# The one thing specific to this file: the "ask until you get a valid
+# answer" pattern (yes/no, or a problem category) repeats four times in
+# the original via GOTO; each becomes its own small while loop below.
+
+print "                                 HELLO"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+
+print "HELLO.  MY NAME IS CREATIVE COMPUTER."
+print ""
+print ""
+name = input("WHAT'S YOUR NAME? ")
+print ""
+
+enjoying = ""
+while enjoying != "YES" and enjoying != "NO"
+    enjoying = input("HI THERE, " + name + ", ARE YOU ENJOYING YOURSELF HERE? ")
+    print ""
+    if enjoying != "YES" and enjoying != "NO"
+        print name + ", I DON'T UNDERSTAND YOUR ANSWER OF '" + enjoying + "'."
+        print "PLEASE ANSWER 'YES' OR 'NO'.  DO YOU LIKE IT HERE?"
+    end
+end
+
+if enjoying == "YES"
+    print "I'M GLAD TO HEAR THAT, " + name + "."
+    print ""
+else
+    print "OH, I'M SORRY TO HEAR THAT, " + name + ". MAYBE WE CAN"
+    print "BRIGHTEN UP YOUR VISIT A BIT."
+end
+
+print ""
+print "SAY, " + name + ", I CAN SOLVE ALL KINDS OF PROBLEMS EXCEPT"
+print "THOSE DEALING WITH GREECE.  WHAT KIND OF PROBLEMS DO"
+
+more_problems = true
+first_question = true
+while more_problems
+    if first_question
+        category = input("YOU HAVE (ANSWER SEX, HEALTH, MONEY, OR JOB)? ")
+        first_question = false
+    else
+        category = input("WHAT KIND (SEX, MONEY, HEALTH, JOB)? ")
+    end
+    print ""
+
+    if category == "SEX"
+        trouble = ""
+        while trouble != "TOO MUCH" and trouble != "TOO LITTLE"
+            trouble = input("IS YOUR PROBLEM TOO MUCH OR TOO LITTLE? ")
+            print ""
+            if trouble != "TOO MUCH" and trouble != "TOO LITTLE"
+                print "DON'T GET ALL SHOOK, " + name + ", JUST ANSWER THE QUESTION"
+                trouble = input("WITH 'TOO MUCH' OR 'TOO LITTLE'.  WHICH IS IT? ")
+                print ""
+            end
+        end
+        if trouble == "TOO MUCH"
+            print "YOU CALL THAT A PROBLEM?!!  I SHOULD HAVE SUCH PROBLEMS!"
+            print "IF IT BOTHERS YOU, " + name + ", TAKE A COLD SHOWER."
+        else
+            print "WHY ARE YOU HERE IN SUFFERN, " + name + "?  YOU SHOULD BE"
+            print "IN TOKYO OR NEW YORK OR AMSTERDAM OR SOMEPLACE WITH SOME"
+            print "REAL ACTION."
+        end
+    else
+        if category == "HEALTH"
+            print "MY ADVICE TO YOU " + name + " IS:"
+            print "     1.  TAKE TWO ASPRIN"
+            print "     2.  DRINK PLENTY OF FLUIDS (ORANGE JUICE, NOT BEER!)"
+            print "     3.  GO TO BED (ALONE)"
+        else
+            if category == "MONEY"
+                print "SORRY, " + name + ", I'M BROKE TOO.  WHY DON'T YOU SELL"
+                print "ENCYCLOPEADIAS OR MARRY SOMEONE RICH OR STOP EATING"
+                print "SO YOU WON'T NEED SO MUCH MONEY?"
+            else
+                if category == "JOB"
+                    print "I CAN SYMPATHIZE WITH YOU " + name + ".  I HAVE TO WORK"
+                    print "VERY LONG HOURS FOR NO PAY -- AND SOME OF MY BOSSES"
+                    print "REALLY BEAT ON MY KEYBOARD.  MY ADVICE TO YOU, " + name + ","
+                    print "IS TO OPEN A RETAIL COMPUTER STORE.  IT'S GREAT FUN."
+                else
+                    print "OH, " + name + ", YOUR ANSWER OF " + category + " IS GREEK TO ME."
+                end
+            end
+        end
+    end
+
+    print ""
+    more = ""
+    while more != "YES" and more != "NO"
+        more = input("ANY MORE PROBLEMS YOU WANT SOLVED, " + name + "? ")
+        print ""
+        if more != "YES" and more != "NO"
+            print "JUST A SIMPLE 'YES' OR 'NO' PLEASE, " + name + "."
+        end
+    end
+    if more == "NO"
+        more_problems = false
+    end
+end
+
+print ""
+print "THAT WILL BE $5.00 FOR THE ADVICE, " + name + "."
+print "PLEASE LEAVE THE MONEY ON THE TERMINAL."
+print ""
+print ""
+
+left_money = ""
+while left_money != "YES" and left_money != "NO"
+    left_money = input("DID YOU LEAVE THE MONEY? ")
+    print ""
+    if left_money != "YES" and left_money != "NO"
+        print "YOUR ANSWER OF '" + left_money + "' CONFUSES ME, " + name + "."
+        print "PLEASE RESPOND WITH 'YES' OR 'NO'."
+    end
+end
+
+if left_money == "YES"
+    print "HEY, " + name + "??? YOU LEFT NO MONEY AT ALL!"
+    print "YOU ARE CHEATING ME OUT OF MY HARD-EARNED LIVING."
+    print ""
+    print "WHAT A RIP OFF, " + name + "!!!"
+    print ""
+else
+    print "THAT'S HONEST, " + name + ", BUT HOW DO YOU EXPECT"
+    print "ME TO GO ON WITH MY PSYCHOLOGY STUDIES IF MY PATIENTS"
+    print "DON'T PAY THEIR BILLS?"
+end
+
+print ""
+print "TAKE A WALK, " + name + "."
+print ""
+print ""

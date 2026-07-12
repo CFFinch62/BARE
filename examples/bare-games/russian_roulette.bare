@@ -1,0 +1,75 @@
+# Russian Roulette — ported from BASIC_Games/russianroulette.bas
+# (Creative Computing / David Ahl, "BASIC Computer Games", 1973). Pull
+# the trigger repeatedly; each pull has a 1-in-6 chance of "BANG".
+# Survive 11 pulls in a row and you win. Plays forever — no quit beyond
+# typing '2' to chicken out of the current round (which just starts a
+# new one), matching the original (it has no true END path either).
+#
+# See ../README.md for general conventions. The original only prints its
+# "GO" prompt once per victim, right before the first pull — every pull
+# after a "- CLICK -" re-enters a bare `INPUT I` with no prompt text
+# (still auto-appending BASIC's default "? "). This port keeps that
+# distinction: the first pull of each victim's turn prompts "GO? ", later
+# pulls in that same turn just prompt "? ".
+#
+# `RND(1)>.833333` fires on the top ~1/6 of the random range — ported as
+# a direct 1-in-6 `random(1, 6) == 1` draw, same odds either way since
+# the draws are uniform and independent.
+
+print "                            RUSSIAN ROULETTE"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+print "THIS IS A GAME OF >>>>>>>>>>RUSSIAN ROULETTE."
+
+while true
+    print ""
+    print "HERE IS A REVOLVER."
+
+    victim_active = true
+    while victim_active
+        print "TYPE '1' TO SPIN CHAMBER AND PULL TRIGGER."
+        print "TYPE '2' TO GIVE UP."
+
+        choice = num(input("GO? "))
+        n = 0
+        outcome = ""
+        pulling = true
+        while pulling
+            if choice == 2
+                print "     CHICKEN!!!!!"
+                outcome = "chicken"
+                pulling = false
+            else
+                n = n + 1
+                if random(1, 6) == 1
+                    print "     BANG!!!!!   YOU'RE DEAD!"
+                    print "CONDOLENCES WILL BE SENT TO YOUR RELATIVES."
+                    outcome = "dead"
+                    pulling = false
+                else
+                    if n > 10
+                        print "YOU WIN!!!!!"
+                        print "LET SOMEONE ELSE BLOW HIS BRAINS OUT."
+                        outcome = "win"
+                        pulling = false
+                    else
+                        print "- CLICK -"
+                        print ""
+                        choice = num(input("? "))
+                    end
+                end
+            end
+        end
+
+        if outcome == "win"
+            victim_active = false
+        else
+            print ""
+            print ""
+            print ""
+            print "...NEXT VICTIM..."
+        end
+    end
+end

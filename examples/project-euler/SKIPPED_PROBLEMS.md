@@ -28,7 +28,7 @@ that needed an external data file pasted in:
 | 98 | Anagramic squares | words.txt (reused) |
 | 99 | Largest exponential | base_exp.txt (1,000 lines) |
 
-## The one exception: correct, but not meant to actually be run
+## The one slow one: correct, and now confirmed to actually finish
 
 60_prime_pair_sets.bare exists and is verified correct (its core logic
 was checked against the problem's own {3,7,109,673}=792 four-prime
@@ -40,18 +40,22 @@ a "worked around what BARE lacks" example. Nothing about the algorithm
 (sieve, trial-division primality, digit concatenation via arithmetic,
 nested search for a matching quintet) is blocked by anything BARE is
 missing. What BARE's design costs here is pure speed: the Python
-original runs in about 29 seconds; the same algorithm in this tree-
-walking interpreter is expected to take on the order of HOURS,
-extrapolating from every other prime-heavy example in this set. See
-the comment header in that file for the full comparison, including two
-small differences from the original (no dict, so it tracks a running
-best instead of collecting-then-minimizing; and a latent sieve bug in
-the original that this port fixes).
+original runs in about 29 seconds; run to completion in the BARE IDE,
+this tree-walking-interpreter port took **2,279 seconds (38 minutes)**
+— slow, and a real illustration of the interpreter-overhead cost, but
+not the "order of HOURS" this doc originally guessed before anyone had
+actually timed it. See the comment header in that file for the full
+comparison, including two small differences from the original (no
+dict, so it tracks a running best instead of collecting-then-
+minimizing; and a latent sieve bug in the original that this port
+fixes).
 
-So: 99 of the first 100 Project Euler problems solved and runnable in
-a reasonable time. Problem 60 makes it 100 for 100 in terms of having
-a correct, working `.bare` file — just one that's there to be read and
-compared, not run to completion.
+So: all 100 of the first 100 Project Euler problems have a correct,
+independently-verified, working `.bare` file, and all 100 have now
+been run to completion — problem 60 just takes 38 minutes instead of
+seconds. See `../../../project_euler_performance.csv` (one level above
+the BARE repo, alongside the other language ports) for the measured
+time.
 
 ## Notable language-limitation workarounds along the way
 
@@ -86,7 +90,7 @@ actual BARE limitation and had to work around it:
   BARE list as a manual stack instead.
 
 ---
-Final status: all 100 problems have a working, verified .bare file.
-99 of them run to completion in a reasonable time. Problem 60 is
-correct but is a deliberately-slow direct language-comparison port,
-not meant to be run to completion — see above.
+Final status: all 100 problems have a working, verified .bare file, and
+all 100 have been run to completion. 99 run in a reasonable time; problem
+60 is a deliberately-slow direct language-comparison port and took 38
+minutes (2,279 seconds) — see above.

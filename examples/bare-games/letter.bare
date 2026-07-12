@@ -1,0 +1,59 @@
+# Letter — ported from BASIC_Games/letter.bas (Creative Computing /
+# David Ahl, "BASIC Computer Games", 1973). Guess the secret letter of
+# the alphabet; too-high/too-low hints narrow it down, same shape as
+# `guess.bare` but comparing letters instead of numbers.
+#
+# See ../README.md for general conventions. The original converts your
+# guess to its ASCII code with `ASC()` to compare against the secret
+# letter numerically; BARE can compare single-character strings directly
+# (`"b" > "a"` is `true`), so no ASCII conversion is needed at all. The
+# original's 15x `CHR$(7)` (a terminal bell "fanfare" on a good score) is
+# dropped — it's an audio effect with no text to translate, the same
+# reasoning `README.md` gives for dropping pacing delays.
+
+alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+print "                                LETTER"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+print "LETTER GUESSING GAME"
+print ""
+print "I'LL THINK OF A LETTER OF THE ALPHABET, A TO Z."
+print "TRY TO GUESS MY LETTER AND I'LL GIVE YOU CLUES"
+print "AS TO HOW CLOSE YOU'RE GETTING TO MY LETTER."
+
+while true
+    target = alphabet[random(0, 25)]
+    guesses = 0
+
+    print ""
+    print "O.K., I HAVE A LETTER.  START GUESSING."
+
+    found = false
+    while not found
+        guess = input("WHAT IS YOUR GUESS? ")
+        guesses = guesses + 1
+        print ""
+        if guess == target
+            found = true
+        else
+            if guess > target
+                print "TOO HIGH.  TRY A LOWER LETTER."
+            else
+                print "TOO LOW.  TRY A HIGHER LETTER."
+            end
+        end
+    end
+
+    print ""
+    print "YOU GOT IT IN " + str(guesses) + " GUESSES!!"
+    if guesses <= 5
+        print "GOOD JOB !!!!!"
+    else
+        print "BUT IT SHOULDN'T TAKE MORE THAN 5 GUESSES!"
+    end
+    print ""
+    print "LET'S PLAN AGAIN....."
+end

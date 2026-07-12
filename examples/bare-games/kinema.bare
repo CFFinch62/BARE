@@ -1,0 +1,77 @@
+# Kinema — ported from BASIC_Games/kinema.bas (Creative Computing /
+# David Ahl, "BASIC Computer Games", 1973). A 3-question kinematics quiz
+# per round — a ball's max height, time to fall back down, and velocity
+# after a given time — despite the name, no trig is involved anywhere,
+# just `v^2` and basic algebra.
+#
+# See ../README.md for general conventions.
+#
+# `T=1+INT(2*V*RND(1))/10` needs a random *fraction* (`RND(1)` in
+# `[0,1)`) which BARE's `random(min, max)` (integer, inclusive) doesn't
+# give directly — but `INT(2*V*RND(1))` is just a uniform random integer
+# in `[0, 2V-1]`, so `random(0, 2*v - 1)` produces the identical
+# distribution without needing to fake a continuous RNG first.
+#
+# The original's `GOSUB 500` answer-checker is shared across all three
+# questions by relying on whatever global `A` (correct answer) happens
+# to be set to; ported as a `check_answer(question, correct)` sub that
+# takes the correct value as an explicit parameter instead, per the
+# GOSUB-to-sub convention in `README.md`.
+
+sub abs_of(x)
+    if x < 0
+        return -x
+    end
+    return x
+end
+
+sub check_answer(question, correct)
+    guess = num(input(question + "? "))
+    is_correct = false
+    if abs_of((guess - correct) / correct) < 0.15
+        print "CLOSE ENOUGH."
+        is_correct = true
+    else
+        print "NOT EVEN CLOSE...."
+    end
+    print "CORRECT ANSWER IS " + str(round(correct, 2))
+    print ""
+    return is_correct
+end
+
+print "                                KINEMA"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+
+while true
+    print ""
+    print ""
+    q_score = 0
+
+    v = random(5, 39)
+    print "A BALL IS THROWN UPWARDS AT " + str(v) + " METERS PER SECOND."
+    print ""
+
+    height = 0.05 * v ^ 2
+    if check_answer("HOW HIGH WILL IT GO (IN METERS)", height)
+        q_score = q_score + 1
+    end
+
+    fall_time = v / 5
+    if check_answer("HOW LONG UNTIL IT RETURNS (IN SECONDS)", fall_time)
+        q_score = q_score + 1
+    end
+
+    t = 1 + random(0, 2 * v - 1) / 10
+    velocity_after = v - 10 * t
+    if check_answer("WHAT WILL ITS VELOCITY BE AFTER " + str(round(t, 1)) + " SECONDS", velocity_after)
+        q_score = q_score + 1
+    end
+
+    print str(q_score) + " RIGHT OUT OF 3."
+    if q_score >= 2
+        print "  NOT BAD."
+    end
+end

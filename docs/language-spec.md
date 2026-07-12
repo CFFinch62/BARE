@@ -248,6 +248,9 @@ calling a sub defined earlier in the same file; it's still just an ordinary
 `sub`, called by name, with no new keyword or syntax. This is an IDE
 convenience layered on top of the language, not a change to it: BARE itself
 has no import statement, no modules, and no notion of more than one file.
+[`libraries/`](../libraries/) has ready-made subs — string, math,
+trigonometry, and more — written in plain BARE and meant to be copied into
+this personal library rather than written from scratch.
 
 ---
 

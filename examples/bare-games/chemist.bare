@@ -1,0 +1,55 @@
+# Chemist — ported from BASIC_Games/chemist.bas (Creative Computing /
+# David Ahl, "BASIC Computer Games", 1973). Given a random amount of
+# "kryptocyanic acid", work out how much water dilutes it at the
+# required 7:3 ratio, within 5%. Nine wrong answers ("lives") and the
+# game really ends — a genuine quit path, unlike most of the simpler
+# ports.
+#
+# See ../README.md for general conventions. BARE has no `abs()` built
+# in, so `abs_of` is a small local helper, same pattern as other ports
+# that need it (e.g. `bounce.bare`, `train.bare`).
+
+sub abs_of(x)
+    if x < 0
+        return -x
+    end
+    return x
+end
+
+print "                                CHEMIST"
+print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
+print ""
+print ""
+print ""
+print "THE FICTITIOUS CHECMICAL KRYPTOCYANIC ACID CAN ONLY BE"
+print "DILUTED BY THE RATIO OF 7 PARTS WATER TO 3 PARTS ACID."
+print "IF ANY OTHER RATIO IS ATTEMPTED, THE ACID BECOMES UNSTABLE"
+print "AND SOON EXPLODES.  GIVEN THE AMOUNT OF ACID, YOU MUST"
+print "DECIDE WHO MUCH WATER TO ADD FOR DILUTION.  IF YOU MISS"
+print "YOU FACE THE CONSEQUENCES."
+
+lives_used = 0
+playing = true
+while playing
+    acid = random(0, 49)
+    correct_water = 7 * acid / 3
+
+    answer = num(input(str(acid) + " LITERS OF KRYPTOCYANIC ACID.  HOW MUCH WATER? "))
+    diff = abs_of(correct_water - answer)
+
+    if diff <= correct_water / 20
+        print " GOOD JOB! YOU MAY BREATHE NOW, BUT DON'T INHALE THE FUMES!"
+        print ""
+    else
+        print " SIZZLE!  YOU HAVE JUST BEEN DESALINATED INTO A BLOB"
+        print " OF QUIVERING PROTOPLASM!"
+        lives_used = lives_used + 1
+        if lives_used == 9
+            print " YOUR 9 LIVES ARE USED, BUT YOU WILL BE LONG REMEMBERED FOR"
+            print " YOUR CONTRIBUTIONS TO THE FIELD OF COMIC BOOK CHEMISTRY."
+            playing = false
+        else
+            print " HOWEVER, YOU MAY TRY AGAIN WITH ANOTHER LIFE."
+        end
+    end
+end
