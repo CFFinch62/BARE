@@ -95,6 +95,11 @@ class BareIDEMainWindow(QMainWindow):
         if ws.maximized:
             self.showMaximized()
 
+    def _console_orientation(self) -> Qt.Orientation:
+        if self.settings.settings.window.console_position == "right":
+            return Qt.Orientation.Horizontal
+        return Qt.Orientation.Vertical
+
     def _setup_ui(self):
         central = QWidget()
         self.setCentralWidget(central)
@@ -110,7 +115,9 @@ class BareIDEMainWindow(QMainWindow):
         self.file_browser.setVisible(self.settings.settings.window.file_browser_visible)
         self.main_splitter.addWidget(self.file_browser)
 
-        self.splitter = QSplitter(Qt.Orientation.Vertical)
+        # Editor/console split: vertical (console below) or horizontal
+        # (console to the right), per View > Console Position.
+        self.splitter = QSplitter(self._console_orientation())
 
         self.tabs = QTabWidget()
         self.tabs.setTabsClosable(True)
@@ -282,6 +289,16 @@ class BareIDEMainWindow(QMainWindow):
         self.toggle_library_panel_action.setChecked(False)
         self.toggle_library_panel_action.triggered.connect(self.library_panel.setVisible)
         self.library_panel.visibilityChanged.connect(self.toggle_library_panel_action.setChecked)
+
+        view_menu.addSeparator()
+        console_position_menu = view_menu.addMenu("Console &Position")
+        self.console_position_actions = {}
+        for key, label in (("bottom", "&Bottom"), ("right", "&Right")):
+            action = console_position_menu.addAction(label)
+            action.setCheckable(True)
+            action.setChecked(key == self.settings.settings.window.console_position)
+            action.triggered.connect(lambda checked, k=key: self._set_console_position(k))
+            self.console_position_actions[key] = action
 
         view_menu.addSeparator()
         clear_console_action = view_menu.addAction("&Clear Console")
@@ -822,6 +839,24 @@ class BareIDEMainWindow(QMainWindow):
         self.help_panel.apply_ui_theme(theme)
         self.spec_panel.apply_ui_theme(theme)
         self.library_panel.apply_ui_theme(theme)
+
+    # =========================================================================
+    # Console
+    # =========================================================================
+
+    def _set_console_position(self, position: str):
+        """View > Console Position — move the console below the editor
+        (vertical split) or to its right (horizontal split)."""
+        if position == self.settings.settings.window.console_position:
+            return
+        self.settings.settings.window.console_position = position
+        self.splitter.setOrientation(self._console_orientation())
+        # The saved sizes are for whichever orientation was active when they
+        # were captured; swapping orientation with mismatched sizes just
+        # means an odd initial split, so fall back to sane defaults instead.
+        self.splitter.setSizes([600, 300])
+        for key, action in self.console_position_actions.items():
+            action.setChecked(key == position)
 
     # =========================================================================
     # Misc UI

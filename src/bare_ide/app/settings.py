@@ -47,6 +47,7 @@ class WindowSettings:
     splitter_sizes: List[int] = field(default_factory=lambda: [600, 300])
     main_splitter_sizes: List[int] = field(default_factory=lambda: [220, 880])
     file_browser_visible: bool = True
+    console_position: str = "bottom"  # "bottom" or "right"
 
 
 @dataclass
