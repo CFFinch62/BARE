@@ -1,0 +1,40 @@
+# list_lib_demo — exercises every sub in libraries/list_lib.bare.
+#
+# This program calls no subs of its own — it expects list_lib.bare to
+# already be loaded into My Library (My Library panel -> Edit Library
+# File..., paste in libraries/list_lib.bare's contents) before you run it.
+# BARE has no import; the IDE loads your personal library automatically
+# before your program runs (see libraries/README.md).
+
+items = [10, 20, 30, 40, 30, 20]
+
+print "list_contains:"
+print list_contains(items, 30)
+print list_contains(items, 99)
+
+print "list_index_of:"
+print list_index_of(items, 30)
+print list_index_of(items, 99)
+
+print "list_count:"
+print list_count(items, 30)
+print list_count(items, 20)
+
+print "list_slice:"
+print list_slice(items, 1, 4)
+
+print "list_remove_at:"
+print list_remove_at(items, 2)
+
+print "list_insert_at:"
+print list_insert_at(items, 2, 99)
+print list_insert_at(items, len(items), 100)
+
+print "list_reverse:"
+print list_reverse(items)
+
+print "list_concat:"
+print list_concat([1, 2, 3], [4, 5, 6])
+
+print "list_unique:"
+print list_unique(items)

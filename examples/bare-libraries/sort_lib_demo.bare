@@ -1,0 +1,34 @@
+# sort_lib_demo — exercises every sub in libraries/sort_lib.bare.
+#
+# This program calls no subs of its own — it expects sort_lib.bare to
+# already be loaded into My Library (My Library panel -> Edit Library
+# File..., paste in libraries/sort_lib.bare's contents) before you run it.
+# BARE has no import; the IDE loads your personal library automatically
+# before your program runs (see libraries/README.md).
+
+print "sort_is_sorted:"
+print sort_is_sorted([1, 2, 3, 4])
+print sort_is_sorted([3, 1, 2])
+
+print "sort_bubble:"
+print sort_bubble([5, 2, 9, 1, 5, 6])
+
+print "sort_selection:"
+print sort_selection([5, 2, 9, 1, 5, 6])
+
+print "sort_insertion:"
+print sort_insertion([5, 2, 9, 1, 5, 6])
+
+words = sort_bubble(["fig", "apple", "date", "banana"])
+print "sort_bubble on strings:"
+print words
+
+sorted_numbers = [1, 5, 6, 9, 12, 15, 20]
+
+print "sort_linear_search:"
+print sort_linear_search(sorted_numbers, 12)
+print sort_linear_search(sorted_numbers, 99)
+
+print "sort_binary_search:"
+print sort_binary_search(sorted_numbers, 12)
+print sort_binary_search(sorted_numbers, 99)

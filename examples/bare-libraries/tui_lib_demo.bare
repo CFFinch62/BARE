@@ -1,0 +1,47 @@
+# tui_lib_demo — exercises every sub in libraries/tui_lib.bare.
+#
+# This program calls no subs of its own — it expects tui_lib.bare to
+# already be loaded into My Library (My Library panel -> Edit Library
+# File..., paste in libraries/tui_lib.bare's contents) before you run it.
+# BARE has no import; the IDE loads your personal library automatically
+# before your program runs (see libraries/README.md).
+
+print "tui_pad_text:"
+print "[" + tui_pad_text("hi", 8, "left") + "]"
+print "[" + tui_pad_text("hi", 8, "right") + "]"
+print "[" + tui_pad_text("hi", 8, "center") + "]"
+
+print "tui_center_text:"
+print "[" + tui_center_text("BARE", 12) + "]"
+
+print "tui_line:"
+print tui_line(20, "single")
+print tui_line(20, "double")
+print tui_line(20, "dashed")
+print tui_line(20, "thick")
+
+print "tui_divider:"
+print tui_divider("Options", 30)
+print tui_divider("", 20)
+
+print "tui_box:"
+print tui_box(["Hello", "from a box"], 24)
+
+print "tui_banner:"
+print tui_banner("BARE", 24)
+
+print "tui_progress_bar:"
+print tui_progress_bar(40, 100, 20)
+print tui_progress_bar(100, 100, 20)
+
+print "tui_menu:"
+print tui_menu(["Start Program", "View Logs", "Exit"])
+
+print "tui_table:"
+headers = ["Name", "Score"]
+rows = [["Ada", 98], ["Grace", 91], ["Alan", 87]]
+print tui_table(headers, rows)
+
+print "tui_sleep (0.1s busy-wait, then prints):"
+tui_sleep(0.1)
+print "done"

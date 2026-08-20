@@ -1,0 +1,37 @@
+# format_lib_demo — exercises every sub in libraries/format_lib.bare.
+#
+# This program calls no subs of its own — it expects format_lib.bare to
+# already be loaded into My Library (My Library panel -> Edit Library
+# File..., paste in libraries/format_lib.bare's contents) before you run it.
+# BARE has no import; the IDE loads your personal library automatically
+# before your program runs (see libraries/README.md).
+
+print "format_pad_zero:"
+print format_pad_zero(42, 6)
+print format_pad_zero(-5, 3)
+
+print "format_commas:"
+print format_commas(1234567)
+print format_commas(-9876)
+
+print "format_to_binary:"
+print format_to_binary(42)
+print format_to_binary(0)
+
+print "format_to_hex:"
+print format_to_hex(255)
+print format_to_hex(0)
+
+print "format_roman:"
+print format_roman(1994)
+print format_roman(58)
+
+print "format_ordinal:"
+print format_ordinal(1)
+print format_ordinal(2)
+print format_ordinal(3)
+print format_ordinal(11)
+print format_ordinal(12)
+print format_ordinal(13)
+print format_ordinal(21)
+print format_ordinal(102)

@@ -1,0 +1,41 @@
+# validate_lib_demo — exercises every sub in libraries/validate_lib.bare.
+#
+# This program calls no subs of its own — it expects validate_lib.bare to
+# already be loaded into My Library (My Library panel -> Edit Library
+# File..., paste in libraries/validate_lib.bare's contents) before you run
+# it. BARE has no import; the IDE loads your personal library automatically
+# before your program runs (see libraries/README.md).
+
+print "valid_in_range:"
+print valid_in_range(5, 1, 10)
+print valid_in_range(15, 1, 10)
+
+print "valid_is_leap_year:"
+print valid_is_leap_year(2000)
+print valid_is_leap_year(1900)
+print valid_is_leap_year(2024)
+print valid_is_leap_year(2023)
+
+print "valid_is_numeric:"
+print valid_is_numeric("-3.14")
+print valid_is_numeric("12abc")
+
+print "valid_is_alpha:"
+print valid_is_alpha("Hello")
+print valid_is_alpha("Hello1")
+
+print "valid_is_alnum:"
+print valid_is_alnum("Hello123")
+print valid_is_alnum("Hello 123")
+
+print "valid_is_upper:"
+print valid_is_upper("HELLO 123")
+print valid_is_upper("Hello")
+
+print "valid_is_lower:"
+print valid_is_lower("hello 123")
+print valid_is_lower("Hello")
+
+print "valid_is_palindrome:"
+print valid_is_palindrome("racecar")
+print valid_is_palindrome("hello")

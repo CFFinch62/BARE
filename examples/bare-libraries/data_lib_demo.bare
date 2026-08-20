@@ -1,0 +1,63 @@
+# data_lib_demo — exercises every sub in libraries/data_lib.bare.
+#
+# This program calls no subs of its own — it expects data_lib.bare to
+# already be loaded into My Library (My Library panel -> Edit Library
+# File..., paste in libraries/data_lib.bare's contents) before you run it.
+# BARE has no import; the IDE loads your personal library automatically
+# before your program runs (see libraries/README.md).
+
+inventory = dict_new()
+
+print "dict_set:"
+inventory = dict_set(inventory, "sword", 1)
+inventory = dict_set(inventory, "shield", 2)
+inventory = dict_set(inventory, "potion", 5)
+print dict_to_string(inventory)
+
+print "dict_find_index:"
+print dict_find_index(inventory, "shield")
+print dict_find_index(inventory, "bow")
+
+print "dict_has:"
+print dict_has(inventory, "sword")
+print dict_has(inventory, "bow")
+
+print "dict_get:"
+print dict_get(inventory, "potion", 0)
+print dict_get(inventory, "bow", 0)
+
+print "dict_set (update existing key):"
+inventory = dict_set(inventory, "potion", 9)
+print dict_to_string(inventory)
+
+print "dict_keys:"
+print dict_keys(inventory)
+
+print "dict_values:"
+print dict_values(inventory)
+
+print "dict_size:"
+print dict_size(inventory)
+
+print "dict_remove:"
+inventory = dict_remove(inventory, "shield")
+print dict_to_string(inventory)
+
+print "dict_to_string:"
+print dict_to_string(inventory)
+
+seen = set_new()
+
+print "set_add:"
+seen = set_add(seen, "red")
+seen = set_add(seen, "green")
+seen = set_add(seen, "red")
+print seen
+
+print "set_contains:"
+print set_contains(seen, "green")
+print set_contains(seen, "blue")
+
+print "set_remove:"
+seen = set_remove(seen, "red")
+print seen

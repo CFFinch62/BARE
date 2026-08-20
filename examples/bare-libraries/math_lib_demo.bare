@@ -1,0 +1,66 @@
+# math_lib_demo — exercises every sub in libraries/math_lib.bare.
+#
+# This program calls no subs of its own — it expects math_lib.bare to
+# already be loaded into My Library (My Library panel -> Edit Library
+# File..., paste in libraries/math_lib.bare's contents) before you run it.
+# BARE has no import; the IDE loads your personal library automatically
+# before your program runs (see libraries/README.md).
+
+print "math_abs:"
+print math_abs(-7)
+print math_abs(7)
+
+print "math_sign:"
+print math_sign(-5)
+print math_sign(0)
+print math_sign(5)
+
+print "math_clamp:"
+print math_clamp(15, 0, 10)
+print math_clamp(-3, 0, 10)
+print math_clamp(5, 0, 10)
+
+print "math_floor:"
+print math_floor(3.7)
+
+print "math_ceil:"
+print math_ceil(3.2)
+
+print "math_sqrt:"
+print math_sqrt(2)
+
+print "math_gcd:"
+print math_gcd(48, 18)
+
+print "math_lcm:"
+print math_lcm(4, 6)
+
+print "math_is_prime:"
+print math_is_prime(17)
+print math_is_prime(18)
+
+print "math_factorial:"
+print math_factorial(6)
+
+numbers = [4, 8, 15, 16, 23, 42]
+
+print "math_max:"
+print math_max(numbers)
+
+print "math_min:"
+print math_min(numbers)
+
+print "math_sum:"
+print math_sum(numbers)
+
+print "math_average:"
+print math_average(numbers)
+
+print "math_sorted_copy:"
+unsorted = [5, 3, 8, 1]
+print math_sorted_copy(unsorted)
+print unsorted
+
+print "math_median:"
+print math_median(numbers)
+print math_median([3, 1, 2])

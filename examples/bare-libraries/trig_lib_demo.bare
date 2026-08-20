@@ -1,0 +1,54 @@
+# trig_lib_demo — exercises every sub in libraries/trig_lib.bare.
+#
+# This program calls no subs of its own — it expects trig_lib.bare to
+# already be loaded into My Library (My Library panel -> Edit Library
+# File..., paste in libraries/trig_lib.bare's contents) before you run it.
+# BARE has no import; the IDE loads your personal library automatically
+# before your program runs (see libraries/README.md).
+
+pi = trig_pi()
+
+print "trig_pi:"
+print pi
+
+print "trig_e:"
+print trig_e()
+
+print "trig_deg_to_rad:"
+print trig_deg_to_rad(180)
+
+print "trig_rad_to_deg:"
+print trig_rad_to_deg(pi)
+
+print "trig_sin:"
+print trig_sin(pi / 2)
+
+print "trig_cos:"
+print trig_cos(0)
+
+print "trig_tan:"
+print trig_tan(pi / 4)
+
+print "trig_atan:"
+print trig_rad_to_deg(trig_atan(1))
+
+print "trig_atan2:"
+print trig_rad_to_deg(trig_atan2(1, 1))
+print trig_rad_to_deg(trig_atan2(1, -1))
+
+print "trig_sqrt:"
+print trig_sqrt(2)
+
+print "trig_asin:"
+print trig_rad_to_deg(trig_asin(1))
+print trig_asin(5)
+
+print "trig_acos:"
+print trig_rad_to_deg(trig_acos(0))
+print trig_acos(5)
+
+print "trig_exp:"
+print trig_exp(1)
+
+print "trig_log:"
+print trig_log(trig_e())
