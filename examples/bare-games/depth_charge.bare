@@ -10,6 +10,25 @@
 # loop instead of a log division here too. `INPUT X,Y,Z` becomes three
 # separate labeled prompts, and `ABS()` is the same small local helper
 # used in the other ports that need it.
+#
+# Addition over the original: an X,Y surface grid is redrawn (as a fresh
+# snapshot appended below the last one — the BARE console can't clear or
+# redraw in place, see libraries/tui_lib.bare's header comment) after
+# every shot, so you don't have to hold the grid of tried coordinates in
+# your head. It only tracks the X,Y column of each shot, not depth — the
+# game never reveals the sub's depth until it's found or you lose, so
+# depth stays a text hint only. Grids are capped at MAX_GRID_SIZE on a
+# side; past that the board would be wider than a console line, so the
+# game falls back to text-only hints, same as the original.
+#
+# Also new: a difficulty menu, asked fresh each round along with the
+# search area size. The original's shot budget (`base_shots`, the halving
+# count) assumes a player who bisects each axis near-perfectly every
+# shot — too tight for a casual or young player, so EASY and MEDIUM pad
+# it with extra tries: EASY is 2 * base_shots + 3, MEDIUM is
+# base_shots + 3, HARD is the original base_shots unchanged.
+
+MAX_GRID_SIZE = 20
 
 sub abs_of(x)
     if x < 0
@@ -18,32 +37,135 @@ sub abs_of(x)
     return x
 end
 
+# pad_left(text, width) — right-aligns text in a field of `width` by
+# adding leading spaces. Never truncates if text is already >= width.
+sub pad_left(text, width)
+    result = text
+    while len(result) < width
+        result = " " + result
+    end
+    return result
+end
+
+# tui_menu(options) — a numbered menu as a single multi-line string, e.g.
+#     1. Start Program
+#     2. View Logs
+#     3. Exit
+# Print the result, then use input() to read the student's choice.
+sub tui_menu(options)
+    result = ""
+    i = 0
+    while i < len(options)
+        result = result + str(i + 1) + ". " + options[i]
+        if i < len(options) - 1
+            result = result + "\n"
+        end
+        i = i + 1
+    end
+    return result
+end
+
+# render_grid(cells, size) — draws a size x size board as one multi-line
+# string: a column-index header, a separator, then one row per Y value
+# with its row index and cells. `cells` is a flat list (row-major, index
+# y * size + x) of one-character strings: "." unexplored, "X" a missed
+# shot's column, "H" the hit, "S" the sub revealed after a loss.
+sub render_grid(cells, size)
+    output = "    "
+    x = 0
+    while x < size
+        output = output + pad_left(str(x), 3)
+        x = x + 1
+    end
+    output = output + "\n   +"
+    x = 0
+    while x < size
+        output = output + "---"
+        x = x + 1
+    end
+    y = 0
+    while y < size
+        output = output + "\n" + pad_left(str(y), 2) + " |"
+        x = 0
+        while x < size
+            output = output + pad_left(cells[y * size + x], 3)
+            x = x + 1
+        end
+        y = y + 1
+    end
+    return output
+end
+
 print "                              DEPTH CHARGE"
 print "               CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY"
 print ""
 print ""
 print ""
 
-search_size = num(input("DIMENSION OF SEARCH AREA? "))
-print ""
-
-remaining = search_size
-shots = 0
-while remaining >= 2
-    remaining = (remaining - (remaining % 2)) / 2
-    shots = shots + 1
-end
-shots = shots + 1
-
-print "YOU ARE THE CAPTAIN OF THE DESTROYER USS COMPUTER"
-print "AN ENEMY SUB HAS BEEN CAUSING YOU TROUBLE.  YOUR"
-print "MISSION IS TO DESTROY IT.  YOU HAVE " + str(shots) + " SHOTS."
-print "SPECIFY DEPTH CHARGE EXPLOSION POINT WITH A"
-print "TRIO OF NUMBERS -- THE FIRST TWO ARE THE"
-print "SURFACE COORDINATES; THE THIRD IS THE DEPTH."
-
 playing = true
+first_round = true
 while playing
+    print ""
+    print "SELECT LEVEL OF PLAY:"
+    print tui_menu(["EASY","MEDIUM","HARD"])
+    level = input("LEVEL (1-3)? ")
+    while level != "1" and level != "2" and level != "3"
+        print "INVALD INPUT! TRY AGAIN."
+        level = input("LEVEL (1-3)? ")
+    end
+
+    print ""
+    search_size = num(input("DIMENSION OF SEARCH AREA? "))
+    print ""
+
+    remaining = search_size
+    base_shots = 0
+    while remaining >= 2
+        remaining = (remaining - (remaining % 2)) / 2
+        base_shots = base_shots + 1
+    end
+    base_shots = base_shots + 1
+
+    shots = base_shots
+    if level == "1"
+        shots = 2 * base_shots + 3
+    end
+    if level == "2"
+        shots = base_shots + 3
+    end
+
+    show_grid = search_size >= 1 and search_size <= MAX_GRID_SIZE
+
+    if first_round
+        print "YOU ARE THE CAPTAIN OF THE DESTROYER USS COMPUTER"
+        print "AN ENEMY SUB HAS BEEN CAUSING YOU TROUBLE.  YOUR"
+        print "MISSION IS TO DESTROY IT.  YOU HAVE " + str(shots) + " SHOTS."
+        print "SPECIFY DEPTH CHARGE EXPLOSION POINT WITH A"
+        print "TRIO OF NUMBERS -- THE FIRST TWO ARE THE"
+        print "SURFACE COORDINATES; THE THIRD IS THE DEPTH."
+        print ""
+        print "SONAR DESCRIBES WHERE YOUR SHOT LANDED, NOT WHICH WAY TO AIM --"
+        print "'NORTH' MEANS YOUR SHOT WAS NORTH OF THE SUB, SO CORRECT SOUTH."
+        if show_grid
+            print "EACH SHOT REDRAWS THE X,Y GRID BELOW: . = UNTRIED  X = MISS  H = HIT"
+        else
+            print "(SEARCH AREA TOO LARGE TO GRID -- TEXT HINTS ONLY.)"
+        end
+        first_round = false
+    else
+        level_name = "HARD"
+        if level == "1"
+            level_name = "EASY"
+        end
+        if level == "2"
+            level_name = "MEDIUM"
+        end
+        print "LEVEL: " + level_name + "   GRID: " + str(search_size) + "x" + str(search_size) + "x" + str(search_size) + "   SHOTS: " + str(shots)
+        if not show_grid
+            print "(SEARCH AREA TOO LARGE TO GRID -- TEXT HINTS ONLY.)"
+        end
+    end
+
     print ""
     print "GOOD LUCK !"
     print ""
@@ -51,6 +173,17 @@ while playing
     sub_x = random(0, search_size - 1)
     sub_y = random(0, search_size - 1)
     sub_z = random(0, search_size - 1)
+
+    grid_cells = []
+    if show_grid
+        i = 0
+        while i < search_size * search_size
+            append(grid_cells, ".")
+            i = i + 1
+        end
+        print render_grid(grid_cells, search_size)
+        print ""
+    end
 
     trial = 1
     found = false
@@ -62,12 +195,27 @@ while playing
 
         if abs_of(x - sub_x) + abs_of(y - sub_y) + abs_of(z - sub_z) == 0
             found = true
-        else
+        end
+
+        if show_grid and x >= 0 and x < search_size and y >= 0 and y < search_size
+            if found
+                grid_cells[y * search_size + x] = "H"
+            else
+                grid_cells[y * search_size + x] = "X"
+            end
+        end
+
+        if show_grid
+            print ""
+            print render_grid(grid_cells, search_size)
+        end
+
+        if not found
             hint = "SONAR REPORTS SHOT WAS "
-            if y > sub_y
+            if y < sub_y
                 hint = hint + "NORTH"
             end
-            if y < sub_y
+            if y > sub_y
                 hint = hint + "SOUTH"
             end
             if x > sub_x
@@ -80,10 +228,10 @@ while playing
                 hint = hint + " AND"
             end
             if z > sub_z
-                hint = hint + " TOO LOW."
+                hint = hint + " TOO DEEP."
             end
             if z < sub_z
-                hint = hint + " TOO HIGH."
+                hint = hint + " TOO SHALLOW."
             end
             if z == sub_z
                 hint = hint + " DEPTH OK."
@@ -98,6 +246,11 @@ while playing
         print ""
         print "B O O M ! ! YOU FOUND IT IN " + str(trial) + " TRIES!"
     else
+        if show_grid
+            grid_cells[sub_y * search_size + sub_x] = "S"
+            print ""
+            print render_grid(grid_cells, search_size)
+        end
         print ""
         print "YOU HAVE BEEN TORPEDOED!  ABANDON SHIP!"
         print "THE SUBMARINE WAS AT " + str(sub_x) + "," + str(sub_y) + "," + str(sub_z)
