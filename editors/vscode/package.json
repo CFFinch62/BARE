@@ -1,0 +1,137 @@
+{
+  "name": "bare-language",
+  "displayName": "BARE Language",
+  "description": "Syntax highlighting, snippets, and one-key running for the BARE programming language (.bare files).",
+  "version": "0.1.0",
+  "publisher": "fragillidae",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CFFinch62/BARE.git"
+  },
+  "homepage": "https://github.com/CFFinch62/BARE#readme",
+  "bugs": {
+    "url": "https://github.com/CFFinch62/BARE/issues"
+  },
+  "qna": "https://github.com/CFFinch62/BARE/issues",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Education"
+  ],
+  "keywords": [
+    "bare",
+    "teaching",
+    "beginner",
+    "minimal"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:bare"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "bare",
+        "aliases": [
+          "BARE",
+          "bare"
+        ],
+        "extensions": [
+          ".bare"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./images/file-icon-light.svg",
+          "dark": "./images/file-icon-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "bare",
+        "scopeName": "source.bare",
+        "path": "./syntaxes/bare.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "bare",
+        "path": "./snippets/bare.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "bare.runFile",
+        "title": "BARE: Run File",
+        "icon": "$(play)"
+      }
+    ],
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "bare.runFile",
+          "when": "resourceLangId == bare",
+          "group": "navigation@1"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "bare.runFile",
+          "when": "resourceLangId == bare",
+          "group": "z_commands"
+        }
+      ],
+      "commandPalette": [
+        { "command": "bare.runFile", "when": "resourceLangId == bare" }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "bare.runFile",
+        "key": "ctrl+f5",
+        "mac": "cmd+f5",
+        "when": "resourceLangId == bare && editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "BARE",
+      "properties": {
+        "bare.interpreterPath": {
+          "type": "string",
+          "default": "bare",
+          "markdownDescription": "Path to the `bare` interpreter. Leave as `bare` if it is on your `PATH` (the standalone runtime installs to `~/.local/bin/bare`); otherwise give an absolute path.\n\nBARE's IDE remains the primary way to run programs — this extension drives the standalone runtime, which takes a filename and nothing else."
+        },
+        "bare.saveBeforeRun": {
+          "type": "boolean",
+          "default": true,
+          "description": "Save the file automatically before running it."
+        },
+        "bare.runInTerminal": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Run in an integrated terminal, which keeps `input` usable.\n\nTurn this **off** to capture output in an Output channel instead, which is what populates the Problems panel with BARE's errors. A program that calls `input` will end at once in that mode, because there is no terminal behind it."
+        }
+      }
+    },
+    "_comment": "No problemMatchers contribution: BARE reports `Error on line <n>: <message>` with no filename, and a VS Code problem matcher pattern cannot attribute an error without one. The extension parses that format itself and pins the diagnostic to the file it ran — see publishDiagnostics in extension.js.",
+    "taskDefinitions": [
+      {
+        "type": "bare",
+        "required": [
+          "file"
+        ],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "The .bare file to run."
+          }
+        }
+      }
+    ]
+  }
+}

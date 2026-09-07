@@ -1,10 +1,15 @@
-"""BARE CLI Harness — Temporary Development Tool.
+"""BARE CLI Harness — development convenience.
 
-Run BARE programs from the command line:
+Run BARE programs straight from a source checkout:
     python -m bare_core myfile.bare
 
-THIS HARNESS IS DELETED BEFORE RELEASE. BARE is IDE-locked — the
-only way end users run .bare files is through the BARE IDE.
+This is the in-tree harness, kept for working on bare_core without
+building anything. The shipped console runtime is ../../bare_cli.py,
+packaged by installer/bare_cli.spec into `dist/bare` — that is what
+MyCode and the VS Code extension launch, and the two behave identically.
+
+The BARE IDE remains the primary way to run .bare files: it is the only
+one with scope boxes, breakpoints and the Variable Watch panel.
 """
 
 import sys

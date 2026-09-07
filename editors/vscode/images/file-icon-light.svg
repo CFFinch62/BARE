@@ -1,0 +1,16 @@
+<!-- BARE file icon, light themes. The bear head from icons/bare_icon.svg,
+     without its surrounding box and with the eyes and snout dropped: at the
+     16px the explorer renders, the head-plus-two-ears silhouette is what
+     carries the identity, while interior detail closes into a blob. Filled
+     rather than outlined for the same reason — a 1px outline at this size
+     grays out into a smudge. Drawn as geometry so it needs no font. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g fill="#a86a12">
+    <circle cx="3.9" cy="4.3" r="2.5"/>
+    <circle cx="12.1" cy="4.3" r="2.5"/>
+    <circle cx="8" cy="9.1" r="5.4"/>
+  </g>
+  <!-- Muzzle: a darker tint of the same amber, not a hole punched in an
+       assumed background — the explorer paints its own ground per theme. -->
+  <ellipse cx="8" cy="10.9" rx="2.3" ry="1.7" fill="#e0a83c"/>
+</svg>

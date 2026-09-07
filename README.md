@@ -4,9 +4,15 @@
 teaching language with 11 reserved words, a single numeric type, one loop
 construct, and one procedure construct.
 
-BARE is part of the Fragillidae Programming Langauge Teaching Suite. It is **IDE-locked**:
-there is no standalone interpreter — the editor, interpreter, and console
-all live in one PyQt6 process.
+BARE is part of the Fragillidae Programming Langauge Teaching Suite. It is
+**IDE-first**: the editor, interpreter and console live in one PyQt6 process,
+and that is where BARE is meant to be learned — with scope box colouring,
+step debugging, breakpoints and the Variable Watch panel.
+
+A standalone console runtime (`bare <file.bare>`) is also built from the same
+`bare_core`, for editors that are not the BARE IDE. It runs a program and
+reports errors; it has none of the teaching apparatus above. See
+[Running outside the IDE](#running-outside-the-ide).
 
 ![BARE IDE — editor with syntax highlighting and scope boxes, paused at a breakpoint with the Variable Watch panel open](docs/images/bare-ide-screenshot.png)
 
@@ -22,6 +28,13 @@ for the full phase-by-phase history.
 ## Getting started
 
 ```bash
+git clone https://github.com/CFFinch62/BARE.git
+cd BARE
+```
+
+Then:
+
+```bash
 ./setup.sh                    # creates venv, installs dev + ide extras
 source venv/bin/activate
 python -m pytest tests/ -v    # run the interpreter test suite
@@ -33,6 +46,36 @@ To build a standalone executable (no Python install required to run it):
 ```bash
 ./build_release.sh            # installs PyInstaller extras, builds dist/bare-ide
 ```
+
+## Running outside the IDE
+
+`bare_core` has no PyQt6 dependency, so the language can run without the IDE.
+`bare_cli.py` is the console entrypoint, and `build_cli.sh` packages it:
+
+```bash
+./build_cli.sh                # builds dist/bare
+cp dist/bare ~/.local/bin/bare
+bare myprogram.bare
+```
+
+The CLI takes a filename and nothing else. It prints the program's output on
+stdout, reports errors as `Error on line N: message` on stderr, and exits 0 or
+1 — enough for another editor to launch it and place the error. It has no
+flags, and in particular **no parse-only mode**: the only way to find out
+whether a program is valid is to run it.
+
+This is what [MyCode](../../IDES) launches, and what the VS Code extension in
+[editors/vscode](editors/vscode) drives.
+
+## Editor support
+
+[editors/vscode](editors/vscode) is a VS Code extension for `.bare` files:
+syntax highlighting for all 11 reserved words, 3 literals and 7 builtins,
+`end`-aware indentation, snippets for the idioms BARE's small vocabulary makes
+you write by hand, and a Run command that drives the standalone runtime above.
+
+It is not a replacement for the IDE — there are no scope boxes, no breakpoints
+and no Variable Watch — and its README says so up front.
 
 ## Documentation
 

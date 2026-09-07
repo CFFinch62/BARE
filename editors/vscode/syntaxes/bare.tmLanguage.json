@@ -1,0 +1,109 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "BARE",
+  "scopeName": "source.bare",
+  "fileTypes": ["bare"],
+  "_comment": "The whole language: 11 reserved words (bare_core.tokens.KEYWORDS), 3 literal keywords (LITERAL_KEYWORDS) and 7 builtins (bare_core.builtins.BUILTINS). `input` is a keyword rather than a builtin because the interpreter handles it specially. Matching is case-sensitive — the lexer compares the word as written.",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#string" },
+    { "include": "#sub_definition" },
+    { "include": "#keyword_control" },
+    { "include": "#keyword_operator_word" },
+    { "include": "#constant_language" },
+    { "include": "#support_builtin" },
+    { "include": "#constant_numeric" },
+    { "include": "#function_call" },
+    { "include": "#operator" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.line.number-sign.bare",
+      "match": "#.*$"
+    },
+
+    "string": {
+      "comment": "Double-quoted. The lexer accepts exactly \\n \\t \\\\ and \\\" (bare_core/lexer.py); anything else after a backslash is not a valid escape.",
+      "name": "string.quoted.double.bare",
+      "begin": "\"",
+      "end": "\"|$",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.string.begin.bare" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.string.end.bare" }
+      },
+      "patterns": [
+        { "name": "constant.character.escape.bare", "match": "\\\\[nt\\\\\"]" },
+        { "name": "invalid.illegal.escape.bare", "match": "\\\\." }
+      ]
+    },
+
+    "sub_definition": {
+      "comment": "sub name(args) ... end — BARE's only procedure form, and there is no colon.",
+      "match": "\\b(sub)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.declaration.bare" },
+        "2": { "name": "entity.name.function.definition.bare" }
+      }
+    },
+
+    "keyword_control": {
+      "comment": "if / else / while / end delimit every block; there is no elif and no colon.",
+      "name": "keyword.control.bare",
+      "match": "\\b(if|else|while|end|return|sub|print|input)\\b"
+    },
+
+    "keyword_operator_word": {
+      "name": "keyword.operator.word.bare",
+      "match": "\\b(and|or|not)\\b"
+    },
+
+    "constant_language": {
+      "name": "constant.language.bare",
+      "match": "\\b(true|false|null)\\b"
+    },
+
+    "support_builtin": {
+      "comment": "The seven builtins in BUILTINS. `input` is a keyword, not one of these.",
+      "name": "support.function.builtin.bare",
+      "match": "\\b(append|len|num|random|round|str|time)\\b"
+    },
+
+    "constant_numeric": {
+      "name": "constant.numeric.bare",
+      "match": "\\b[0-9]+(?:\\.[0-9]+)?\\b"
+    },
+
+    "function_call": {
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+      "name": "entity.name.function.bare"
+    },
+
+    "operator": {
+      "patterns": [
+        {
+          "comment": "Two-character forms first, so == is not read as two = and <= not as < then =.",
+          "name": "keyword.operator.comparison.bare",
+          "match": "==|!=|<=|>="
+        },
+        { "name": "keyword.operator.comparison.bare", "match": "[<>]" },
+        { "name": "keyword.operator.arithmetic.bare", "match": "[+\\-*/%]" },
+        { "name": "keyword.operator.assignment.bare", "match": "=" }
+      ]
+    },
+
+    "punctuation": {
+      "patterns": [
+        { "name": "punctuation.definition.parameters.bare", "match": "[()]" },
+        {
+          "comment": "Indexing a string or list is BARE's one way in — see libraries/string_lib.bare.",
+          "name": "punctuation.definition.index.bare",
+          "match": "[\\[\\]]"
+        },
+        { "name": "punctuation.separator.comma.bare", "match": "," }
+      ]
+    }
+  }
+}

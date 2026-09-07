@@ -10,8 +10,15 @@ excludes build/ wholesale for that reason — putting the spec there too
 would make it invisible to git.
 
 Produces a single-file executable: dist/bare-ide (dist/bare-ide.exe on
-Windows). BARE is IDE-locked — there is no separate bare_core CLI binary
-to package; this is the one and only distributable artifact.
+Windows). This is the primary distributable: the IDE is where BARE is
+meant to be learned and used, with scope boxes, breakpoints and the
+Variable Watch panel.
+
+There is now a second artifact alongside it — installer/bare_cli.spec
+builds dist/bare, a console runtime that takes a .bare file and runs it.
+It exists so an editor that is not the BARE IDE (MyCode, or the VS Code
+extension in editors/vscode) can run a program without bundling PyQt6.
+It packages only bare_core, which has no Qt dependency.
 
 Icon note: icons/ currently only has SVGs. PyInstaller needs a .ico for
 Windows or .icns for macOS to brand the executable/app bundle — add one

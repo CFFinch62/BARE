@@ -1,0 +1,22 @@
+// Copy into your project's .vscode/tasks.json to run BARE files as a build
+// task, without needing the extension at all.
+//
+// Note there is no problem matcher here, and none is contributed by the
+// extension either. BARE reports "Error on line 4: message" with no filename,
+// and a VS Code problem matcher cannot attribute an error without one. The
+// extension parses that format itself and pins the diagnostic to the file it
+// ran; a task can only show you the text.
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "BARE: run current file",
+      "type": "shell",
+      "command": "bare",
+      "args": ["${file}"],
+      "group": { "kind": "test", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": []
+    }
+  ]
+}

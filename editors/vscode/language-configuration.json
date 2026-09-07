@@ -1,0 +1,46 @@
+{
+  "comments": {
+    "lineComment": "#"
+  },
+  "brackets": [
+    ["(", ")"],
+    ["[", "]"]
+  ],
+  "autoClosingPairs": [
+    { "open": "(", "close": ")" },
+    { "open": "[", "close": "]" },
+    { "open": "\"", "close": "\"", "notIn": ["string", "comment"] }
+  ],
+  "surroundingPairs": [
+    ["(", ")"],
+    ["[", "]"],
+    ["\"", "\""]
+  ],
+  "autoCloseBefore": ")],\t\n ",
+  "wordPattern": "[A-Za-z_][A-Za-z0-9_]*",
+  "_comment": "BARE has no colons and no elif: every block opens with if / while / sub and closes with a bare `end` (docs/language-spec.md). Indentation is a convention the editor maintains, not syntax, so folding is marker-based rather than offside.",
+  "indentationRules": {
+    "increaseIndentPattern": "^\\s*(if|while|sub|else)\\b",
+    "decreaseIndentPattern": "^\\s*(end|else)\\b"
+  },
+  "onEnterRules": [
+    {
+      "beforeText": "^\\s*(if|while|sub|else)\\b",
+      "action": { "indent": "indent" }
+    },
+    {
+      "beforeText": "^\\s*return\\b",
+      "action": { "indent": "outdent" }
+    },
+    {
+      "beforeText": "^\\s*#",
+      "action": { "indent": "none", "appendText": "# " }
+    }
+  ],
+  "folding": {
+    "markers": {
+      "start": "^\\s*(if|while|sub)\\b",
+      "end": "^\\s*end\\b"
+    }
+  }
+}

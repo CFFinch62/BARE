@@ -1,0 +1,80 @@
+{
+  "Sub": {
+    "prefix": "sub",
+    "body": ["sub ${1:name}(${2:arg})", "    ${0}", "end"],
+    "description": "A sub — BARE's only procedure form"
+  },
+  "Sub with return": {
+    "prefix": "subreturn",
+    "body": ["sub ${1:name}(${2:arg})", "    ${3}", "    return ${0:result}", "end"],
+    "description": "A sub that returns a value"
+  },
+  "If": {
+    "prefix": "if",
+    "body": ["if ${1:condition}", "    ${0}", "end"],
+    "description": "An if block"
+  },
+  "If / else": {
+    "prefix": "ifelse",
+    "body": ["if ${1:condition}", "    ${2}", "else", "    ${0}", "end"],
+    "description": "An if / else block — BARE has no elif"
+  },
+  "While": {
+    "prefix": "while",
+    "body": ["while ${1:condition}", "    ${0}", "end"],
+    "description": "A while loop — BARE's only loop"
+  },
+  "Counted loop": {
+    "prefix": "count",
+    "body": [
+      "${1:i} = 0",
+      "while ${1:i} < ${2:10}",
+      "    ${0}",
+      "    ${1:i} = ${1:i} + 1",
+      "end"
+    ],
+    "description": "Count from 0 with a while loop — BARE has no for"
+  },
+  "Loop over a string": {
+    "prefix": "eachchar",
+    "body": [
+      "${1:i} = 0",
+      "while ${1:i} < len(${2:s})",
+      "    ${3:ch} = ${2:s}[${1:i}]",
+      "    ${0}",
+      "    ${1:i} = ${1:i} + 1",
+      "end"
+    ],
+    "description": "Walk a string one character at a time by index"
+  },
+  "Print": {
+    "prefix": "print",
+    "body": ["print ${0:\"text\"}"],
+    "description": "Write a line to the console"
+  },
+  "Input": {
+    "prefix": "input",
+    "body": ["${1:answer} = input(\"${0:What is your name? }\")"],
+    "description": "Prompt for a line of text"
+  },
+  "Input a number": {
+    "prefix": "inputnum",
+    "body": ["${1:n} = num(input(\"${0:Enter a number: }\"))"],
+    "description": "Prompt for text and convert it to a number"
+  },
+  "Append to a list": {
+    "prefix": "append",
+    "body": ["append(${1:items}, ${0:value})"],
+    "description": "Add a value to the end of a list"
+  },
+  "Random integer": {
+    "prefix": "random",
+    "body": ["${1:n} = round(random() * ${0:6})"],
+    "description": "A random number, rounded to a whole one"
+  },
+  "Comment": {
+    "prefix": "comment",
+    "body": ["# ${0:note}"],
+    "description": "A comment"
+  }
+}
